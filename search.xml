@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>spring笔记</title>
-    <url>/2020/07/17/java%E5%90%8E%E7%AB%AF/spring/</url>
+    <url>/alex-next/2020/07/17/java%E5%90%8E%E7%AB%AF/spring/</url>
     <content><![CDATA[<p>项目gitee地址</p>
 <blockquote>
 <p><a href="https://gitee.com/alexander1/spring-notes" target="_blank" rel="noopener">https://gitee.com/alexander1/spring-notes</a></p>
@@ -158,7 +158,7 @@
   </entry>
   <entry>
     <title>mybatis笔记</title>
-    <url>/2020/07/31/java%E5%90%8E%E7%AB%AF/mybatis/</url>
+    <url>/alex-next/2020/07/31/java%E5%90%8E%E7%AB%AF/mybatis/</url>
     <content><![CDATA[<p>项目gitee地址</p>
 <blockquote>
 <p><a href="https://gitee.com/alexander1/mybatis-notes" target="_blank" rel="noopener">https://gitee.com/alexander1/mybatis-notes</a></p>
@@ -202,7 +202,7 @@
   </entry>
   <entry>
     <title>springMVC笔记</title>
-    <url>/2020/07/27/java%E5%90%8E%E7%AB%AF/SpringMVC/</url>
+    <url>/alex-next/2020/07/27/java%E5%90%8E%E7%AB%AF/SpringMVC/</url>
     <content><![CDATA[<p>项目gitee地址</p>
 <blockquote>
 <p><a href="https://gitee.com/alexander1/spring-mvc-notes" target="_blank" rel="noopener">https://gitee.com/alexander1/spring-mvc-notes</a></p>
@@ -285,7 +285,7 @@
   </entry>
   <entry>
     <title>算法</title>
-    <url>/2020/01/12/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95/</url>
+    <url>/alex-next/2020/01/12/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[]]></content>
       <tags>
         <tag>算法</tag>
@@ -293,7 +293,7 @@
   </entry>
   <entry>
     <title>springboot笔记</title>
-    <url>/2020/08/05/java%E5%90%8E%E7%AB%AF/springboot/springboot/</url>
+    <url>/alex-next/2020/08/05/java%E5%90%8E%E7%AB%AF/springboot/springboot/</url>
     <content><![CDATA[<p>项目gitee地址</p>
 <blockquote>
 <p><a href="https://gitee.com/alexander1/springboot_notes.git" target="_blank" rel="noopener">https://gitee.com/alexander1/springboot_notes.git</a></p>
@@ -869,7 +869,7 @@
   </entry>
   <entry>
     <title>springboot中后台接受前台传递的对象数组</title>
-    <url>/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/</url>
+    <url>/alex-next/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/</url>
     <content><![CDATA[<h1 id="springboot中后台接受前台传递的对象数组"><a href="#springboot中后台接受前台传递的对象数组" class="headerlink" title="springboot中后台接受前台传递的对象数组"></a>springboot中后台接受前台传递的对象数组</h1><h2 id="第一种方式"><a href="#第一种方式" class="headerlink" title="第一种方式"></a>第一种方式</h2><p><strong>前台部分</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">let student = [&#123;name:<span class="string">"zs"</span>,age:<span class="number">12</span>&#125;,&#123;name:<span class="string">"ls"</span>,age:<span class="number">45</span>&#125;]</span><br><span class="line">$.ajax(&#123;</span><br><span class="line">	type:<span class="string">"post"</span>,</span><br><span class="line">	url:<span class="string">"/filePage/JsonTest"</span>,</span><br><span class="line">	dataType: <span class="string">'json'</span>,</span><br><span class="line">	contentType:<span class="string">"application/json"</span>,</span><br><span class="line">	data:JSON.stringify(student),</span><br><span class="line">	success:function()&#123;</span><br><span class="line">		console.log(<span class="number">12345676</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
 <p><strong>注意</strong>：在ajax中，如果没加contentType:”application/json”，那么data就应该对应的是key-value形式，如：data:”students=”+JSON.stringify(student)；如果加了，那么ajax发送的data就必须是JSON字符串形式。</p>
 <p><strong>后台部分</strong></p>
