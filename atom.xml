@@ -3,11 +3,11 @@
   <title>alex</title>
   
   
-  <link href="/atom.xml" rel="self"/>
+  <link href="/alex-next/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
+  <link href="https://alexander-wd.github.io/"/>
   <updated>2021-03-20T13:47:30.788Z</updated>
-  <id>http://yoursite.com/</id>
+  <id>https://alexander-wd.github.io/</id>
   
   <author>
     <name>alex</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>springboot笔记</title>
-    <link href="http://yoursite.com/2020/08/05/java%E5%90%8E%E7%AB%AF/springboot/springboot/"/>
-    <id>http://yoursite.com/2020/08/05/java%E5%90%8E%E7%AB%AF/springboot/springboot/</id>
+    <link href="https://alexander-wd.github.io/2020/08/05/java%E5%90%8E%E7%AB%AF/springboot/springboot/"/>
+    <id>https://alexander-wd.github.io/2020/08/05/java%E5%90%8E%E7%AB%AF/springboot/springboot/</id>
     <published>2020-08-05T08:03:12.000Z</published>
     <updated>2021-03-20T13:47:30.788Z</updated>
     
@@ -38,18 +38,18 @@
     
     
     
-      <category term="java后端" scheme="http://yoursite.com/tags/java%E5%90%8E%E7%AB%AF/"/>
+      <category term="java后端" scheme="https://alexander-wd.github.io/tags/java%E5%90%8E%E7%AB%AF/"/>
     
-      <category term="笔记" scheme="http://yoursite.com/tags/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="https://alexander-wd.github.io/tags/%E7%AC%94%E8%AE%B0/"/>
     
-      <category term="springboot" scheme="http://yoursite.com/tags/springboot/"/>
+      <category term="springboot" scheme="https://alexander-wd.github.io/tags/springboot/"/>
     
   </entry>
   
   <entry>
     <title>mybatis笔记</title>
-    <link href="http://yoursite.com/2020/07/31/java%E5%90%8E%E7%AB%AF/mybatis/"/>
-    <id>http://yoursite.com/2020/07/31/java%E5%90%8E%E7%AB%AF/mybatis/</id>
+    <link href="https://alexander-wd.github.io/2020/07/31/java%E5%90%8E%E7%AB%AF/mybatis/"/>
+    <id>https://alexander-wd.github.io/2020/07/31/java%E5%90%8E%E7%AB%AF/mybatis/</id>
     <published>2020-07-31T08:03:12.000Z</published>
     <updated>2021-03-20T13:44:35.653Z</updated>
     
@@ -67,19 +67,19 @@
     </summary>
     
     
-      <category term="笔记" scheme="http://yoursite.com/categories/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="https://alexander-wd.github.io/categories/%E7%AC%94%E8%AE%B0/"/>
     
     
-      <category term="java后端" scheme="http://yoursite.com/tags/java%E5%90%8E%E7%AB%AF/"/>
+      <category term="java后端" scheme="https://alexander-wd.github.io/tags/java%E5%90%8E%E7%AB%AF/"/>
     
-      <category term="笔记" scheme="http://yoursite.com/tags/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="https://alexander-wd.github.io/tags/%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
   <entry>
     <title>springMVC笔记</title>
-    <link href="http://yoursite.com/2020/07/27/java%E5%90%8E%E7%AB%AF/SpringMVC/"/>
-    <id>http://yoursite.com/2020/07/27/java%E5%90%8E%E7%AB%AF/SpringMVC/</id>
+    <link href="https://alexander-wd.github.io/2020/07/27/java%E5%90%8E%E7%AB%AF/SpringMVC/"/>
+    <id>https://alexander-wd.github.io/2020/07/27/java%E5%90%8E%E7%AB%AF/SpringMVC/</id>
     <published>2020-07-27T07:12:45.000Z</published>
     <updated>2021-03-20T13:03:17.121Z</updated>
     
@@ -98,16 +98,16 @@
     
     
     
-      <category term="java后端" scheme="http://yoursite.com/tags/java%E5%90%8E%E7%AB%AF/"/>
+      <category term="java后端" scheme="https://alexander-wd.github.io/tags/java%E5%90%8E%E7%AB%AF/"/>
     
-      <category term="笔记" scheme="http://yoursite.com/tags/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="https://alexander-wd.github.io/tags/%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
   <entry>
     <title>spring笔记</title>
-    <link href="http://yoursite.com/2020/07/17/java%E5%90%8E%E7%AB%AF/spring/"/>
-    <id>http://yoursite.com/2020/07/17/java%E5%90%8E%E7%AB%AF/spring/</id>
+    <link href="https://alexander-wd.github.io/2020/07/17/java%E5%90%8E%E7%AB%AF/spring/"/>
+    <id>https://alexander-wd.github.io/2020/07/17/java%E5%90%8E%E7%AB%AF/spring/</id>
     <published>2020-07-17T08:03:12.000Z</published>
     <updated>2021-03-20T13:44:43.617Z</updated>
     
@@ -125,19 +125,19 @@
     </summary>
     
     
-      <category term="笔记" scheme="http://yoursite.com/categories/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="https://alexander-wd.github.io/categories/%E7%AC%94%E8%AE%B0/"/>
     
     
-      <category term="java后端" scheme="http://yoursite.com/tags/java%E5%90%8E%E7%AB%AF/"/>
+      <category term="java后端" scheme="https://alexander-wd.github.io/tags/java%E5%90%8E%E7%AB%AF/"/>
     
-      <category term="笔记" scheme="http://yoursite.com/tags/%E7%AC%94%E8%AE%B0/"/>
+      <category term="笔记" scheme="https://alexander-wd.github.io/tags/%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
   <entry>
     <title>springboot中后台接受前台传递的对象数组</title>
-    <link href="http://yoursite.com/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/"/>
-    <id>http://yoursite.com/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/</id>
+    <link href="https://alexander-wd.github.io/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/"/>
+    <id>https://alexander-wd.github.io/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/</id>
     <published>2020-04-23T07:21:45.000Z</published>
     <updated>2021-03-20T11:31:20.706Z</updated>
     
@@ -154,16 +154,16 @@
     
     
     
-      <category term="java后端" scheme="http://yoursite.com/tags/java%E5%90%8E%E7%AB%AF/"/>
+      <category term="java后端" scheme="https://alexander-wd.github.io/tags/java%E5%90%8E%E7%AB%AF/"/>
     
-      <category term="springboot" scheme="http://yoursite.com/tags/springboot/"/>
+      <category term="springboot" scheme="https://alexander-wd.github.io/tags/springboot/"/>
     
   </entry>
   
   <entry>
     <title>算法</title>
-    <link href="http://yoursite.com/2020/01/12/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95/"/>
-    <id>http://yoursite.com/2020/01/12/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95/</id>
+    <link href="https://alexander-wd.github.io/2020/01/12/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95/"/>
+    <id>https://alexander-wd.github.io/2020/01/12/%E7%AE%97%E6%B3%95/%E7%AE%97%E6%B3%95/</id>
     <published>2020-01-12T04:54:45.000Z</published>
     <updated>2021-03-20T11:48:31.202Z</updated>
     
@@ -173,7 +173,7 @@
     
     
     
-      <category term="算法" scheme="http://yoursite.com/tags/%E7%AE%97%E6%B3%95/"/>
+      <category term="算法" scheme="https://alexander-wd.github.io/tags/%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
