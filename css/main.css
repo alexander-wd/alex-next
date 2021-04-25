@@ -462,7 +462,7 @@ code {
   word-wrap: break-word;
   background: #eee;
   border-radius: 3px;
-  color: #555;
+  color: #fe9a2e;
   padding: 2px 4px;
 }
 pre {
@@ -746,13 +746,13 @@ pre .javascript .function {
   border-bottom: 1px solid transparent;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
-  border-top: 3px solid #fc6423;
+  border-top: 3px solid #fe9a2e;
 }
 @media (max-width: 413px) {
   .post-body .tabs ul.nav-tabs li.tab.active,
   .tabs-comment ul.nav-tabs li.tab.active {
     border-bottom: 1px solid #ddd;
-    border-left: 3px solid #fc6423;
+    border-left: 3px solid #fe9a2e;
     border-right: 1px solid #ddd;
     border-top: 1px solid #ddd;
   }
@@ -1036,7 +1036,7 @@ pre .javascript .function {
   width: initial;
 }
 .back-to-top:hover {
-  color: #fc6423;
+  color: #fe9a2e;
 }
 .back-to-top.back-to-top-on {
   bottom: 30px;
@@ -1795,7 +1795,7 @@ article:last-child .post-eof {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #1d2133;
+  background: #ff21ee;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1810,9 +1810,9 @@ article:last-child .post-eof {
 }
 .feed-link a,
 .chat a {
-  border: 1px solid #fc6423;
+  border: 1px solid #fe9a2e;
   border-radius: 4px;
-  color: #fc6423;
+  color: #fe9a2e;
   display: inline-block;
   padding: 0 15px;
 }
@@ -1822,8 +1822,8 @@ article:last-child .post-eof {
 }
 .feed-link a:hover,
 .chat a:hover {
-  background: #fc6423;
-  border: 1px solid #fc6423;
+  background: #fe9a2e;
+  border: 1px solid #fe9a2e;
   color: #fff;
 }
 .feed-link a:hover .fa,
@@ -1892,14 +1892,14 @@ article:last-child .post-eof {
   margin-left: 10px;
 }
 .sidebar-nav li:hover {
-  color: #fc6423;
+  color: #fe9a2e;
 }
 .sidebar-nav .sidebar-nav-active {
-  border-bottom-color: #fc6423;
-  color: #fc6423;
+  border-bottom-color: #fe9a2e;
+  color: #fe9a2e;
 }
 .sidebar-nav .sidebar-nav-active:hover {
-  color: #fc6423;
+  color: #fe9a2e;
 }
 .sidebar-panel {
   display: none;
@@ -1940,7 +1940,7 @@ article:last-child .post-eof {
   margin-top: 0;
 }
 .sidebar-toggle:hover .sidebar-toggle-line {
-  background: #fc6423;
+  background: #fe9a2e;
 }
 .post-toc-wrap {
   overflow-x: hidden;
@@ -1989,14 +1989,14 @@ article:last-child .post-eof {
   display: block;
 }
 .post-toc .nav .active > a {
-  border-bottom-color: #fc6423;
-  color: #fc6423;
+  border-bottom-color: #fe9a2e;
+  color: #fe9a2e;
 }
 .post-toc .nav .active-current > a {
-  color: #fc6423;
+  color: #fe9a2e;
 }
 .post-toc .nav .active-current > a:hover {
-  color: #fc6423;
+  color: #fe9a2e;
 }
 .site-state {
   display: flex;
@@ -2669,16 +2669,16 @@ ul.breadcrumb li + li:last-child {
 .sub-menu .menu-item a:hover,
 .sub-menu .menu-item span.exturl:hover {
   background: initial;
-  color: #fc6423;
+  color: #fe9a2e;
 }
 .sub-menu .menu-item-active a {
   background: #fff;
-  border-bottom-color: #fc6423;
-  color: #fc6423;
+  border-bottom-color: #fe9a2e;
+  color: #fe9a2e;
 }
 .sub-menu .menu-item-active a:hover {
   background: #fff;
-  border-bottom-color: #fc6423;
+  border-bottom-color: #fe9a2e;
 }
 .sub-menu .menu-item-active a::after {
   content: initial;
@@ -2732,18 +2732,18 @@ ul.breadcrumb li + li:last-child {
 .feed-link a,
 .chat a {
   border: 0;
-  color: #fc6423;
+  color: #fe9a2e;
   display: block;
 }
 .feed-link a:hover,
 .chat a:hover {
   background: none;
   border: 0;
-  color: #e34603;
+  color: #ef7d01;
 }
 .feed-link a:hover .fa,
 .chat a:hover .fa {
-  color: #e34603;
+  color: #ef7d01;
 }
 .links-of-author {
   display: flex;
