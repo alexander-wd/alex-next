@@ -994,6 +994,11 @@
 <p>第一轮：$t = p+1$</p>
 <p>第二轮：$t = p^2+p+1$</p>
 <p>第n轮：$t = p^n+···+p^2+p+1$</p>
+<h2 id="4-最大公约数"><a href="#4-最大公约数" class="headerlink" title="4.最大公约数"></a>4.最大公约数</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gcd</span><span class="params">(<span class="keyword">int</span> m,<span class="keyword">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n==<span class="number">0</span>?m:gcd(n,m%n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);</span><br><span class="line">    <span class="keyword">while</span> (n--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> a,b;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;a,&amp;b);</span><br><span class="line">        <span class="keyword">int</span> r = gcd(a,b);</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;r&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基本原理：</p>
+<p>若$x$能整除$a$且$x$能整除$b$，则$x$能整除$a·i+b·j$</p>
+<p>$a\mod b=a-\lfloor{\frac{a}{b}}\rfloor·b$ ，即$a\mod b=a-c·b$  ，记 $c=\lfloor{\frac{a}{b}}\rfloor$</p>
+<p>所以<code>gcd(a,b)=gcd(b,a mod b)</code></p>
 ]]></content>
       <categories>
         <category>算法</category>
