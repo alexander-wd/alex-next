@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>hexo常用操作</title>
-    <url>/alex-next/2021/04/18/hexo%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<h1 id="hexo-操作"><a href="#hexo-操作" class="headerlink" title="hexo 操作"></a>hexo 操作</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo <span class="built_in">help</span>  <span class="comment"># 查看帮助</span></span><br><span class="line">hexo version  <span class="comment">#查看Hexo的版本</span></span><br><span class="line">hexo algolia  <span class="comment"># 更新search库</span></span><br><span class="line">hexo new <span class="string">"postName"</span> <span class="comment">#新建文章</span></span><br><span class="line">hexo new post <span class="string">"title"</span>  <span class="comment"># 生成新文章：\source\_posts\title.md，可省略post</span></span><br><span class="line">hexo new page <span class="string">"pageName"</span> <span class="comment">#新建页面</span></span><br><span class="line">hexo clean <span class="comment">#清除部署緩存</span></span><br><span class="line">hexo n == hexo new <span class="comment">#新建文章</span></span><br><span class="line">hexo g == hexo generate <span class="comment">#生成静态页面至public目录</span></span><br><span class="line">hexo s == hexo server <span class="comment">#本地访问,开启预览访问端口（默认端口4000，'ctrl + c'关闭server）</span></span><br><span class="line">hexo d == hexo deploy <span class="comment">#将.deploy目录部署到GitHub</span></span><br><span class="line">hexo d -g <span class="comment">#生成加部署</span></span><br><span class="line">hexo s -g <span class="comment">#生成加预览</span></span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>工具</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mybatis笔记</title>
     <url>/alex-next/2020/07/31/java%E5%90%8E%E7%AB%AF/mybatis/</url>
     <content><![CDATA[<p>项目gitee地址</p>
@@ -48,10 +37,10 @@
 <h1 id="六、类型转换器"><a href="#六、类型转换器" class="headerlink" title="六、类型转换器"></a>六、类型转换器</h1><p>参考<a href="https://mybatis.org/mybatis-3/zh/configuration.html#typeHandlers" target="_blank" rel="noopener">https://mybatis.org/mybatis-3/zh/configuration.html#typeHandlers</a></p>
 ]]></content>
       <categories>
-        <category>笔记</category>
+        <category>JavaEE</category>
       </categories>
       <tags>
-        <tag>java后端</tag>
+        <tag>MyBatis</tag>
       </tags>
   </entry>
   <entry>
@@ -203,10 +192,10 @@
 </ul>
 ]]></content>
       <categories>
-        <category>笔记</category>
+        <category>JavaEE</category>
       </categories>
       <tags>
-        <tag>java后端</tag>
+        <tag>Spring</tag>
       </tags>
   </entry>
   <entry>
@@ -288,10 +277,21 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//默认返回视图是@RequestMapping的值</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/testListener"</span>,method = RequestMethod.GET)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testListener</span><span class="params">(HttpSession session)</span></span>&#123;</span><br><span class="line">    ServletContext servletContext = session.getServletContext();</span><br><span class="line">    ApplicationContext ac = (ApplicationContext)servletContext.getAttribute(<span class="string">"ac"</span>);</span><br><span class="line">    Person person = (Person)ac.getBean(<span class="string">"person"</span>);</span><br><span class="line">    System.out.println(person);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="十、SpringMVC执行流程"><a href="#十、SpringMVC执行流程" class="headerlink" title="十、SpringMVC执行流程**"></a>十、SpringMVC执行流程**</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">springmvc利用DispatcherServlet进行处理客户端的请求，</span><br><span class="line">如果springmvc中有相应的请求，即springmvc能够处理这个请求</span><br><span class="line">    1.由HandlerMapping(存储的是所有的请求和处理器的关系)调用getHandler()</span><br><span class="line">    获取该Handler配置的所有相关的对象(包括Handler对象)以及Handler对象对应的拦截器</span><br><span class="line">    最后以HandlerExecutionChain(某个指定的处理器和请求的关系)对象的形式返回</span><br><span class="line">    2.DispatcherServlet根据获得的Handler对象选择合适的HandlerAdapter(对请求执行和操作)对象</span><br><span class="line">        通过调用getHandlerAdapter()获得</span><br><span class="line">    3.成功获得HandlerAdapter对象后，执行拦截器preHandle方法，</span><br><span class="line">    4.调用Handler的目标方法得到ModelAndView对象</span><br><span class="line">        如果存在异常，由HandlerExceptionResolver组件处理异常，得到新的ModelAndView对象</span><br><span class="line">        如果不存在异常，就执行拦截器的postHandle方法</span><br><span class="line">                     有ViewResolver组件根据ModelAndView对象得到实际的View</span><br><span class="line">                     渲染视图</span><br><span class="line">    5.执行拦截器的afterCompletion方法</span><br><span class="line">否则，查看xml配置文件中有没有&lt;mvc:default-servlet-handler/&gt;(用tomcat默认的servet处理)注解</span><br><span class="line">    如果配置了，且能处理，就成功</span><br><span class="line">              但不能处理，就到404页面,控制台没有报错</span><br><span class="line">    如果没配置，控制台:No mapping found for HTTP request with URI in DispatcherServlet</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>笔记</category>
+        <category>JavaEE</category>
       </categories>
       <tags>
-        <tag>java后端</tag>
+        <tag>SpringMVC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo常用操作</title>
+    <url>/alex-next/2021/04/18/%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE/hexo%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h1 id="hexo-操作"><a href="#hexo-操作" class="headerlink" title="hexo 操作"></a>hexo 操作</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo <span class="built_in">help</span>  <span class="comment"># 查看帮助</span></span><br><span class="line">hexo version  <span class="comment">#查看Hexo的版本</span></span><br><span class="line">hexo algolia  <span class="comment"># 更新search库</span></span><br><span class="line">hexo new <span class="string">"postName"</span> <span class="comment">#新建文章</span></span><br><span class="line">hexo new post <span class="string">"title"</span>  <span class="comment"># 生成新文章：\source\_posts\title.md，可省略post</span></span><br><span class="line">hexo new page <span class="string">"pageName"</span> <span class="comment">#新建页面</span></span><br><span class="line">hexo clean <span class="comment">#清除部署緩存</span></span><br><span class="line">hexo n == hexo new <span class="comment">#新建文章</span></span><br><span class="line">hexo g == hexo generate <span class="comment">#生成静态页面至public目录</span></span><br><span class="line">hexo s == hexo server <span class="comment">#本地访问,开启预览访问端口（默认端口4000，'ctrl + c'关闭server）</span></span><br><span class="line">hexo d == hexo deploy <span class="comment">#将.deploy目录部署到GitHub</span></span><br><span class="line">hexo d -g <span class="comment">#生成加部署</span></span><br><span class="line">hexo s -g <span class="comment">#生成加预览</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -866,11 +866,41 @@
 <h1 id="五、Docker"><a href="#五、Docker" class="headerlink" title="五、Docker"></a>五、Docker</h1><h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><p>Docker是一个开源的应用容器引擎；</p>
 <h2 id="2、核心概念"><a href="#2、核心概念" class="headerlink" title="2、核心概念"></a>2、核心概念</h2><h1 id="六、定时任务"><a href="#六、定时任务" class="headerlink" title="六、定时任务"></a>六、定时任务</h1><h2 id="1、-Scheduled"><a href="#1、-Scheduled" class="headerlink" title="1、@Scheduled"></a>1、@Scheduled</h2>]]></content>
       <categories>
-        <category>笔记</category>
+        <category>JavaEE</category>
       </categories>
       <tags>
-        <tag>java后端</tag>
         <tag>springboot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>springboot中后台接受前台传递的对象数组</title>
+    <url>/alex-next/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<h1 id="springboot中后台接受前台传递的对象数组"><a href="#springboot中后台接受前台传递的对象数组" class="headerlink" title="springboot中后台接受前台传递的对象数组"></a>springboot中后台接受前台传递的对象数组</h1><h2 id="第一种方式"><a href="#第一种方式" class="headerlink" title="第一种方式"></a>第一种方式</h2><p><strong>前台部分</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">let student = [&#123;name:<span class="string">"zs"</span>,age:<span class="number">12</span>&#125;,&#123;name:<span class="string">"ls"</span>,age:<span class="number">45</span>&#125;]</span><br><span class="line">$.ajax(&#123;</span><br><span class="line">	type:<span class="string">"post"</span>,</span><br><span class="line">	url:<span class="string">"/filePage/JsonTest"</span>,</span><br><span class="line">	dataType: <span class="string">'json'</span>,</span><br><span class="line">	contentType:<span class="string">"application/json"</span>,</span><br><span class="line">	data:JSON.stringify(student),</span><br><span class="line">	success:function()&#123;</span><br><span class="line">		console.log(<span class="number">12345676</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意</strong>：在ajax中，如果没加contentType:”application/json”，那么data就应该对应的是key-value形式，如：data:”students=”+JSON.stringify(student)；如果加了，那么ajax发送的data就必须是JSON字符串形式。</p>
+<p><strong>后台部分</strong></p>
+<p>controller</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/JsonTest"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Result <span class="title">JsonTest</span><span class="params">(@RequestBody Student[] students)</span> </span>&#123;</span><br><span class="line">	System.out.println(students[<span class="number">0</span>]);</span><br><span class="line">	<span class="keyword">return</span> Results.success();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>@RequestBody会根据前台json字符串中的key来匹配对应实体类(Student)的属性，再调用实体类的setter方法将值赋给该属性。</p>
+<p><strong>实体类</strong> </p>
+<p>Student.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"Student [name="</span> + name + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(String name, Integer age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第二种方式"><a href="#第二种方式" class="headerlink" title="第二种方式"></a>第二种方式</h2><p><strong>前台部分</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">	let student = [&#123;name:<span class="string">"zs"</span>,age:<span class="number">12</span>&#125;,&#123;name:<span class="string">"ls"</span>,age:<span class="number">45</span>&#125;]</span><br><span class="line">	$.ajax(&#123;</span><br><span class="line">		type:<span class="string">"post"</span>,</span><br><span class="line">		url:<span class="string">"/filePage/JsonTest"</span>,</span><br><span class="line">		dataType: <span class="string">'json'</span>,</span><br><span class="line"><span class="comment">//		contentType:"application/json",</span></span><br><span class="line">		data:<span class="string">"student="</span>+JSON.stringify(student),</span><br><span class="line">		success:function()&#123;</span><br><span class="line">			console.log(<span class="number">12345676</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>:这里没有加上contentType:”application/json”,所以data要写成key-value形式。</p>
+<p><strong>后台部分</strong></p>
+<p>controller</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/JsonTest"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Result <span class="title">JsonTest</span><span class="params">(String student)</span> </span>&#123;</span><br><span class="line">	System.out.println(student);</span><br><span class="line">	List&lt;Student&gt; students = JSONArray.parseArray(student,Student.class);</span><br><span class="line">	System.out.println(students);</span><br><span class="line">	<span class="keyword">return</span> Results.success();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong>：JSONArray是import com.alibaba.fastjson.JSONArray;<br>引入的。pom.xml依赖如下：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;!-- Json --&gt;</span><br><span class="line">   &lt;dependency&gt;</span><br><span class="line">     &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</span><br><span class="line">     &lt;artifactId&gt;fastjson&lt;/artifactId&gt;</span><br><span class="line">     &lt;version&gt;1.2.58&lt;/version&gt;</span><br><span class="line">   &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>实体类不变。</p>
+<p><strong>还有一点注意的是</strong>，两种方式的ajax请求方式一定要是post。</p>
+]]></content>
+      <categories>
+        <category>JavaEE</category>
+      </categories>
+      <tags>
+        <tag>springboot</tag>
+        <tag>项目总结</tag>
       </tags>
   </entry>
   <entry>
@@ -900,36 +930,8 @@
       </tags>
   </entry>
   <entry>
-    <title>springboot中后台接受前台传递的对象数组</title>
-    <url>/alex-next/2020/04/23/java%E5%90%8E%E7%AB%AF/springboot/springboot%E4%B8%AD%E5%90%8E%E5%8F%B0%E6%8E%A5%E5%8F%97%E5%89%8D%E5%8F%B0%E4%BC%A0%E9%80%92%E7%9A%84%E5%AF%B9%E8%B1%A1%E6%95%B0%E7%BB%84/</url>
-    <content><![CDATA[<h1 id="springboot中后台接受前台传递的对象数组"><a href="#springboot中后台接受前台传递的对象数组" class="headerlink" title="springboot中后台接受前台传递的对象数组"></a>springboot中后台接受前台传递的对象数组</h1><h2 id="第一种方式"><a href="#第一种方式" class="headerlink" title="第一种方式"></a>第一种方式</h2><p><strong>前台部分</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">let student = [&#123;name:<span class="string">"zs"</span>,age:<span class="number">12</span>&#125;,&#123;name:<span class="string">"ls"</span>,age:<span class="number">45</span>&#125;]</span><br><span class="line">$.ajax(&#123;</span><br><span class="line">	type:<span class="string">"post"</span>,</span><br><span class="line">	url:<span class="string">"/filePage/JsonTest"</span>,</span><br><span class="line">	dataType: <span class="string">'json'</span>,</span><br><span class="line">	contentType:<span class="string">"application/json"</span>,</span><br><span class="line">	data:JSON.stringify(student),</span><br><span class="line">	success:function()&#123;</span><br><span class="line">		console.log(<span class="number">12345676</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
-<p><strong>注意</strong>：在ajax中，如果没加contentType:”application/json”，那么data就应该对应的是key-value形式，如：data:”students=”+JSON.stringify(student)；如果加了，那么ajax发送的data就必须是JSON字符串形式。</p>
-<p><strong>后台部分</strong></p>
-<p>controller</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/JsonTest"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Result <span class="title">JsonTest</span><span class="params">(@RequestBody Student[] students)</span> </span>&#123;</span><br><span class="line">	System.out.println(students[<span class="number">0</span>]);</span><br><span class="line">	<span class="keyword">return</span> Results.success();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>@RequestBody会根据前台json字符串中的key来匹配对应实体类(Student)的属性，再调用实体类的setter方法将值赋给该属性。</p>
-<p><strong>实体类</strong> </p>
-<p>Student.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"Student [name="</span> + name + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(String name, Integer age)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">		<span class="keyword">this</span>.age = age;</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="第二种方式"><a href="#第二种方式" class="headerlink" title="第二种方式"></a>第二种方式</h2><p><strong>前台部分</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">	let student = [&#123;name:<span class="string">"zs"</span>,age:<span class="number">12</span>&#125;,&#123;name:<span class="string">"ls"</span>,age:<span class="number">45</span>&#125;]</span><br><span class="line">	$.ajax(&#123;</span><br><span class="line">		type:<span class="string">"post"</span>,</span><br><span class="line">		url:<span class="string">"/filePage/JsonTest"</span>,</span><br><span class="line">		dataType: <span class="string">'json'</span>,</span><br><span class="line"><span class="comment">//		contentType:"application/json",</span></span><br><span class="line">		data:<span class="string">"student="</span>+JSON.stringify(student),</span><br><span class="line">		success:function()&#123;</span><br><span class="line">			console.log(<span class="number">12345676</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br></pre></td></tr></table></figure>
-<p><strong>注意</strong>:这里没有加上contentType:”application/json”,所以data要写成key-value形式。</p>
-<p><strong>后台部分</strong></p>
-<p>controller</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/JsonTest"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Result <span class="title">JsonTest</span><span class="params">(String student)</span> </span>&#123;</span><br><span class="line">	System.out.println(student);</span><br><span class="line">	List&lt;Student&gt; students = JSONArray.parseArray(student,Student.class);</span><br><span class="line">	System.out.println(students);</span><br><span class="line">	<span class="keyword">return</span> Results.success();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>注意</strong>：JSONArray是import com.alibaba.fastjson.JSONArray;<br>引入的。pom.xml依赖如下：</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;!-- Json --&gt;</span><br><span class="line">   &lt;dependency&gt;</span><br><span class="line">     &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</span><br><span class="line">     &lt;artifactId&gt;fastjson&lt;/artifactId&gt;</span><br><span class="line">     &lt;version&gt;1.2.58&lt;/version&gt;</span><br><span class="line">   &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
-<p>实体类不变。</p>
-<p><strong>还有一点注意的是</strong>，两种方式的ajax请求方式一定要是post。</p>
-]]></content>
-      <tags>
-        <tag>java后端</tag>
-        <tag>springboot</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>背包问题</title>
-    <url>/alex-next/2021/04/18/%E7%AE%97%E6%B3%95/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/</url>
+    <url>/alex-next/2021/04/18/%E7%AE%97%E6%B3%95/dp/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<h1 id="1-01背包问题"><a href="#1-01背包问题" class="headerlink" title="1.01背包问题"></a>1.01背包问题</h1><p>原题链接：<a href="https://www.acwing.com/problem/content/description/2/" target="_blank" rel="noopener">https://www.acwing.com/problem/content/description/2/</a></p>
 <p>详细解析：<a href="https://www.acwing.com/solution/content/1374/" target="_blank" rel="noopener">https://www.acwing.com/solution/content/1374/</a></p>
 <p>关键：每件物品只能选一次，所以一维情况下，枚举背包容量时必须倒序，防止更新状态时前面的状态被污染</p>
@@ -967,6 +969,37 @@
       </categories>
       <tags>
         <tag>dp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>约数</title>
+    <url>/alex-next/2021/04/26/%E7%AE%97%E6%B3%95/%E6%95%B0%E5%AD%A6%E7%9F%A5%E8%AF%86/%E7%BA%A6%E6%95%B0/</url>
+    <content><![CDATA[<h2 id="1-试除法求约数"><a href="#1-试除法求约数" class="headerlink" title="1.试除法求约数"></a>1.试除法求约数</h2><p>先用<code>vector</code>把所有因数保存下来，再排序。</p>
+<p>注意：判断下若两个因数相同，不要添加两次。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">    <span class="keyword">while</span>(n--)&#123;</span><br><span class="line">        <span class="keyword">int</span> m;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;m;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>;i&lt;=m/i;i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(m%i==<span class="number">0</span>)&#123;</span><br><span class="line">                res.push_back(i);</span><br><span class="line">                <span class="keyword">if</span>(i!=m/i)res.push_back(m/i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        sort(res.begin(),res.end());</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> x:res)</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"%d "</span>,x);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-约数个数"><a href="#2-约数个数" class="headerlink" title="2.约数个数"></a>2.约数个数</h2><p>对于任意一个合数$N$，若$N=p_1^{\alpha_1}·p_2^{\alpha_2}···p_n^{\alpha_n},其中p_i为质数,\alpha_i$为每种质因数的个数，$n为N$的质因数种类数</p>
+<p>约数个数$N_c=(\alpha_1+1)·(\alpha_2+1)···(\alpha_n+1)$</p>
+<p>证明：对于合数$N$的任意一个因数$C$，可以表示为$C=p_1^{\beta_1}·p_2^{\beta_2}···p_n^{\beta_n},\beta_i\in[0,\alpha_i]$</p>
+<p>由排列组合的知识，每种质因数有$\alpha_i+1$种情况，$+1$是因为不选择也是一种情况，满足乘法原理。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unordered_map&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> mod = <span class="number">1e9</span>+<span class="number">7</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; primes;</span><br><span class="line">    <span class="keyword">while</span>(n--)&#123;</span><br><span class="line">        <span class="keyword">int</span> m;</span><br><span class="line">		<span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;m);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>;i&lt;=m/i;i++)&#123;</span><br><span class="line">            <span class="keyword">while</span>(m%i==<span class="number">0</span>)&#123;</span><br><span class="line">                m/=i;</span><br><span class="line">                primes[i]++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(m&gt;<span class="number">1</span>)primes[m]++;</span><br><span class="line">    &#125;</span><br><span class="line">    ll res = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> p:primes)</span><br><span class="line">        res = res*(p.second+<span class="number">1</span>)%mod;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;res;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-约数之和"><a href="#3-约数之和" class="headerlink" title="3.约数之和"></a>3.约数之和</h2><p>对于任意一个合数$N$，若$N=p_1^{\alpha_1}·p_2^{\alpha_2}···p_n^{\alpha_n},其中p_i为质数,\alpha_i$为每种质因数的个数，$n为N$的质因数种类数</p>
+<p>约数之和$S$可以表示为</p>
+<p>$S=(p_1^0+p_1^1+p_1^2+····+p_1^{\alpha_1})·(p_2^0+p_2^1+p_2^2+····+p_2^{\alpha_2})····(p_n^0+p_n^1+p_n^2+····+p_n^{\alpha_n})$</p>
+<p>证明：将$S$按项展开可表示为</p>
+<p>$S=p_1^0·p_2^0··p_n^0+p_1^0·p_2^0··p_n^1+·····+p_1^{\beta_1}·p_2^{\beta_2}··p_n^{\beta_n}+·····+p_1^{\alpha_1}·p_2^{\alpha_2}··p_n^{\alpha_n}$</p>
+<p>其中$\beta_1，\beta_2····\beta_n\in[0,\alpha_i]$</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unordered_map&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> mod = <span class="number">1e9</span>+<span class="number">7</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; primes;</span><br><span class="line">    <span class="keyword">while</span>(n--)&#123;</span><br><span class="line">        <span class="keyword">int</span> m;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;m);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>;i&lt;=m/i;i++)&#123;</span><br><span class="line">            <span class="keyword">while</span>(m%i==<span class="number">0</span>)&#123;</span><br><span class="line">                m/=i;</span><br><span class="line">                primes[i]++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(m&gt;<span class="number">1</span>)primes[m]++;</span><br><span class="line">    &#125;</span><br><span class="line">    ll res = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> prime:primes)&#123;</span><br><span class="line">        ll t = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> p = prime.first;</span><br><span class="line">        <span class="keyword">int</span> cnt = prime.second;</span><br><span class="line">       	<span class="keyword">while</span>(cnt--)t = (t*p+<span class="number">1</span>)%mod;</span><br><span class="line">        res = res*t%mod;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;res;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于<code>while(cnt--)t = (t*p+1)%mod;</code></p>
+<p>初始化$t = 1$;</p>
+<p>第一轮：$t = p+1$</p>
+<p>第二轮：$t = p^2+p+1$</p>
+<p>第n轮：$t = p^n+···+p^2+p+1$</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>数学知识</tag>
       </tags>
   </entry>
 </search>
