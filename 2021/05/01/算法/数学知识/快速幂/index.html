@@ -56,18 +56,19 @@
   };
 </script>
 
-  <meta name="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
-<meta name="keywords" content="python">
-<meta property="og:type" content="website">
-<meta property="og:title" content="alex的博客 - github.com">
-<meta property="og:url" content="https://alexander-wd.github.io/categories/JavaEE/index.html">
+  <meta name="description" content="1.快速幂快速幂的方法其实可以借鉴多重背包的二进制化简法，异曲同工。 底数为$a$，幂指数为$k$，模数为$p$ 例：若求$3^{13} \mod 2$ ， 解：幂指数$13=(1101)$，$3^{13}=3^8·3^4·3^1$    每次遍历指数时，若二进制对应位为1，就把它与结果相乘再取余，让底数成自身，指数右移一位    ； ​">
+<meta name="keywords" content="数学知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快速幂">
+<meta property="og:url" content="https://alexander-wd.github.io/2021/05/01/算法/数学知识/快速幂/index.html">
 <meta property="og:site_name" content="alex的博客 - github.com">
-<meta property="og:description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+<meta property="og:description" content="1.快速幂快速幂的方法其实可以借鉴多重背包的二进制化简法，异曲同工。 底数为$a$，幂指数为$k$，模数为$p$ 例：若求$3^{13} \mod 2$ ， 解：幂指数$13=(1101)$，$3^{13}=3^8·3^4·3^1$    每次遍历指数时，若二进制对应位为1，就把它与结果相乘再取余，让底数成自身，指数右移一位    ； ​">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-05-01T10:03:57.958Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="alex的博客 - github.com">
-<meta name="twitter:description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
-  <link rel="canonical" href="https://alexander-wd.github.io/categories/JavaEE/">
+<meta name="twitter:title" content="快速幂">
+<meta name="twitter:description" content="1.快速幂快速幂的方法其实可以借鉴多重背包的二进制化简法，异曲同工。 底数为$a$，幂指数为$k$，模数为$p$ 例：若求$3^{13} \mod 2$ ， 解：幂指数$13=(1101)$，$3^{13}=3^8·3^4·3^1$    每次遍历指数时，若二进制对应位为1，就把它与结果相乘再取余，让底数成自身，指数右移一位    ； ​">
+  <link rel="canonical" href="https://alexander-wd.github.io/2021/05/01/算法/数学知识/快速幂/">
 
 
 <script id="page-configurations">
@@ -75,13 +76,13 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false,
+    isPost: true,
     isPage: false,
     isArchive: false
   };
 </script>
 
-  <title>分类: JavaEE | alex的博客 - github.com</title>
+  <title>快速幂 | alex的博客 - github.com</title>
   
 
 
@@ -239,198 +240,133 @@
         <div class="content-wrap">
             
 
-  
-    
-    
-  
-    
-    
-  
-    
-    
-  
-    
-    
-  
-  
-
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
   
   
   
-  <div class="post-block category">
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1 class="collection-header">JavaEE<small>分类</small>
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2021/05/01/算法/数学知识/快速幂/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">快速幂
+
+          
         </h1>
-      </div>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-05-01 17:29:17 / 修改时间：18:03:57" itemprop="dateCreated datePublished" datetime="2021-05-01T17:29:17+08:00">2021-05-01</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
+        <h2 id="1-快速幂"><a href="#1-快速幂" class="headerlink" title="1.快速幂"></a>1.快速幂</h2><p>快速幂的方法其实可以借鉴多重背包的二进制化简法，异曲同工。</p>
+<p>底数为$a$，幂指数为$k$，模数为$p$</p>
+<p>例：若求$3^{13} \mod 2$ ，</p>
+<p>解：幂指数$13=(1101)$，$3^{13}=3^8·3^4·3^1$   </p>
+<p>每次遍历指数时，若二进制对应位为1，就把它与结果相乘再取余，让底数成自身，指数右移一位    ；</p>
+<p>​                                若二进制对应位为0  ，让底数成自身，指数右移一位    </p>
+<p>代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">    <span class="keyword">while</span>(n--)&#123;</span><br><span class="line">        ll a,k,p;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%lld%lld%lld"</span>, &amp;a, &amp;k, &amp;p);</span><br><span class="line">        ll r = <span class="number">1</span>%p;</span><br><span class="line">        <span class="keyword">while</span>(k)&#123;<span class="comment">//指数不为0</span></span><br><span class="line">            <span class="keyword">if</span>(k&amp;<span class="number">1</span>)r=r*a%p;<span class="comment">//乘结果取余</span></span><br><span class="line">            k&gt;&gt;=<span class="number">1</span>;<span class="comment">//指数右移一位</span></span><br><span class="line">            a = a*a%p;<span class="comment">//底数乘自身</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%lld\n"</span>,r);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-快速幂求逆元"><a href="#2-快速幂求逆元" class="headerlink" title="2.快速幂求逆元"></a>2.快速幂求逆元</h2><p>若p是质数,$\frac{a}{b}\equiv a·x(\mod p)$</p>
+<p>两边同乘$b$得$a\equiv a·b·x(\mod p)$</p>
+<p>即$1\equiv b·x(\mod p)$</p>
+<p>由费马小定理可知，当n为质数时，</p>
+<p>$b^{p-1} \equiv 1(\mod p)$</p>
+<p>所以$x=b^{p-2},x称为b的模p乘法逆元$，其中$b$与$p$互质主要用来化除为乘</p>
+<p>所以逆元就是$x\mod p$，即求$b^{p-2}\mod p$</p>
+<p>注：当$b$是$p$的倍数时，$b$的逆元不存在，因为$b*x \mod p==0$  ，一定不等于1</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">qmi</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> k,<span class="keyword">int</span> p)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> r = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (k)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(k&amp;<span class="number">1</span>)r = (ll)r*a%p;</span><br><span class="line">        k&gt;&gt;=<span class="number">1</span>;</span><br><span class="line">        a = (ll)a*a%p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">    <span class="keyword">while</span> (n--)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> a,k,p;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>,&amp;a,&amp;p);</span><br><span class="line">        <span class="keyword">int</span> r = qmi(a,p<span class="number">-2</span>,p);</span><br><span class="line">        <span class="keyword">if</span>(a%p)<span class="built_in">printf</span>(<span class="string">"%d\n"</span>,r);</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">puts</span>(<span class="string">"impossible"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-  
-  
+    </div>
 
-  
     
-    <div class="collection-year">
-      <h1 class="collection-header">2020</h1>
-    </div>
-  
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
+    
+    
         
-          <a class="post-title-link" href="/alex-next/2020/08/05/java后端/springboot/springboot/" itemprop="url">
-            <span itemprop="name">springboot笔记</span>
-          </a>
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/alex-next/tags/数学知识/" rel="tag"># 数学知识</a>
+            
+          </div>
         
-      </h2>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-08-05T16:03:12+08:00"
-              content="2020-08-05">
-          08-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-  
-  
-
-  
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
         
-          <a class="post-title-link" href="/alex-next/2020/07/31/java后端/mybatis/" itemprop="url">
-            <span itemprop="name">mybatis笔记</span>
-          </a>
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/alex-next/2021/04/26/算法/数学知识/约数/" rel="next" title="约数">
+                  <i class="fa fa-chevron-left"></i> 约数
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
         
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-07-31T16:03:12+08:00"
-              content="2020-07-31">
-          07-31
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-  
-  
-
-  
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/alex-next/2020/07/27/java后端/SpringMVC/" itemprop="url">
-            <span itemprop="name">springMVC笔记</span>
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-07-27T15:12:45+08:00"
-              content="2020-07-27">
-          07-27
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-  
-  
-
-  
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/alex-next/2020/07/17/java后端/spring/" itemprop="url">
-            <span itemprop="name">spring笔记</span>
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-07-17T16:03:12+08:00"
-              content="2020-07-17">
-          07-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-  
-  
-
-  
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-          <a class="post-title-link" href="/alex-next/2020/04/23/java后端/springboot/springboot中后台接受前台传递的对象数组/" itemprop="url">
-            <span itemprop="name">springboot中后台接受前台传递的对象数组</span>
-          </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-04-23T15:21:45+08:00"
-              content="2020-04-23">
-          04-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    </div>
+      </footer>
+    
   </div>
   
   
   
+  </article>
 
-  
-
+  </div>
 
 
           </div>
           
+    
+    <div class="comments" id="gitalk-container"></div>
+  
 
         </div>
           
@@ -445,6 +381,11 @@
 
   <aside class="sidebar">
     <div class="sidebar-inner">
+        
+        
+        
+        
+      
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
@@ -457,6 +398,8 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-快速幂"><span class="nav-number">1.</span> <span class="nav-text">1.快速幂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-快速幂求逆元"><span class="nav-number">2.</span> <span class="nav-text">2.快速幂求逆元</span></a></li></ol></div>
+        
       </div>
       <!--/noindex-->
 
@@ -700,6 +643,24 @@ window.addEventListener('pjax:success', () => {
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '84888b5ba3be0f56b2ed',
+      clientSecret: '1306406ecbdc02b679df3c95b94985753d302d6a',
+      repo: 'alex-next',
+      owner: 'alexander-wd',
+      admin: ['alexander-wd'],
+      id: 'e99e8e0628a733297e390530886fa544',
+        language: 'zh-CN',
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
 
     </div>
 </body>
