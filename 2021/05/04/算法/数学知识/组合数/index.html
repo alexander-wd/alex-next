@@ -56,19 +56,19 @@
   };
 </script>
 
-  <meta name="description" content="1.试除法判断质数123456bool is_prime(int x)&amp;#123;    if(x &amp;lt; 2) return false;    for(int i = 2;i&amp;lt;=x/i;i++)        if(x%i==0)return false;     return true;&amp;#125; 上述for循环结束的条件是 i &amp;lt;= n/i  只需要判断 $[2,\sqrt">
-<meta name="keywords" content="数学知识">
+  <meta name="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+<meta name="keywords" content="python">
 <meta property="og:type" content="article">
-<meta property="og:title" content="质数">
-<meta property="og:url" content="https://alexander-wd.github.io/2021/04/24/算法/数学知识/质数/index.html">
+<meta property="og:title" content="组合数">
+<meta property="og:url" content="https://alexander-wd.github.io/2021/05/04/算法/数学知识/组合数/index.html">
 <meta property="og:site_name" content="alex的博客 - github.com">
-<meta property="og:description" content="1.试除法判断质数123456bool is_prime(int x)&amp;#123;    if(x &amp;lt; 2) return false;    for(int i = 2;i&amp;lt;=x/i;i++)        if(x%i==0)return false;     return true;&amp;#125; 上述for循环结束的条件是 i &amp;lt;= n/i  只需要判断 $[2,\sqrt">
+<meta property="og:description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-25T08:24:17.625Z">
+<meta property="og:updated_time" content="2021-05-04T02:32:04.434Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="质数">
-<meta name="twitter:description" content="1.试除法判断质数123456bool is_prime(int x)&amp;#123;    if(x &amp;lt; 2) return false;    for(int i = 2;i&amp;lt;=x/i;i++)        if(x%i==0)return false;     return true;&amp;#125; 上述for循环结束的条件是 i &amp;lt;= n/i  只需要判断 $[2,\sqrt">
-  <link rel="canonical" href="https://alexander-wd.github.io/2021/04/24/算法/数学知识/质数/">
+<meta name="twitter:title" content="组合数">
+<meta name="twitter:description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+  <link rel="canonical" href="https://alexander-wd.github.io/2021/05/04/算法/数学知识/组合数/">
 
 
 <script id="page-configurations">
@@ -82,7 +82,7 @@
   };
 </script>
 
-  <title>质数 | alex的博客 - github.com</title>
+  <title>组合数 | alex的博客 - github.com</title>
   
 
 
@@ -249,7 +249,7 @@
   
   
   <div class="post-block post">
-    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2021/04/24/算法/数学知识/质数/">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2021/05/04/算法/数学知识/组合数/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="alex">
@@ -261,7 +261,7 @@
       <meta itemprop="name" content="alex的博客 - github.com">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">质数
+        <h1 class="post-title" itemprop="name headline">组合数
 
           
         </h1>
@@ -277,32 +277,7 @@
                 
               
 
-              <time title="创建时间：2021-04-24 21:50:24" itemprop="dateCreated datePublished" datetime="2021-04-24T21:50:24+08:00">2021-04-24</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-25 16:24:17" itemprop="dateModified" datetime="2021-04-25T16:24:17+08:00">2021-04-25</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
-
-                
-                
-              
+              <time title="创建时间：2021-05-04 10:32:04" itemprop="dateCreated datePublished" datetime="2021-05-04T10:32:04+08:00">2021-05-04</time>
             </span>
           
 
@@ -317,22 +292,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="1-试除法判断质数"><a href="#1-试除法判断质数" class="headerlink" title="1.试除法判断质数"></a>1.试除法判断质数</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">is_prime</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(x &lt; <span class="number">2</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>;i&lt;=x/i;i++)</span><br><span class="line">        <span class="keyword">if</span>(x%i==<span class="number">0</span>)<span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上述for循环结束的条件是 <code>i &lt;= n/i</code>  只需要判断 $[2,\sqrt{n}]$ 内是否有n的因子, 因为$\sqrt{n}$ 之后的数如果是因子，必定已经被搜过了。</p>
-<p>如 $2*6=12$ 若 6 是因子，必定在搜索 2 的时候，已经能判断 <code>n</code> 是合数。</p>
-<h2 id="2-试除法分解质因数"><a href="#2-试除法分解质因数" class="headerlink" title="2.试除法分解质因数"></a>2.试除法分解质因数</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">prime</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>;i&lt;=x/i;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(x%i==<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">int</span> s = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span>(x%i==<span class="number">0</span>)&#123;</span><br><span class="line">                s++;</span><br><span class="line">                x/=i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">cout</span>&lt;&lt;i&lt;&lt;<span class="string">" "</span>&lt;&lt;s&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(x&gt;<span class="number">1</span>)<span class="built_in">cout</span>&lt;&lt;x&lt;&lt;<span class="string">" "</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>根据算数基本定理，任意一个合数，可以用几个质数的幂的乘积来表示。</p>
-<p>如:  </p>
-<p>$12 = 2^2 * 3$</p>
-<p>$20 = 2^2*5$ </p>
-<h2 id="3-埃式筛质数"><a href="#3-埃式筛质数" class="headerlink" title="3.埃式筛质数"></a>3.埃式筛质数</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1000010</span>;</span><br><span class="line"><span class="keyword">int</span> primes[N],cnt;</span><br><span class="line"><span class="keyword">bool</span> st[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ai_seive</span><span class="params">(<span class="keyword">int</span> n)</span></span>&#123;<span class="comment">//埃式筛----逐个将质因数倍数筛去</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>;i&lt;=n/i;i++)&#123;<span class="comment">//一个合数的最小质因数一定小于根号n,所以从2遍历到根号n</span></span><br><span class="line">        <span class="keyword">if</span>(st[i]==<span class="number">0</span>)&#123;</span><br><span class="line">    		<span class="keyword">for</span>(<span class="keyword">int</span> j = i*i;j&lt;=n;j+=i)<span class="comment">//从i*i开始筛，因为j*(2,3,...i-1)都被筛完了</span></span><br><span class="line">            	st[j] = <span class="number">1</span>;   </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>由 一个质数的倍数一定是合数，一次从2开始筛除它们的倍数。</p>
-<h2 id="4-欧拉筛"><a href="#4-欧拉筛" class="headerlink" title="4.欧拉筛"></a>4.欧拉筛</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">100010</span>;</span><br><span class="line"><span class="keyword">int</span> primes[N],cnt;</span><br><span class="line"><span class="keyword">int</span> st[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ola</span><span class="params">(<span class="keyword">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>;i&lt;=n;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(st[i]==<span class="number">0</span>)primes[cnt++] = i;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>;primes[j]&lt;=n/i;j++)&#123;<span class="comment">//如果primes[j]*i&gt;n,就没有意义了</span></span><br><span class="line">            st[primes[j]*i] = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(i%primes[j]==<span class="number">0</span>)<span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>1)    当<code>i%primes[j]!=0</code>时,说明此时遍历到的<code>primes[j]</code>不是<code>i</code>的质因子，由<code>primes[j]&lt;i</code>所以<code>primes[j]*i</code>的最小质因子就是<code>primes[j]</code>;</p>
-<p>2)    当有<code>i%primes[j]==0</code>时,说明<code>i</code>的最小质因子是<code>primes[j]</code>,因此<code>primes[j]*i</code>的最小质因子也就应该是<code>prime[j]</code>，</p>
-<p>之后接着用<code>st[primes[j+1]*i]=true</code>去筛合数时，就不是用最小质因子去更新了,因为<code>i</code>有最小质因子<code>primes[j]&lt;primes[j+1]</code>,</p>
-<p>此时的<code>primes[j+1]</code>不是<code>primes[j+1]*i</code>的最小质因子，此时就应该退出循环，避免之后重复进行筛选。</p>
-
+        
     </div>
 
     
@@ -342,23 +302,14 @@
       
 
       <footer class="post-footer">
-          
-            
-          
-          <div class="post-tags">
-            
-              <a href="/alex-next/tags/数学知识/" rel="tag"># 数学知识</a>
-            
-          </div>
-        
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/alex-next/2021/04/18/算法/dp/背包问题/" rel="next" title="背包问题">
-                  <i class="fa fa-chevron-left"></i> 背包问题
+                <a href="/alex-next/2021/05/01/工具配置/部署springboot项目到服务器上/" rel="next" title="部署springboot项目到服务器上">
+                  <i class="fa fa-chevron-left"></i> 部署springboot项目到服务器上
                 </a>
               
             </div>
@@ -366,10 +317,6 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-              
-                <a href="/alex-next/2021/04/26/算法/数学知识/约数/" rel="prev" title="约数">
-                  约数 <i class="fa fa-chevron-right"></i>
-                </a>
               
             </div>
           </div>
@@ -421,8 +368,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-试除法判断质数"><span class="nav-number">1.</span> <span class="nav-text">1.试除法判断质数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-试除法分解质因数"><span class="nav-number">2.</span> <span class="nav-text">2.试除法分解质因数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-埃式筛质数"><span class="nav-number">3.</span> <span class="nav-text">3.埃式筛质数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-欧拉筛"><span class="nav-number">4.</span> <span class="nav-text">4.欧拉筛</span></a></li></ol></div>
-        
       </div>
       <!--/noindex-->
 
@@ -676,7 +621,7 @@ window.addEventListener('pjax:success', () => {
       repo: 'alex-next',
       owner: 'alexander-wd',
       admin: ['alexander-wd'],
-      id: 'aa125815a714576fdab8e6645bfe89fd',
+      id: '6fd622a39fa634bafd6b5d80ce3ad520',
         language: 'zh-CN',
       
       distractionFreeMode: 'true'
