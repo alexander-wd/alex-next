@@ -64,7 +64,7 @@
 <meta property="og:site_name" content="alex的博客 - github.com">
 <meta property="og:description" content="1、快速排序① 基准元素取$x=p[l+r&amp;gt;&amp;gt;1]$ ② 调整区间：根据基准元素将区间调整为左右两个小区间，左边的元素都小于等于$x$，右边的元素都大于等于$x$，但此时左右两个区间都是无序的。 ③ 递归处理左右两个小区间。 注：边界问题，取$i=l-1和j=r+1$ ，防止边界元素遍历不到 (在do-while中先执行自加自减，再执行while)。 时间复杂度：每趟调整的时间复杂度为">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-08T13:08:12.488Z">
+<meta property="og:updated_time" content="2021-05-08T13:37:58.842Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="快速排序与归并排序">
 <meta name="twitter:description" content="1、快速排序① 基准元素取$x=p[l+r&amp;gt;&amp;gt;1]$ ② 调整区间：根据基准元素将区间调整为左右两个小区间，左边的元素都小于等于$x$，右边的元素都大于等于$x$，但此时左右两个区间都是无序的。 ③ 递归处理左右两个小区间。 注：边界问题，取$i=l-1和j=r+1$ ，防止边界元素遍历不到 (在do-while中先执行自加自减，再执行while)。 时间复杂度：每趟调整的时间复杂度为">
@@ -277,7 +277,7 @@
                 
               
 
-              <time title="创建时间：2021-05-08 20:22:19 / 修改时间：21:08:12" itemprop="dateCreated datePublished" datetime="2021-05-08T20:22:19+08:00">2021-05-08</time>
+              <time title="创建时间：2021-05-08 20:22:19 / 修改时间：21:37:58" itemprop="dateCreated datePublished" datetime="2021-05-08T20:22:19+08:00">2021-05-08</time>
             </span>
           
             
@@ -335,10 +335,13 @@
 <h2 id="例：逆序对的数量"><a href="#例：逆序对的数量" class="headerlink" title="例：逆序对的数量"></a>例：逆序对的数量</h2><blockquote>
 <p>给定一个长度为 n 的整数数列，请你计算数列中的逆序对的数量。</p>
 <p>逆序对的定义如下：对于数列的第 i 个和第 j 个元素，如果满足 i<j 且 a[i]>a[j]，则其为一个逆序对；否则不是。</j></p>
-<h4 id="输入格式"><a href="#输入格式" class="headerlink" title="输入格式"></a>输入格式</h4><p>第一行包含整数 n，表示数列的长度。</p>
+<p><strong>输入格式</strong></p>
+<p>第一行包含整数 n，表示数列的长度。</p>
 <p>第二行包含 n 个整数，表示整个数列。</p>
-<h4 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h4><p>输出一个整数，表示逆序对的个数。</p>
-<h4 id="数据范围"><a href="#数据范围" class="headerlink" title="数据范围"></a>数据范围</h4><p>1≤n≤100000</p>
+<p><strong>输出格式</strong></p>
+<p>输出一个整数，表示逆序对的个数。</p>
+<p><strong>数据范围</strong></p>
+<p>1≤n≤100000</p>
 </blockquote>
 <p><img alt="img" data-src="https://gitee.com/alexander1/pic/raw/master/acwing/20210508210441.png"></p>
 <p>如图，若$tmp[i]&gt;tmp[j]$，则区间$[i,mid]$中的数均大于$tmp[j]$，因为两区间都是有序的</p>
@@ -429,7 +432,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、快速排序"><span class="nav-number">1.</span> <span class="nav-text">1、快速排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例：第K个数"><span class="nav-number">2.</span> <span class="nav-text">例：第K个数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、归并排序"><span class="nav-number">3.</span> <span class="nav-text">2、归并排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例：逆序对的数量"><span class="nav-number">4.</span> <span class="nav-text">例：逆序对的数量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#输入格式"><span class="nav-number">4.0.1.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#输出格式"><span class="nav-number">4.0.2.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据范围"><span class="nav-number">4.0.3.</span> <span class="nav-text">数据范围</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、快速排序"><span class="nav-number">1.</span> <span class="nav-text">1、快速排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例：第K个数"><span class="nav-number">2.</span> <span class="nav-text">例：第K个数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、归并排序"><span class="nav-number">3.</span> <span class="nav-text">2、归并排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例：逆序对的数量"><span class="nav-number">4.</span> <span class="nav-text">例：逆序对的数量</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->
