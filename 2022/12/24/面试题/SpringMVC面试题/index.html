@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/alex-next/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/alex-next/images/logo.svg?v=7.4.0" color="#222">
+  <link rel="alternate" href="/alex-next/atom.xml" title="alex的博客 - github.com" type="application/atom+xml">
+
+<link rel="stylesheet" href="/alex-next/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/alex-next/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/alex-next/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="67.如何解决get/post乱码问题​    确保前端没问题​    post请求乱码问题​        配置CharacterEncodingFilter过滤器  ​    get中文乱码  68.SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决​    Q.17,18​    默认单例​    如果声明在类成员变量中​        如果在类中声明成员变量，并且有读写">
+<meta name="keywords" content="springmvc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC面试题">
+<meta property="og:url" content="https://alexander-wd.github.io/2022/12/24/面试题/SpringMVC面试题/index.html">
+<meta property="og:site_name" content="alex的博客 - github.com">
+<meta property="og:description" content="67.如何解决get/post乱码问题​    确保前端没问题​    post请求乱码问题​        配置CharacterEncodingFilter过滤器  ​    get中文乱码  68.SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决​    Q.17,18​    默认单例​    如果声明在类成员变量中​        如果在类中声明成员变量，并且有读写">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2023-02-13T10:16:44.537Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringMVC面试题">
+<meta name="twitter:description" content="67.如何解决get/post乱码问题​    确保前端没问题​    post请求乱码问题​        配置CharacterEncodingFilter过滤器  ​    get中文乱码  68.SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决​    Q.17,18​    默认单例​    如果声明在类成员变量中​        如果在类中声明成员变量，并且有读写">
+  <link rel="canonical" href="https://alexander-wd.github.io/2022/12/24/面试题/SpringMVC面试题/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>SpringMVC面试题 | alex的博客 - github.com</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/alex-next/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">alex的博客 - github.com</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/alex-next/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/alex-next/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/alex-next/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/alex-next/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/alexander-wd" class="github-corner" title="alex GitHub" aria-label="alex GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/12/24/面试题/SpringMVC面试题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">SpringMVC面试题
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-12-24 16:10:20" itemprop="dateCreated datePublished" datetime="2022-12-24T16:10:20+08:00">2022-12-24</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 18:16:44" itemprop="dateModified" datetime="2023-02-13T18:16:44+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/面试题/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="67-如何解决get-post乱码问题"><a href="#67-如何解决get-post乱码问题" class="headerlink" title="67.如何解决get/post乱码问题"></a>67.如何解决get/post乱码问题</h3><p>​    确保前端没问题<br>​    post请求乱码问题<br>​        配置CharacterEncodingFilter过滤器</p>
+<p><img alt="43" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125203418.png"></p>
+<p>​    get中文乱码</p>
+<p><img alt="44" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125203426.png"></p>
+<h3 id="68-SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决"><a href="#68-SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决" class="headerlink" title="68.SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决"></a>68.SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决</h3><p>​    Q.17,18<br>​    默认单例<br>​    如果声明在类成员变量中<br>​        如果在类中声明成员变量，并且有读写操作(有状态)，线程不安全，但是成员变量声明在方法中(无状态)，单例bean是安全的<br>​    解决<br>​        1.设置为多例<br>​            每个线程都会创建不同的对象<br>​        2.成员变量放到ThreadLocal中<br>​            成员变量会绑定在各自的线程上，不共享<br>​        3.同步锁synchronized<br>​            并行变成了串行，会影响系统吞吐量<br>​    题外话<br>​        HttpServletRequest HttpSession  Spring底层已经放到IOC容器里了，可以直接自动注入</p>
+<h3 id="69-描述SpringMVC的工作流程-DispatcherServlet的工作流程"><a href="#69-描述SpringMVC的工作流程-DispatcherServlet的工作流程" class="headerlink" title="==69.描述SpringMVC的工作流程(DispatcherServlet的工作流程)=="></a>==69.描述SpringMVC的工作流程(DispatcherServlet的工作流程)==</h3><p>​    1.请求到DispatcherServlet<br>​    2.请求处理器映射器HandlerMapping<br>​        返回映射器执行链(包含拦截器)<br>​    3.HandlerAdapter<br>​        因为controller多种实现方式<br>​    4.handler真正调用后端方法<br>​        返回ModelAndView<br>​    5.请求视图解析器ViewReslover，动态拼接.html，.jsp等<br>​        返回view<br>​    6.解析视图(jsp，thymeleaf)<br>​    7.响应给用户<br>​    参考</p>
+<p><img alt="46" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125203651.png"></p>
+<p>​    图解</p>
+<p><img alt="45" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125204154.png"></p>
+<h3 id="70-SpringMVC中处理ajax请求原理"><a href="#70-SpringMVC中处理ajax请求原理" class="headerlink" title="==70.SpringMVC中处理ajax请求原理=="></a>==70.SpringMVC中处理ajax请求原理==</h3><p>​    1.加入Jackson.jar<br>​    2.配置json的消息转换器HttpMessageConverter接口<br>​    3.接收ajax方法上加@ResponseBody<br>​    图解</p>
+<p><img alt="47" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125203654.png"></p>
+<p>​        请求的是json，就直接返回了，viewReslover和解析视图都没有<br>​    参考</p>
+<p><img alt="48" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125204206.png"></p>
+<h3 id="71-Spring和SpringMVC为什么需要父子容器"><a href="#71-Spring和SpringMVC为什么需要父子容器" class="headerlink" title="==71.Spring和SpringMVC为什么需要父子容器=="></a>==71.Spring和SpringMVC为什么需要父子容器==</h3><p>​    划分框架边界<br>​    规范整体架构(SSM)<br>​    方便子容器的切换<br>​    为了节省重复bean创建<br>​        两个子容器依赖父容器，bean创建到父容器<br>​    参考</p>
+<p><img alt="49" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125204428.png"></p>
+<h3 id="72-是否可以把SpringMVC所有Bean交给Spring容器管理"><a href="#72-是否可以把SpringMVC所有Bean交给Spring容器管理" class="headerlink" title="72.是否可以把SpringMVC所有Bean交给Spring容器管理"></a>72.是否可以把SpringMVC所有Bean交给Spring容器管理</h3><p>​    如果交给父容器管理，处理器映射器HandlerMapping初始化时候会根据beanDefinition解析@RequestMapping，并没有调用父容器的getBean，就找不到对应的HandlerMethod<br>​    参考</p>
+<p><img alt="50" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125204549.png"></p>
+<h3 id="73-是否可以吧Spring的Bean都交给SpringMVC管理"><a href="#73-是否可以吧Spring的Bean都交给SpringMVC管理" class="headerlink" title="73.是否可以吧Spring的Bean都交给SpringMVC管理"></a>73.是否可以吧Spring的Bean都交给SpringMVC管理</h3><p>​    可以，因为子容器可以获取父容器，而父容器拿不到子容器的bean<br>​    参考</p>
+<p><img alt="51" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125204617.png"></p>
+<h3 id="74-如何实现零配置的SpringMVC，原理是什么"><a href="#74-如何实现零配置的SpringMVC，原理是什么" class="headerlink" title="==74.如何实现零配置的SpringMVC，原理是什么=="></a>==74.如何实现零配置的SpringMVC，原理是什么==</h3><p>​    零配置<br>​        无web.xml，spring.xml，spring-mvc.xml<br>​    实现<br>​        省略web.xml<br>​            1.Servlet3.0后<br>​                @WebServlet<br>​                @WebListener<br>​                @WebFilter<br>​            ==2.使用SPI==<br>​        省略spring.xml和springmvc.xml<br>​            自定义一个类实现AbstractAnnotationConfigDispatcherServletInitializer，此类实现了WebApplicationInitializer，在里面配置spring和springmvc配置类的位置<br>​    参考代码<br>​        spring-tuling-webmvc<br>​        spring-web<br>​    参考</p>
+<p><img alt="52" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125204646.png"></p>
+<h3 id="75-SpringMVC的拦截器和过滤器有什么区别，执行顺序"><a href="#75-SpringMVC的拦截器和过滤器有什么区别，执行顺序" class="headerlink" title="==75.SpringMVC的拦截器和过滤器有什么区别，执行顺序=="></a>==75.SpringMVC的拦截器和过滤器有什么区别，执行顺序==</h3><p>​    区别</p>
+<p><img alt="53" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125204950.png"></p>
+<p>​    执行顺序<br>​        filter<br>​        servlet<br>​        interceptor<br>​        controller<br>​        依次进来，依次出去</p>
+<p><img alt="54" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125205001.png"></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/alex-next/tags/springmvc/" rel="tag"># springmvc</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/alex-next/2022/12/24/面试题/Springboot面试题/" rel="next" title="SpringBoot面试题">
+                  <i class="fa fa-chevron-left"></i> SpringBoot面试题
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/alex-next/2022/12/30/面试题/Redis面试题/" rel="prev" title="Redis面试题">
+                  Redis面试题 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#67-如何解决get-post乱码问题"><span class="nav-number">1.</span> <span class="nav-text">67.如何解决get/post乱码问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#68-SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决"><span class="nav-number">2.</span> <span class="nav-text">68.SpringMVC的控制器是不是单例模式，如果是，有什么问题，怎么解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#69-描述SpringMVC的工作流程-DispatcherServlet的工作流程"><span class="nav-number">3.</span> <span class="nav-text">==69.描述SpringMVC的工作流程(DispatcherServlet的工作流程)==</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#70-SpringMVC中处理ajax请求原理"><span class="nav-number">4.</span> <span class="nav-text">==70.SpringMVC中处理ajax请求原理==</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#71-Spring和SpringMVC为什么需要父子容器"><span class="nav-number">5.</span> <span class="nav-text">==71.Spring和SpringMVC为什么需要父子容器==</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#72-是否可以把SpringMVC所有Bean交给Spring容器管理"><span class="nav-number">6.</span> <span class="nav-text">72.是否可以把SpringMVC所有Bean交给Spring容器管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#73-是否可以吧Spring的Bean都交给SpringMVC管理"><span class="nav-number">7.</span> <span class="nav-text">73.是否可以吧Spring的Bean都交给SpringMVC管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#74-如何实现零配置的SpringMVC，原理是什么"><span class="nav-number">8.</span> <span class="nav-text">==74.如何实现零配置的SpringMVC，原理是什么==</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#75-SpringMVC的拦截器和过滤器有什么区别，执行顺序"><span class="nav-number">9.</span> <span class="nav-text">==75.SpringMVC的拦截器和过滤器有什么区别，执行顺序==</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/alex-next/images/avatar.jpg"
+      alt="alex">
+  <p class="site-author-name" itemprop="name">alex</p>
+  <div class="site-description" itemprop="description">时光静好,与君语;细水流年,与君同;繁华落尽,与君老.</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/alex-next/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/alex-next/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/alex-next/tags/">
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/alex-next/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">alex</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/alex-next/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/alex-next/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/pjax/pjax.min.js?v=0.2.8"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/alex-next/js/utils.js?v=7.4.0"></script><script src="/alex-next/js/motion.js?v=7.4.0"></script>
+<script src="/alex-next/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/alex-next/js/next-boot.js?v=7.4.0"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var id = element.id || '';
+    var src = element.src || '';
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (id !=='') {
+      script.id = element.id;
+    }
+    if (src !== '') {
+      script.src = src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/alex-next/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '84888b5ba3be0f56b2ed',
+      clientSecret: '1306406ecbdc02b679df3c95b94985753d302d6a',
+      repo: 'alex-next',
+      owner: 'alexander-wd',
+      admin: ['alexander-wd'],
+      id: '5bfda09756b4f5d2a279ea9c77bbcaec',
+        language: 'zh-CN',
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+    </div>
+</body>
+</html>

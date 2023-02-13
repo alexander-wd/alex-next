@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/alex-next/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/alex-next/images/logo.svg?v=7.4.0" color="#222">
+  <link rel="alternate" href="/alex-next/atom.xml" title="alex的博客 - github.com" type="application/atom+xml">
+
+<link rel="stylesheet" href="/alex-next/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/alex-next/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/alex-next/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="基础知识JAVA概述1.JVM、JRE和JDK的关系 JDK包含JRE，JRE包含JVM JDK=开发工具(java.exe,javac.exe等等)+JRE JRE=核心类库(util,concurrent等等)+JVM  2.什么是跨平台性？原理是什么 跨平台性    一次编译到处执行 原理    Java程序是通过java虚拟机在系统平台上运行的，只要该系统可以安装相应的java虚拟机，该系">
+<meta name="keywords" content="python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA基础面试题">
+<meta property="og:url" content="https://alexander-wd.github.io/2022/09/29/面试题/java面试题/index.html">
+<meta property="og:site_name" content="alex的博客 - github.com">
+<meta property="og:description" content="基础知识JAVA概述1.JVM、JRE和JDK的关系 JDK包含JRE，JRE包含JVM JDK=开发工具(java.exe,javac.exe等等)+JRE JRE=核心类库(util,concurrent等等)+JVM  2.什么是跨平台性？原理是什么 跨平台性    一次编译到处执行 原理    Java程序是通过java虚拟机在系统平台上运行的，只要该系统可以安装相应的java虚拟机，该系">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2023-02-13T10:09:48.651Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JAVA基础面试题">
+<meta name="twitter:description" content="基础知识JAVA概述1.JVM、JRE和JDK的关系 JDK包含JRE，JRE包含JVM JDK=开发工具(java.exe,javac.exe等等)+JRE JRE=核心类库(util,concurrent等等)+JVM  2.什么是跨平台性？原理是什么 跨平台性    一次编译到处执行 原理    Java程序是通过java虚拟机在系统平台上运行的，只要该系统可以安装相应的java虚拟机，该系">
+  <link rel="canonical" href="https://alexander-wd.github.io/2022/09/29/面试题/java面试题/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JAVA基础面试题 | alex的博客 - github.com</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/alex-next/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">alex的博客 - github.com</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/alex-next/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/alex-next/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/alex-next/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/alex-next/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/alexander-wd" class="github-corner" title="alex GitHub" aria-label="alex GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/09/29/面试题/java面试题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">JAVA基础面试题
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-09-29 17:10:20" itemprop="dateCreated datePublished" datetime="2022-09-29T17:10:20+08:00">2022-09-29</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 18:09:48" itemprop="dateModified" datetime="2023-02-13T18:09:48+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/面试题/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h3><h4 id="JAVA概述"><a href="#JAVA概述" class="headerlink" title="JAVA概述"></a>JAVA概述</h4><h5 id="1-JVM、JRE和JDK的关系"><a href="#1-JVM、JRE和JDK的关系" class="headerlink" title="1.JVM、JRE和JDK的关系"></a>1.JVM、JRE和JDK的关系</h5><blockquote>
+<p>JDK包含JRE，JRE包含JVM</p>
+<p>JDK=开发工具(java.exe,javac.exe等等)+JRE</p>
+<p>JRE=核心类库(util,concurrent等等)+JVM</p>
+</blockquote>
+<h5 id="2-什么是跨平台性？原理是什么"><a href="#2-什么是跨平台性？原理是什么" class="headerlink" title="2.什么是跨平台性？原理是什么"></a>2.什么是跨平台性？原理是什么</h5><blockquote>
+<p>跨平台性<br>    一次编译到处执行</p>
+<p>原理<br>    Java程序是通过java虚拟机在系统平台上运行的，只要该系统可以安装相应的java虚拟机，该系统就可以运行java程序</p>
+</blockquote>
+<h4 id="基础语法"><a href="#基础语法" class="headerlink" title="基础语法"></a>基础语法</h4><h5 id="1-Java有哪些数据类型"><a href="#1-Java有哪些数据类型" class="headerlink" title="1.Java有哪些数据类型"></a>1.Java有哪些数据类型</h5><blockquote>
+<p>基本数据类型<br>    数值型<br>        整数类型(byte,short,int,long)<br>        浮点类型(float,double)<br>    字符型(char)<br>    布尔型(boolean)</p>
+<p>引用数据类型(String等)</p>
+</blockquote>
+<h5 id="2-用最有效率的方法计算-2-乘以-8"><a href="#2-用最有效率的方法计算-2-乘以-8" class="headerlink" title="2.用最有效率的方法计算 2 乘以 8"></a>2.用最有效率的方法计算 2 乘以 8</h5><blockquote>
+<p>2&lt;&lt;3</p>
+</blockquote>
+<h5 id="3-float-f-3-4-是否正确"><a href="#3-float-f-3-4-是否正确" class="headerlink" title="3.float f=3.4;是否正确"></a>3.float f=3.4;是否正确</h5><blockquote>
+<p>不正确<br>    3.4 是双精度数，将双精度型（double）赋值给浮点型（float）属于下转型（down-casting，也称为窄化）会造成精度损失<br>    因此需要强制类型转换float f =(float)3.4; 或者写成 float f =3.4F;</p>
+</blockquote>
+<h5 id="4-short-s1-1-s1-s1-1-有错吗-short-s1-1-s1-1-有错吗"><a href="#4-short-s1-1-s1-s1-1-有错吗-short-s1-1-s1-1-有错吗" class="headerlink" title="4.short s1 = 1; s1 = s1 + 1;有错吗?short s1 = 1; s1 += 1;有错吗"></a>4.short s1 = 1; s1 = s1 + 1;有错吗?short s1 = 1; s1 += 1;有错吗</h5><blockquote>
+<p>前者不对，后者对<br>由于 1 是 int 类型，因此 s1+1 运算结果也是 int型，需要强制转换类型才能赋值给 short 型<br>因为 s1+= 1;相当于 s1 = (short(s1 + 1);其中有隐含的强制类型转换，所以后者对</p>
+</blockquote>
+<h5 id="5-访问修饰符-public-private-protected-以及不写（默认）时的区别"><a href="#5-访问修饰符-public-private-protected-以及不写（默认）时的区别" class="headerlink" title="==5.访问修饰符 public,private,protected,以及不写（默认）时的区别=="></a><strong>==5.访问修饰符 public,private,protected,以及不写（默认）时的区别==</strong></h5><blockquote>
+<p><img alt data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230103193453.png"></p>
+<p>private : 在同一类内可见。使用对象：变量、方法。 注意：不能修饰类（外部类）<br>default (即缺省，什么也不写，不使用任何关键字）: 在同一包内可见，不使用任何修饰符。使用对象：类、接口、变量、方法。<br>protected : 对同一包内的类和所有子类可见。使用对象：变量、方法。 注意：不能修饰类（外部类）。</p>
+<p>public : 对所有类可见。使用对象：类、接口、变量、方法</p>
+</blockquote>
+<h5 id="6-final-有什么用"><a href="#6-final-有什么用" class="headerlink" title="==6.final 有什么用=="></a>==6.final 有什么用==</h5><blockquote>
+<p><strong>被final修饰的类不可以被继承</strong><br><strong>被final修饰的方法不可以被重写</strong><br><strong>被final修饰的变量不可以被改变</strong>，被final修饰不可变的是变量的引用(堆中的)，而不是引用本身(栈中的)，引用本身是可以改变的</p>
+</blockquote>
+<h5 id="7-final-finally-finalize区别"><a href="#7-final-finally-finalize区别" class="headerlink" title="7.final finally finalize区别"></a>7.final finally finalize区别</h5><blockquote>
+<p>final可以修饰类、变量、方法<br>    参考Q.6<br>finally一般作用在try-catch代码块中，无论是否发生异常，finally的代码块都会执行<br>finalize是一个方法，属于Object类的一个方法<br>    当我们调用System.gc() 方法的时候，由垃圾回收器调用finalize()，回收垃圾，一个对象是否可回收的最后判断</p>
+</blockquote>
+<h5 id="8-在-Java-中，如何跳出当前的多重嵌套循环"><a href="#8-在-Java-中，如何跳出当前的多重嵌套循环" class="headerlink" title="8.在 Java 中，如何跳出当前的多重嵌套循环"></a>8.在 Java 中，如何跳出当前的多重嵌套循环</h5><blockquote>
+<p>可以在外面的循环语句前定义一个标号，然后在里层循环体的代码中使用带有标号的break 语句，即可跳出外层循环</p>
+</blockquote>
+<h4 id="面向对象基础"><a href="#面向对象基础" class="headerlink" title="面向对象基础"></a>面向对象基础</h4><h5 id="1-重写和重载的区别？重载中方法的返回值可以相同吗？"><a href="#1-重写和重载的区别？重载中方法的返回值可以相同吗？" class="headerlink" title="1.重写和重载的区别？重载中方法的返回值可以相同吗？"></a>1.重写和重载的区别？重载中方法的返回值可以相同吗？</h5><blockquote>
+<p>重写(override)⽅法原则<br>    1.⼦类的⽅法的名称必须和所覆盖的⽅法相同<br>    2.⼦类的⽅法的参数必须和所覆盖的⽅法相同<br>    3.⼦类的返回类型必须和所覆盖的⽅法相同 （除过⼦类中⽅法的返回类型是⽗类中返回类型的⼦类）<br>    4.⼦类抛出异常⼩于等于⽗类⽅法抛出异常<br>    5.⼦类访问权限⼤于等于⽗类⽅法访问权限<br>重载(overload)⽅法原则<br>    1.⽅法名必须相同<br>    2.⽅法的参数列表不相同（包括参数类型，参数个数，参数顺序）<br>    3.⽅法的返回类型和⽅法的修饰符可以不相同<br>总结<br>    方法的重载和重写都是实现多态的方式，区别在于前者实现的是编译时的多态性，而后者实现的是运行时的多态性<br>    ⽅法重载的返回值类型可以不相同，⽅法重写的返回类型必须相同，否则编译报错</p>
+</blockquote>
+<h5 id="2-JAVA支持多继承吗，如果想要多继承怎么办？"><a href="#2-JAVA支持多继承吗，如果想要多继承怎么办？" class="headerlink" title="2.JAVA支持多继承吗，如果想要多继承怎么办？"></a>2.JAVA支持多继承吗，如果想要多继承怎么办？</h5><blockquote>
+<p>不支持，可以考虑多实现、内部类、多层继承</p>
+</blockquote>
+<h5 id="3-抽象类和接口的区别，抽象类和接口可以实例化吗？"><a href="#3-抽象类和接口的区别，抽象类和接口可以实例化吗？" class="headerlink" title="3.抽象类和接口的区别，抽象类和接口可以实例化吗？"></a>3.抽象类和接口的区别，抽象类和接口可以实例化吗？</h5><blockquote>
+<p>共同点：都不能实例化</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:left">声明</th>
+<th style="text-align:left">实现</th>
+<th style="text-align:left">构造器</th>
+<th style="text-align:left">访问修饰符</th>
+<th style="text-align:left">多继承</th>
+<th style="text-align:left">字段声明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">抽象类</td>
+<td style="text-align:left">抽象类使用abstract关键字声明</td>
+<td style="text-align:left">子类使用extends关键字来继承抽象类。如果子类不是抽象类的话，它需要提供抽象类中所有声明的方法的实现</td>
+<td style="text-align:left">抽象类可以有构造器</td>
+<td style="text-align:left">抽象类中的方法可以是任意访问修饰符</td>
+<td style="text-align:left">一个类最多只能继承一个抽象类</td>
+<td style="text-align:left">抽象类的字段声明可以是任意的</td>
+</tr>
+<tr>
+<td style="text-align:center">接口</td>
+<td style="text-align:left">接口使用interface关键字声明</td>
+<td style="text-align:left">子类使用implements关键字来实现接口。它需要提供接口中所有声明的方法的实现</td>
+<td style="text-align:left">接口不能有构造器</td>
+<td style="text-align:left">接口方法默认修饰符是public。并且不允许定义为 private 或者 protected</td>
+<td style="text-align:left">一个类可以实现多个接口</td>
+<td style="text-align:left">接口的字段默认都是 static 和 final 的</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>参考Q.5</p>
+</blockquote>
+<h5 id="4-String可以被继承吗"><a href="#4-String可以被继承吗" class="headerlink" title="4.String可以被继承吗"></a>4.String可以被继承吗</h5><blockquote>
+<p>不能被继承,因为String类有final修饰符</p>
+</blockquote>
+<h5 id="5-抽象类和接口的对比"><a href="#5-抽象类和接口的对比" class="headerlink" title="5.抽象类和接口的对比"></a>5.抽象类和接口的对比</h5><blockquote>
+<p>抽象类是用来捕捉子类的通用特性的。接口是抽象方法的集合。<br>从设计层面来说，抽象类是对类的抽象，是一种模板设计，接口是行为的抽象，是一种行为的规范。<br>相同点<br>    接口和抽象类都不能实例化<br>    都位于继承的顶端，用于被其他实现或继承<br>    都包含抽象方法，其子类都必须覆写这些抽象方法</p>
+</blockquote>
+<h5 id="6-内部类的分类有哪些"><a href="#6-内部类的分类有哪些" class="headerlink" title="6.内部类的分类有哪些"></a>6.内部类的分类有哪些</h5><blockquote>
+<p>静态内部类<br>成员内部类<br>局部内部类<br>匿名内部类<br>    就是没有名字的内部类，日常开发中使用的比较多</p>
+</blockquote>
+<h5 id="7-内部类的优点"><a href="#7-内部类的优点" class="headerlink" title="7.内部类的优点"></a>7.内部类的优点</h5><blockquote>
+<p><strong>一个内部类对象可以访问创建它的外部类对象的内容，包括私有数据！</strong><br>内部类不为同一包的其他类所见，具有很好的封装性；<br>内部类有效实现了“多重继承”，优化 java 单继承的缺陷。<br>匿名内部类可以很方便的定义回调。</p>
+</blockquote>
+<h5 id="8-局部内部类和匿名内部类访问局部变量的时候，为什么变量必须要加上final"><a href="#8-局部内部类和匿名内部类访问局部变量的时候，为什么变量必须要加上final" class="headerlink" title="==8.局部内部类和匿名内部类访问局部变量的时候，为什么变量必须要加上final=="></a>==8.局部内部类和匿名内部类访问局部变量的时候，为什么变量必须要加上final==</h5><blockquote>
+<p>是因为生命周期不一致， 局部变量直接存储在栈中，当方法执行结束后，非final的局部变量就被销毁。而局部内部类对局部变量的引用依然存在(该匿名内部类作为返回值返回了)，如果局部内部类要调用局部变量时，就会出错。加了final，可以确保局部内部类使用的变量与外层的局部变量区分开，解决了这个问题<br><a href="https://blog.csdn.net/Angiexia/article/details/21244303?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164335989916780269832426%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&amp;request_id=164335989916780269832426&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~rank_v31_ecpm-1-21244303.pc_search_insert_es_download&amp;utm_term=%E5%B1%80%E9%83%A8%E5%86%85%E9%83%A8%E7%B1%BB%E5%8F%AA%E8%83%BD%E8%AE%BF%E9%97%AEfinal%E5%8F%98%E9%87%8F%E8%AF%A6%E7%BB%86%E4%BE%8B%E5%AD%90&amp;spm=1018.2226.3001.4187" target="_blank" rel="noopener">参考</a></p>
+</blockquote>
+<h5 id="9-String中equals与-的区别"><a href="#9-String中equals与-的区别" class="headerlink" title="9.String中equals与==的区别"></a>9.String中equals与==的区别</h5><blockquote>
+<p>equals比较的是值比较<br>\==表示：<br>    引用数据类型比较引用地址<br>    基本数据类型比较值</p>
+</blockquote>
+<h5 id="10-hashCode-与-equals"><a href="#10-hashCode-与-equals" class="headerlink" title="==10.hashCode 与 equals=="></a>==10.hashCode 与 equals==</h5><blockquote>
+<p>Object中的实现<br>    hashcode()<br>        本地方法，返回调用对象在内存堆上的独特值<br>    equals()<br>        this==obj<br>为什么散列表hash一定要重写hashcode和equals<br>    步骤<br>        先调用hashcode比较是否相等(是否在一个bucket中)<br>        如果Hashcode相等，再调用equals判断是否是一个对象(属性是否相同)<br>equals 方法被覆盖过，则 hashCode 方法也必须被覆盖<br>    若hashcode不重写，默认调用Object的，无论如何hashcode都不会相等</p>
+<p>​    若equals不重写，默认调用Object的，除非是同一个对象，否则就算属性值相同也会返回false。</p>
+<p>总结<br>    当我们需要将某一个类的对象存入散列表时（如 HashMap、HashTable 等），hashCode 和 equals 都必须重写</p>
+<p><a href="https://blog.csdn.net/qq_46698411/article/details/119753966?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-119753966-blog-113819810.t0_layer_searchtargeting_s&amp;spm=1001.2101.3001.4242.1&amp;utm_relevant_index=3" target="_blank" rel="noopener">原理</a>    <a href="https://blog.csdn.net/qq_43842093/article/details/117387063?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-117387063-blog-125721508.pc_relevant_aa&amp;spm=1001.2101.3001.4242.1&amp;utm_relevant_index=3" target="_blank" rel="noopener">例子</a></p>
+</blockquote>
+<h5 id="11-值传递和引用传递有什么区别"><a href="#11-值传递和引用传递有什么区别" class="headerlink" title="11.值传递和引用传递有什么区别"></a>11.值传递和引用传递有什么区别</h5><blockquote>
+<p>值传递<br>    传的是值的拷贝<br>引用传递<br>    传的是引用地址(即存在栈中的)</p>
+</blockquote>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><h5 id="1-说一下JAVA中的泛型"><a href="#1-说一下JAVA中的泛型" class="headerlink" title="1.说一下JAVA中的泛型?"></a>1.说一下JAVA中的泛型?</h5><blockquote>
+<p>使用泛型参数，可以增强代码的可读性以及稳定性<br>泛型一般有三种使用方式:泛型类、泛型接口、泛型方法</p>
+</blockquote>
+<h5 id="2-Java-int-和Integer的区别，怎样比较int和Integer类型的值是否相等。"><a href="#2-Java-int-和Integer的区别，怎样比较int和Integer类型的值是否相等。" class="headerlink" title="==2.Java int 和Integer的区别，怎样比较int和Integer类型的值是否相等。=="></a>==2.Java int 和Integer的区别，怎样比较int和Integer类型的值是否相等。==</h5><blockquote>
+<p>区别<br>    1.Integer是int的包装类，int则是java的一种基本数据类型<br>    2.Integer变量必须实例化后才能使用，而int变量不需要<br>    3.Integer实际是对象的引用，当new一个Integer时，实际上是生成一个指针指向此对象；而int则是直接存储数据值<br>    4.Integer的默认值是null，int的默认值是0<br>int和Integer比较<br>    Integer会自动拆箱，相当于两个int比较<br>缓存机制<br>    如对于两个非new生成的Integer对象(值在-128~127之间，会从缓存中拿)<br>自动装箱和自动装箱<br>    装箱：将基本类型用它们对应的引用类型包装起来；<br>        Integer i = 10;  //装箱<br>        等价于Integer i = Integer.valueOf(10)<br>    拆箱：将包装类型转换为基本数据类型；<br>        int n = i;   //拆箱<br>        等价于int n = i.intValue()</p>
+</blockquote>
+<h5 id="3-java-中-IO-流分为几种"><a href="#3-java-中-IO-流分为几种" class="headerlink" title="3.java 中 IO 流分为几种"></a>3.java 中 IO 流分为几种</h5><blockquote>
+<p>按照流的流向分，可以分为输入流和输出流；<br>按照操作单元划分，可以划分为字节流和字符流；<br>按照流的角色划分为节点流和处理流<br>InputStream/Reader: 所有的输入流的基类，前者是字节输入流，后者是字符输入流。<br>OutputStream/Writer: 所有输出流的基类，前者是字节输出流，后者是字符输出流</p>
+</blockquote>
+<h5 id="4-BIO-NIO-AIO-有什么区别"><a href="#4-BIO-NIO-AIO-有什么区别" class="headerlink" title="4.BIO,NIO,AIO 有什么区别"></a>4.BIO,NIO,AIO 有什么区别</h5><blockquote>
+<p>BIO<br>    Block IO 同步阻塞式 IO，就是我们平常使用的传统 IO，它的特点是模式简单使用方便，并发处理能力低<br>NIO<br>    Non IO 同步非阻塞 IO，是传统 IO 的升级，客户端和服务器端通过 Channel（通道）通讯，实现了多路复用<br>AIO<br>    实现了异步非堵塞 IO ，异步 IO 的操作基于事件和回调机制</p>
+</blockquote>
+<h5 id="5-什么是反射机制"><a href="#5-什么是反射机制" class="headerlink" title="5.什么是反射机制"></a>5.什么是反射机制</h5><blockquote>
+<p>JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性</p>
+</blockquote>
+<h5 id="6-反射机制优缺点"><a href="#6-反射机制优缺点" class="headerlink" title="6.反射机制优缺点"></a>6.反射机制优缺点</h5><blockquote>
+<p>优点： 运行期类型的判断，动态加载类，提高代码灵活度。<br>缺点： 性能瓶颈：反射相当于一系列解释操作，通知 JVM 要做的事情，性能比直接的java代码要慢很多。</p>
+</blockquote>
+<h5 id="7-获取反射的三种方法"><a href="#7-获取反射的三种方法" class="headerlink" title="7.获取反射的三种方法"></a>7.获取反射的三种方法</h5><blockquote>
+<p>通过建立对象<br>    Student stu = new Student();<br>    Class classobj1 = stu.getClass();<br>所在通过路径-相对路径<br>    Class classobj2 = Class.forName(“fanshe.Student”)<br>通过类名<br>    Class classobj3 = Student.class</p>
+</blockquote>
+<h5 id="8-String的特性"><a href="#8-String的特性" class="headerlink" title="==8.String的特性=="></a>==8.String的特性==</h5><blockquote>
+<p><strong>不变性</strong><br>    定义了final char value[]的成员变量<br>    但是引用自身(栈中)可以改变，但是引用指向的内容(堆中)不能变<br>字符串常量池<br>    位于堆内存，提高内存的使用率<br>final<br>    不可被继承</p>
+</blockquote>
+<h5 id="9-在使用-HashMap-的时候，用-String-做-key-有什么好处"><a href="#9-在使用-HashMap-的时候，用-String-做-key-有什么好处" class="headerlink" title="9.在使用 HashMap 的时候，用 String 做 key 有什么好处"></a>9.在使用 HashMap 的时候，用 String 做 key 有什么好处</h5><blockquote>
+<p><strong>因为String的不变性</strong>，它的hashcode被缓存了下来，不需要被再次计算，速度比其他对象更快</p>
+</blockquote>
+<h5 id="10-String和StringBuffer、StringBuilder的区别是什么"><a href="#10-String和StringBuffer、StringBuilder的区别是什么" class="headerlink" title="==10.String和StringBuffer、StringBuilder的区别是什么=="></a>==10.String和StringBuffer、StringBuilder的区别是什么==</h5><blockquote>
+<p>可变性<br>    <strong>String 是不可变的</strong><br>    StringBuilder与StringBuffer都继承自AbstractStringBuilder类，定义了char[] value，这两种对象都是可变的<br>线程安全性<br>    String中的对象是不可变的，也就可以理解为常量，线程安全<br>    StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的<br>    StringBuilder并没有对方法进行加同步锁，所以是非线程安全的<br>性能<br>    每次对String 类型进行改变的时候，都会生成一个新的String对象，然后将指针指向新的String 对象<br>    StringBuffer和StringBuilder每次都会对对象本身进行操作，而不是生成新的对象并改变对象引用<br>总结<br>    如果要操作少量的数据用 =&gt; String<br>    单线程操作字符串缓冲区 下操作大量数据 =&gt; StringBuilder<br>    多线程操作字符串缓冲区 下操作大量数据 =&gt; StringBuffer</p>
+</blockquote>
+<h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h3><h4 id="集合概述"><a href="#集合概述" class="headerlink" title="集合概述"></a>集合概述</h4><h5 id="1-说说-List-Set-Queue-Map-四者的区别"><a href="#1-说说-List-Set-Queue-Map-四者的区别" class="headerlink" title="1.说说 List, Set, Queue, Map 四者的区别"></a>1.说说 List, Set, Queue, Map 四者的区别</h5><blockquote>
+<p><img alt="2" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230104201918.png"></p>
+<p>如上图所示</p>
+<p>List<br>    存储的元素是有序的、可重复的。<br>Set<br>    存储的元素是无序的、不可重复的。<br>Queue<br>    按特定的排队规则来确定先后顺序，存储的元素是有序的、可重复的。<br>Map<br>    使用键值对（key-value）存储，类似于数学上的函数 y=f(x)，”x” 代表 key，”y” 代表 value，key 是无序的、不可重复的，value 是无序的、可重复的，每个键最多映射到一个值。</p>
+</blockquote>
+<h5 id="2-集合框架底层数据结构"><a href="#2-集合框架底层数据结构" class="headerlink" title="==2.集合框架底层数据结构=="></a>==2.集合框架底层数据结构==</h5><blockquote>
+<p> Collection<br>     List<br>         Arraylist： Object数组<br>         Vector： Object数组<br>         LinkedList： 双向循环链表<br>     Set<br>         HashSet（无序，唯一）<br>             基于 HashMap 实现的，底层采用 HashMap 来保存元素<br>         LinkedHashSet<br>             LinkedHashSet 继承于HashSet，并且其内部是通过 LinkedHashMap 来实现的。有点类似于我们之前说的LinkedHashMap 其内部是基于 Hashmap 实现一样，不过还是有一点点区别的。<br>         TreeSet（有序，唯一）<br>              红黑树(自平衡的排序二叉树。)<br> Map<br>     HashMap<br>         JDK1.8之前HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的（“拉链法”解决冲突）.JDK1.8以后在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为8）时，将链表转化为红黑树，以减少搜索时间<br>     LinkedHashMap<br>         LinkedHashMap 继承自 HashMap，所以它的底层仍然是基于拉链式散列结构即由数组和链表或红黑树组成。另外，LinkedHashMap 在上面结构的基础上，增加了一条双向链表，使得上面的结构可以保持键值对的插入顺序。同时通过对链表进行相应的操作，实现了访问顺序相关逻辑。<br>     HashTable<br>         数组+链表组成的，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突而存在的<br>     TreeMap<br>         红黑树（自平衡的排序二叉树）</p>
+</blockquote>
+<h5 id="3-Java集合的快速失败机制-“fail-fast”"><a href="#3-Java集合的快速失败机制-“fail-fast”" class="headerlink" title="3.Java集合的快速失败机制 “fail-fast”"></a>3.Java集合的快速失败机制 “fail-fast”</h5><blockquote>
+<p>是java集合的一种错误检测机制，如在增强for循环(foreach)中remove</p>
+<p>会触发ConcurrentModificationException</p>
+<p><a href="https://blog.csdn.net/weixin_50276625/article/details/115157076" target="_blank" rel="noopener">详解</a>   <a href="https://blog.csdn.net/feiying0canglang/article/details/124853294" target="_blank" rel="noopener">正确使用方法</a></p>
+</blockquote>
+<h4 id="List接口"><a href="#List接口" class="headerlink" title="List接口"></a>List接口</h4><h5 id="1-迭代器-Iterator-是什么"><a href="#1-迭代器-Iterator-是什么" class="headerlink" title="1.迭代器 Iterator 是什么"></a>1.迭代器 Iterator 是什么</h5><blockquote>
+<p>Iterator 接口提供遍历任何 Collection 的接口。我们可以从一个 Collection 中使用迭代器方法来获取迭代器实例</p>
+</blockquote>
+<h5 id="2-Iterator-和-ListIterator-有什么区别"><a href="#2-Iterator-和-ListIterator-有什么区别" class="headerlink" title="2.Iterator 和 ListIterator 有什么区别"></a>2.Iterator 和 ListIterator 有什么区别</h5><blockquote>
+<ul>
+<li>Iterator 可以遍历 Set 和 List 集合，而 ListIterator 只能遍历 List。</li>
+<li>Iterator 只能单向遍历，而 ListIterator 可以双向遍历（向前/后遍历）。</li>
+<li>ListIterator 实现 Iterator 接口，然后添加了一些额外的功能，比如添加一个元素、替换一个元素、获取前面或后面元素的索引位置。</li>
+</ul>
+</blockquote>
+<h5 id="3-ArrayList-和-LinkedList-的区别是什么"><a href="#3-ArrayList-和-LinkedList-的区别是什么" class="headerlink" title="==3.ArrayList 和 LinkedList 的区别是什么=="></a>==3.ArrayList 和 LinkedList 的区别是什么==</h5><blockquote>
+<p>区别</p>
+<ul>
+<li><p>数据结构实现<br>  ArrayList 是动态数组的数据结构实现，而 LinkedList 是双向链表的数据结构实现。</p>
+</li>
+<li><p>随机访问效率<br>  ArrayList 比 LinkedList 在随机访问的时候效率要高，因为 LinkedList 是线性的数据存储方式，所以需要移动指针从前往后依次查找。</p>
+</li>
+<li>增加和删除效率<br>  在非首尾的增加和删除操作，LinkedList 要比 ArrayList 效率要高，因为 ArrayList 增删操作要影响数组内的其他数据的下标。</li>
+<li>内存空间占用<br>  LinkedList 比 ArrayList 更占内存，因为 LinkedList 的节点除了存储数据，还存储了两个引用，一个指向前一个元素，一个指向后一个元素。</li>
+<li>线程安全<br>  ArrayList 和 LinkedList 都是不同步的，也就是不保证线程安全</li>
+</ul>
+<p>总结<br>使用ArrayList就行，LinkedList创作者自己都不用</p>
+</blockquote>
+<h5 id="4-ArrayList-和-Vector-的区别是什么"><a href="#4-ArrayList-和-Vector-的区别是什么" class="headerlink" title="==4.ArrayList 和 Vector 的区别是什么=="></a>==4.ArrayList 和 Vector 的区别是什么==</h5><blockquote>
+<ul>
+<li>线程安全<br>  Vector 使用了 Synchronized 来实现线程同步，是线程安全的，而 ArrayList 是非线程安全的。</li>
+<li>性能<br>  ArrayList 在性能方面要优于 Vector。</li>
+<li>扩容<br>  ArrayList 和 Vector 都会根据实际的需要动态的调整容量，只不过在 Vector 扩容每次会增加 1 倍，而 ArrayList 只会增加 50%</li>
+</ul>
+</blockquote>
+<h5 id="5-多线程场景下如何使用-ArrayList"><a href="#5-多线程场景下如何使用-ArrayList" class="headerlink" title="==5.多线程场景下如何使用 ArrayList=="></a>==5.多线程场景下如何使用 ArrayList==</h5><blockquote>
+<p>可以通过 Collections 的 synchronizedList 方法将其转换成线程安全的容器后再使用</p>
+</blockquote>
+<h5 id="6-为什么-ArrayList-的-elementData-加上-transient-修饰"><a href="#6-为什么-ArrayList-的-elementData-加上-transient-修饰" class="headerlink" title="6.为什么 ArrayList 的 elementData 加上 transient 修饰"></a>6.为什么 ArrayList 的 elementData 加上 transient 修饰</h5><blockquote>
+<p><strong>对于transient 修饰的成员变量，在类的实例对象的序列化处理过程中会被忽略。</strong></p>
+<p>每次序列化时，先调用 defaultWriteObject() 方法序列化 ArrayList 中的非 transient 元素，然后遍历 elementData，只序列化已存入的元素，<strong>这样既加快了序列化的速度，又减小了序列化之后的文件大小</strong></p>
+</blockquote>
+<h5 id="7-说一说-ArrayList-的扩容机制吧"><a href="#7-说一说-ArrayList-的扩容机制吧" class="headerlink" title="==7.说一说 ArrayList 的扩容机制吧=="></a>==7.说一说 ArrayList 的扩容机制吧==</h5><blockquote>
+<p> 底层维护了一个数组，add()首先判断容量够不够，不够按照原容量的1.5倍扩容(System.arraycopy)，然后添加进数组</p>
+</blockquote>
+<h4 id="set接口"><a href="#set接口" class="headerlink" title="set接口"></a>set接口</h4><h5 id="1-list和set区别"><a href="#1-list和set区别" class="headerlink" title="1.list和set区别"></a>1.list和set区别</h5><blockquote>
+<p>list<br>    有序容器(元素存入集合的顺序和取出的顺序一致)<br>    可重复<br>    检索效率高，删除插入效率低<br>set<br>    无序<br>    不可重复<br>    检索效率低，删除插入效率高</p>
+</blockquote>
+<h5 id="2-说一下-HashSet-的实现原理"><a href="#2-说一下-HashSet-的实现原理" class="headerlink" title="==2.说一下 HashSet 的实现原理=="></a>==2.说一下 HashSet 的实现原理==</h5><blockquote>
+<p>基于HashMap实现，HashSet的值存放于HashMap的key上，HashMap的value统一为PRESENT。参考HashMap。相关 HashSet 的操作，基本上都是直接调用底层 HashMap 的相关方法来完成，HashSet 不允许重复的值。</p>
+<p>HashSet部分源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object PRESENT = <span class="keyword">new</span> Object();</span><br><span class="line">&gt; <span class="keyword">private</span> <span class="keyword">transient</span> HashMap&lt;E,Object&gt; map;</span><br><span class="line">&gt; </span><br><span class="line">&gt; <span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">&gt;  map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt; </span><br><span class="line">&gt; <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">&gt;  <span class="comment">// 调用HashMap的put方法,PRESENT是一个至始至终都相同的虚值</span></span><br><span class="line">&gt; 	<span class="keyword">return</span> map.put(e, PRESENT)==<span class="keyword">null</span>;</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h5 id="3-HashSet和HashMap的区别"><a href="#3-HashSet和HashMap的区别" class="headerlink" title="3.HashSet和HashMap的区别"></a>3.HashSet和HashMap的区别</h5><blockquote>
+<p>HashMap<br>    实现了Map接口<br>    存储键值对<br>    调用put（）向map中添加元素<br>    HashMap使用键（Key）计算Hashcode<br>    HashMap相对于HashSet较快，因为它是使用唯一的键获取对象<br>HashSet<br>    实现Set接口<br>    仅存储对象<br>    调用add（）方法向Set中添加元素<br>    HashSet使用成员对象来计算hashcode值，对于两个对象来说hashcode可能相同，所以equals()方法用来判断对象的相等性，如果两个对象不同的话，那么返回false<br>    HashSet较HashMap来说比较慢</p>
+<p><strong>==两者性能上的疑问解答：==</strong></p>
+<p><strong>==它们都必须计算哈希码，但要考虑HashMap的键的性质 - 它通常是一个简单的字符串甚至是一个数字。计算它的哈希码比整个对象的默认哈希码计算快得多。如果HashMap的键与存储在HashSet中的键相同，那么性能就没有真正的区别。不同之处在于HashMap的关键是什么类型的对象。==</strong></p>
+</blockquote>
+<h4 id="map接口"><a href="#map接口" class="headerlink" title="==map接口=="></a>==map接口==</h4><h5 id="1-说一下-HashMap-的实现原理"><a href="#1-说一下-HashMap-的实现原理" class="headerlink" title="==1.说一下 HashMap 的实现原理=="></a>==1.说一下 HashMap 的实现原理==</h5><blockquote>
+<p>JDK1.7<br>    计算key的hash，hash相同的话，比较key；key相同，覆盖原值，key不同，放入链表中；最后检查Map中元素个数是否大于阈值，是的话，扩容<br>    拉链法示意图</p>
+<p>​    <img alt="3" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230104213314.png"></p>
+<p>JDK1.8后<br>    1.在初始化的时候走resize()<br>    2.在插入值的时候判断是否是树节点，是的话，走红黑树插入流程，否则，走插入链表的流程，插入完之后，检查链表长度是否大于8，是的话，转换为红黑树，最后检查Map中元素个数是否大于阈值，是的话，扩容<br>    数组+链表+红黑树示意图</p>
+<p>​    <img alt="4" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230104213326.png"></p>
+</blockquote>
+<h5 id="2-HashMap-JDK1-7与JDK1-8比较"><a href="#2-HashMap-JDK1-7与JDK1-8比较" class="headerlink" title="2.HashMap(JDK1.7与JDK1.8比较)"></a>2.HashMap(JDK1.7与JDK1.8比较)</h5><div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>存储结构</th>
+<th>初始化方式</th>
+<th>hash值计算方式</th>
+<th>插入数据方式</th>
+<th>存放数据的规则</th>
+<th>扩容后存储位置的计算方式</th>
+<th>线程安全</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK1.7</td>
+<td>数组 + 链表</td>
+<td>单独函数：inflateTable()</td>
+<td>扰动处理 = 9次扰动 = 4次位运算 + 5次异或运算</td>
+<td>头插法（先将原位置的数据移到后1位，再插入数据到该位置）</td>
+<td>无冲突时，存放数组；冲突时，存放链表</td>
+<td>全部按照原来方法进行计算（即hashCode -&gt;&gt; 扰动函数 -&gt;&gt; (h&amp;length-1)）</td>
+<td>不安全，多线程扩容时会形成环形链表</td>
+</tr>
+<tr>
+<td>JDK1.8</td>
+<td>数组 + 链表 + 红黑树</td>
+<td>直接集成到了扩容函数resize()中</td>
+<td>扰动处理 = 2次扰动 = 1次位运算 + 1次异或运算</td>
+<td>尾插法（直接插入到链表尾部/红黑树）</td>
+<td>无冲突时，存放数组；冲突 &amp; 链表长度 &lt; 8：存放单链表；冲突 &amp; 链表长度 &gt; 8：树化并存放红黑树</td>
+<td>按照扩容后的规律计算（即扩容后的位置=原位置 or 原位置 + 旧容量）</td>
+<td>不安全，采用高低位拆分转移方式解决了多线程死循环问题。但仍是非线程安全的，多线程时可能会造成数据丢失问题</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h5 id="3-HashMap的put-具体流程-jdk1-8"><a href="#3-HashMap的put-具体流程-jdk1-8" class="headerlink" title="==3.HashMap的put()具体流程(jdk1.8)=="></a>==3.HashMap的put()具体流程(jdk1.8)==</h5><blockquote>
+<p>①.判断键值对数组table[i]是否为空或为null，否则执行resize()进行扩容；<br>②.根据键值key计算hash值得到插入的数组索引i，如果table[i]==null，直接新建节点添加，转向⑥，如果table[i]不为空，转向③；<br>③.判断table[i]的首个元素是否和key一样，如果相同直接覆盖value，否则转向④，这里的相同指的是hashCode以及equals；<br>④.判断table[i] 是否为treeNode，即table[i] 是否是红黑树，如果是红黑树，则直接在树中插入键值对，否则转向⑤；<br>⑤.遍历table[i]，判断链表长度是否大于8，大于8的话把链表转换为红黑树，在红黑树中执行插入操作，否则进行链表的插入操作；遍历过程中若发现key已经存在直接覆盖value即可；<br>⑥.插入成功后，判断实际存在的键值对数量size是否超多了最大容量threshold，如果超过，进行扩容。</p>
+<p>图解</p>
+<p><img alt="5" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230104215122.png"></p>
+</blockquote>
+<h5 id="4-HashMap的扩容操作是怎么实现的"><a href="#4-HashMap的扩容操作是怎么实现的" class="headerlink" title="4.HashMap的扩容操作是怎么实现的"></a>4.HashMap的扩容操作是怎么实现的</h5><blockquote>
+<p>①.在jdk1.8中，resize方法是在hashmap中的键值对大于阀值时或者初始化时，就调用resize方法进行扩容；<br>②.每次扩展的时候，都是扩展2倍；<br>③.扩展后Node对象的位置要么在原位置，要么移动到原偏移量两倍的位置。</p>
+</blockquote>
+<h5 id="5-HashMap是怎么解决哈希冲突的"><a href="#5-HashMap是怎么解决哈希冲突的" class="headerlink" title="==5.HashMap是怎么解决哈希冲突的=="></a>==5.HashMap是怎么解决哈希冲突的==</h5><blockquote>
+<ol>
+<li>使用链地址法（使用散列表）来链接拥有相同hash值的数据；</li>
+<li>使用2次扰动函数（hash函数）来降低哈希冲突的概率，使得数据分布更平均；</li>
+<li>引入红黑树进一步降低遍历的时间复杂度，使得遍历更快；</li>
+</ol>
+</blockquote>
+<h5 id="6-为什么HashMap中String、Integer这样的包装类适合作为K"><a href="#6-为什么HashMap中String、Integer这样的包装类适合作为K" class="headerlink" title="6.为什么HashMap中String、Integer这样的包装类适合作为K"></a>6.为什么HashMap中String、Integer这样的包装类适合作为K</h5><blockquote>
+<ol>
+<li>都是final类型，即不可变性(hashCode() 值可以被缓存起来)，保证key的不可更改性，不会存在获取hash值不同的情况</li>
+<li>内部已重写了equals()、hashCode()等方法，遵守了HashMap内部的规范（不清楚可以去上面看看putValue的过程），不容易出现Hash值计算错误的情况；</li>
+</ol>
+</blockquote>
+<h5 id="7-HashMap-的长度为什么是2的幂次方"><a href="#7-HashMap-的长度为什么是2的幂次方" class="headerlink" title="7.HashMap 的长度为什么是2的幂次方"></a>7.HashMap 的长度为什么是2的幂次方</h5><blockquote>
+<p>1.计算hashcode时，return h &amp; (length-1);因为要获取数组下标使用位运算，如果不是2的整数次幂，会出错<br>2.使用位运算，而不是用mod运算，是因为位运算效率比mod运算高得多，后续扩容效率更高。</p>
+<p>==为什么是两次扰动呢?==<br>    加大哈希值低位的随机性，使得分布更均匀，从而提高对应数组存储下标位置的随机性&amp;均匀性，最终减少Hash冲突，两次就够了，已经达到了高位低位同时参与运算的目的</p>
+</blockquote>
+<h5 id="8-加载因子为什么是0-75"><a href="#8-加载因子为什么是0-75" class="headerlink" title="8.加载因子为什么是0.75"></a>8.加载因子为什么是0.75</h5><blockquote>
+<p>加载因子又叫负载因子，表示HashMap表中元素的填满的程度</p>
+<p>时间和空间上比较均衡<br>目的:为了减少hash碰撞table长度会扩容一倍</p>
+</blockquote>
+<h5 id="9-HashMap与HashTable的区别"><a href="#9-HashMap与HashTable的区别" class="headerlink" title="==9.HashMap与HashTable的区别=="></a>==9.HashMap与HashTable的区别==</h5><blockquote>
+<ol>
+<li>线程安全</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;  HashMap 是非线程安全的，HashTable 是线程安全的；HashTable 内部的方法基本都经过 synchronized 修饰。（如果你要保证线程安全的话就使用 ConcurrentHashMap 吧！）</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<ol>
+<li><p>效率</p>
+<p> 因为线程安全的问题，HashMap 要比 HashTable 效率高一点。另外，HashTable 基本被淘汰，不要在代码中使用它；</p>
+</li>
+<li><p>对Null key 和Null value的支持</p>
+<p> HashMap 中，null 可以作为键，这样的键只有一个，可以有一个或多个键所对应的值为 null。但是在 HashTable 中 put 进的键值只要有一个 null，直接抛NullPointerException。</p>
+</li>
+<li><p>初始容量大小和每次扩充容量大小的不同 </p>
+<p> ①创建时如果不指定容量初始值，Hashtable 默认的初始大小为11，之后每次扩充，容量变为原来的2n+1。HashMap 默认的初始化大小为16。之后每次扩充，容量变为原来的2倍。<br> ②创建时如果给定了容量初始值，那么 Hashtable 会直接使用你给定的大小，而 HashMap 会将其扩充为2的幂次方大小。也就是说 HashMap 总是使用2的幂作为哈希表的大小，后面会介绍到为什么是2的幂次方。</p>
+</li>
+<li><p>底层数据结构</p>
+<p> JDK1.8 以后的 HashMap 在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为8）时，将链表转化为红黑树，以减少搜索时间。Hashtable 没有这样的机制。</p>
+</li>
+<li><p>推荐使用</p>
+<p> 在 Hashtable 的类注释可以看到，Hashtable 是保留类不建议使用，推荐在单线程环境下使用 HashMap 替代，如果需要多线程使用则用 ConcurrentHashMap 替代。</p>
+</li>
+</ol>
+</blockquote>
+<h5 id="10-ConcurrentHashMap-和-Hashtable-的区别"><a href="#10-ConcurrentHashMap-和-Hashtable-的区别" class="headerlink" title="==10.ConcurrentHashMap 和 Hashtable 的区别=="></a>==10.ConcurrentHashMap 和 Hashtable 的区别==</h5><blockquote>
+<p>底层数据结构<br>    ConcurrentHashMap<br>         JDK1.7的 ConcurrentHashMap 底层采用 分段的数组+链表 实现，<br>         JDK1.8 采用的数据结构跟HashMap1.8的结构一样，数组+链表/红黑二叉树。<br>    HashTable<br>        Hashtable 和 JDK1.8 之前(JDK1.7)的 HashMap 的底层数据结构类似都是采用 数组+链表 的形式，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突而存在的；<br>实现线程安全的方式<br>    ConcurrentHashMap<br>         JDK1.7的 对整个桶数组进行了分割分段(Segment)，每一把锁只锁容器其中一部分bucket</p>
+<p>​    <img alt="7" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230106214911.png"></p>
+<p>​        JDK1.8 使用 synchronized 和 CAS 来操作，每把锁只锁一个bucket</p>
+<p>​        <img alt="8" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230106214926.png"></p>
+<p>​    HashTable</p>
+<p>​        示意图</p>
+<p>​        <img alt="6" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/java基础/20230106214741.png"></p>
+<p>​        给全表加synchronized锁，锁粒度太大</p>
+</blockquote>
+<h5 id="11-ConcurrentHashMap-底层具体实现"><a href="#11-ConcurrentHashMap-底层具体实现" class="headerlink" title="==11.ConcurrentHashMap 底层具体实现=="></a>==11.ConcurrentHashMap 底层具体实现==</h5><blockquote>
+<p>JDK1.7<br>    Segment(ReentrantLock) + HashEntry<br>    会锁住多个HashEntry<br>JDK1.8<br>    Node + CAS + Synchronized</p>
+<p>​            CAS体现在hash不冲突是自旋插入</p>
+<p>​            Synchronized在hash冲突时，加上同步锁，保证线程安全</p>
+<p>​    synchronized只锁定当前链表或红黑二叉树的首节点</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/alex-next/2022/08/18/javaEE/spring源码/spring源码(九)--Spring整合mybatis/" rel="next" title="spring源码(八)--MyBatis源码及Spring整合源码">
+                  <i class="fa fa-chevron-left"></i> spring源码(八)--MyBatis源码及Spring整合源码
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/alex-next/2022/10/15/面试题/Mysql面试题/" rel="prev" title="mysql面试题">
+                  mysql面试题 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础知识"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JAVA概述"><span class="nav-number">1.1.</span> <span class="nav-text">JAVA概述</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-JVM、JRE和JDK的关系"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.JVM、JRE和JDK的关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-什么是跨平台性？原理是什么"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.什么是跨平台性？原理是什么</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基础语法"><span class="nav-number">1.2.</span> <span class="nav-text">基础语法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Java有哪些数据类型"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.Java有哪些数据类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-用最有效率的方法计算-2-乘以-8"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.用最有效率的方法计算 2 乘以 8</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-float-f-3-4-是否正确"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.float f=3.4;是否正确</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-short-s1-1-s1-s1-1-有错吗-short-s1-1-s1-1-有错吗"><span class="nav-number">1.2.4.</span> <span class="nav-text">4.short s1 = 1; s1 = s1 + 1;有错吗?short s1 = 1; s1 += 1;有错吗</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-访问修饰符-public-private-protected-以及不写（默认）时的区别"><span class="nav-number">1.2.5.</span> <span class="nav-text">==5.访问修饰符 public,private,protected,以及不写（默认）时的区别==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-final-有什么用"><span class="nav-number">1.2.6.</span> <span class="nav-text">==6.final 有什么用==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-final-finally-finalize区别"><span class="nav-number">1.2.7.</span> <span class="nav-text">7.final finally finalize区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-在-Java-中，如何跳出当前的多重嵌套循环"><span class="nav-number">1.2.8.</span> <span class="nav-text">8.在 Java 中，如何跳出当前的多重嵌套循环</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#面向对象基础"><span class="nav-number">1.3.</span> <span class="nav-text">面向对象基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-重写和重载的区别？重载中方法的返回值可以相同吗？"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.重写和重载的区别？重载中方法的返回值可以相同吗？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-JAVA支持多继承吗，如果想要多继承怎么办？"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.JAVA支持多继承吗，如果想要多继承怎么办？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-抽象类和接口的区别，抽象类和接口可以实例化吗？"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.抽象类和接口的区别，抽象类和接口可以实例化吗？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-String可以被继承吗"><span class="nav-number">1.3.4.</span> <span class="nav-text">4.String可以被继承吗</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-抽象类和接口的对比"><span class="nav-number">1.3.5.</span> <span class="nav-text">5.抽象类和接口的对比</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-内部类的分类有哪些"><span class="nav-number">1.3.6.</span> <span class="nav-text">6.内部类的分类有哪些</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-内部类的优点"><span class="nav-number">1.3.7.</span> <span class="nav-text">7.内部类的优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-局部内部类和匿名内部类访问局部变量的时候，为什么变量必须要加上final"><span class="nav-number">1.3.8.</span> <span class="nav-text">==8.局部内部类和匿名内部类访问局部变量的时候，为什么变量必须要加上final==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-String中equals与-的区别"><span class="nav-number">1.3.9.</span> <span class="nav-text">9.String中equals与==的区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-hashCode-与-equals"><span class="nav-number">1.3.10.</span> <span class="nav-text">==10.hashCode 与 equals==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#11-值传递和引用传递有什么区别"><span class="nav-number">1.3.11.</span> <span class="nav-text">11.值传递和引用传递有什么区别</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他"><span class="nav-number">1.4.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-说一下JAVA中的泛型"><span class="nav-number">1.4.1.</span> <span class="nav-text">1.说一下JAVA中的泛型?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Java-int-和Integer的区别，怎样比较int和Integer类型的值是否相等。"><span class="nav-number">1.4.2.</span> <span class="nav-text">==2.Java int 和Integer的区别，怎样比较int和Integer类型的值是否相等。==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-java-中-IO-流分为几种"><span class="nav-number">1.4.3.</span> <span class="nav-text">3.java 中 IO 流分为几种</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-BIO-NIO-AIO-有什么区别"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.BIO,NIO,AIO 有什么区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-什么是反射机制"><span class="nav-number">1.4.5.</span> <span class="nav-text">5.什么是反射机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-反射机制优缺点"><span class="nav-number">1.4.6.</span> <span class="nav-text">6.反射机制优缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-获取反射的三种方法"><span class="nav-number">1.4.7.</span> <span class="nav-text">7.获取反射的三种方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-String的特性"><span class="nav-number">1.4.8.</span> <span class="nav-text">==8.String的特性==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-在使用-HashMap-的时候，用-String-做-key-有什么好处"><span class="nav-number">1.4.9.</span> <span class="nav-text">9.在使用 HashMap 的时候，用 String 做 key 有什么好处</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-String和StringBuffer、StringBuilder的区别是什么"><span class="nav-number">1.4.10.</span> <span class="nav-text">==10.String和StringBuffer、StringBuilder的区别是什么==</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合"><span class="nav-number">2.</span> <span class="nav-text">集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#集合概述"><span class="nav-number">2.1.</span> <span class="nav-text">集合概述</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-说说-List-Set-Queue-Map-四者的区别"><span class="nav-number">2.1.1.</span> <span class="nav-text">1.说说 List, Set, Queue, Map 四者的区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-集合框架底层数据结构"><span class="nav-number">2.1.2.</span> <span class="nav-text">==2.集合框架底层数据结构==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Java集合的快速失败机制-“fail-fast”"><span class="nav-number">2.1.3.</span> <span class="nav-text">3.Java集合的快速失败机制 “fail-fast”</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#List接口"><span class="nav-number">2.2.</span> <span class="nav-text">List接口</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-迭代器-Iterator-是什么"><span class="nav-number">2.2.1.</span> <span class="nav-text">1.迭代器 Iterator 是什么</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-Iterator-和-ListIterator-有什么区别"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.Iterator 和 ListIterator 有什么区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-ArrayList-和-LinkedList-的区别是什么"><span class="nav-number">2.2.3.</span> <span class="nav-text">==3.ArrayList 和 LinkedList 的区别是什么==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-ArrayList-和-Vector-的区别是什么"><span class="nav-number">2.2.4.</span> <span class="nav-text">==4.ArrayList 和 Vector 的区别是什么==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-多线程场景下如何使用-ArrayList"><span class="nav-number">2.2.5.</span> <span class="nav-text">==5.多线程场景下如何使用 ArrayList==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-为什么-ArrayList-的-elementData-加上-transient-修饰"><span class="nav-number">2.2.6.</span> <span class="nav-text">6.为什么 ArrayList 的 elementData 加上 transient 修饰</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-说一说-ArrayList-的扩容机制吧"><span class="nav-number">2.2.7.</span> <span class="nav-text">==7.说一说 ArrayList 的扩容机制吧==</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#set接口"><span class="nav-number">2.3.</span> <span class="nav-text">set接口</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-list和set区别"><span class="nav-number">2.3.1.</span> <span class="nav-text">1.list和set区别</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-说一下-HashSet-的实现原理"><span class="nav-number">2.3.2.</span> <span class="nav-text">==2.说一下 HashSet 的实现原理==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-HashSet和HashMap的区别"><span class="nav-number">2.3.3.</span> <span class="nav-text">3.HashSet和HashMap的区别</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#map接口"><span class="nav-number">2.4.</span> <span class="nav-text">==map接口==</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-说一下-HashMap-的实现原理"><span class="nav-number">2.4.1.</span> <span class="nav-text">==1.说一下 HashMap 的实现原理==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-HashMap-JDK1-7与JDK1-8比较"><span class="nav-number">2.4.2.</span> <span class="nav-text">2.HashMap(JDK1.7与JDK1.8比较)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-HashMap的put-具体流程-jdk1-8"><span class="nav-number">2.4.3.</span> <span class="nav-text">==3.HashMap的put()具体流程(jdk1.8)==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-HashMap的扩容操作是怎么实现的"><span class="nav-number">2.4.4.</span> <span class="nav-text">4.HashMap的扩容操作是怎么实现的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-HashMap是怎么解决哈希冲突的"><span class="nav-number">2.4.5.</span> <span class="nav-text">==5.HashMap是怎么解决哈希冲突的==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-为什么HashMap中String、Integer这样的包装类适合作为K"><span class="nav-number">2.4.6.</span> <span class="nav-text">6.为什么HashMap中String、Integer这样的包装类适合作为K</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-HashMap-的长度为什么是2的幂次方"><span class="nav-number">2.4.7.</span> <span class="nav-text">7.HashMap 的长度为什么是2的幂次方</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-加载因子为什么是0-75"><span class="nav-number">2.4.8.</span> <span class="nav-text">8.加载因子为什么是0.75</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-HashMap与HashTable的区别"><span class="nav-number">2.4.9.</span> <span class="nav-text">==9.HashMap与HashTable的区别==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-ConcurrentHashMap-和-Hashtable-的区别"><span class="nav-number">2.4.10.</span> <span class="nav-text">==10.ConcurrentHashMap 和 Hashtable 的区别==</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#11-ConcurrentHashMap-底层具体实现"><span class="nav-number">2.4.11.</span> <span class="nav-text">==11.ConcurrentHashMap 底层具体实现==</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/alex-next/images/avatar.jpg"
+      alt="alex">
+  <p class="site-author-name" itemprop="name">alex</p>
+  <div class="site-description" itemprop="description">时光静好,与君语;细水流年,与君同;繁华落尽,与君老.</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/alex-next/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/alex-next/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/alex-next/tags/">
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/alex-next/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">alex</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/alex-next/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/alex-next/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/pjax/pjax.min.js?v=0.2.8"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/alex-next/js/utils.js?v=7.4.0"></script><script src="/alex-next/js/motion.js?v=7.4.0"></script>
+<script src="/alex-next/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/alex-next/js/next-boot.js?v=7.4.0"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var id = element.id || '';
+    var src = element.src || '';
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (id !=='') {
+      script.id = element.id;
+    }
+    if (src !== '') {
+      script.src = src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/alex-next/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '84888b5ba3be0f56b2ed',
+      clientSecret: '1306406ecbdc02b679df3c95b94985753d302d6a',
+      repo: 'alex-next',
+      owner: 'alexander-wd',
+      admin: ['alexander-wd'],
+      id: '03235a6b86eed1be7884a8cf4f01de1b',
+        language: 'zh-CN',
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+    </div>
+</body>
+</html>

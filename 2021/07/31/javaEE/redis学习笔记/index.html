@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/alex-next/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/alex-next/images/logo.svg?v=7.4.0" color="#222">
+  <link rel="alternate" href="/alex-next/atom.xml" title="alex的博客 - github.com" type="application/atom+xml">
+
+<link rel="stylesheet" href="/alex-next/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/alex-next/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/alex-next/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Redis1.入门安装五种数据结构 字符串  常用操作  set key value  存入键值对   mset key value [key value…]  批量存储键值对   setnx key value  分布式锁，获取锁成功返回1，否则返回0   get key  获取value   mget key [key…]  批量获取value   del key   删除key     原子">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis学习笔记">
+<meta property="og:url" content="https://alexander-wd.github.io/2021/07/31/javaEE/redis学习笔记/index.html">
+<meta property="og:site_name" content="alex的博客 - github.com">
+<meta property="og:description" content="Redis1.入门安装五种数据结构 字符串  常用操作  set key value  存入键值对   mset key value [key value…]  批量存储键值对   setnx key value  分布式锁，获取锁成功返回1，否则返回0   get key  获取value   mget key [key…]  批量获取value   del key   删除key     原子">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2023-02-13T09:44:08.897Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="redis学习笔记">
+<meta name="twitter:description" content="Redis1.入门安装五种数据结构 字符串  常用操作  set key value  存入键值对   mset key value [key value…]  批量存储键值对   setnx key value  分布式锁，获取锁成功返回1，否则返回0   get key  获取value   mget key [key…]  批量获取value   del key   删除key     原子">
+  <link rel="canonical" href="https://alexander-wd.github.io/2021/07/31/javaEE/redis学习笔记/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>redis学习笔记 | alex的博客 - github.com</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/alex-next/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">alex的博客 - github.com</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/alex-next/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/alex-next/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/alex-next/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/alex-next/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/alexander-wd" class="github-corner" title="alex GitHub" aria-label="alex GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2021/07/31/javaEE/redis学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">redis学习笔记
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-07-31 16:03:12" itemprop="dateCreated datePublished" datetime="2021-07-31T16:03:12+08:00">2021-07-31</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 17:44:08" itemprop="dateModified" datetime="2023-02-13T17:44:08+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/JavaEE/" itemprop="url" rel="index"><span itemprop="name">JavaEE</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><h2 id="1-入门"><a href="#1-入门" class="headerlink" title="1.入门"></a>1.入门</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><h3 id="五种数据结构"><a href="#五种数据结构" class="headerlink" title="五种数据结构"></a>五种数据结构</h3><ul>
+<li><p>字符串</p>
+<ul>
+<li><p>常用操作</p>
+<ul>
+<li><p>set key value</p>
+<ul>
+<li>存入键值对</li>
+</ul>
+</li>
+<li><p>mset key value [key value…]</p>
+<ul>
+<li>批量存储键值对</li>
+</ul>
+</li>
+<li><p>setnx key value</p>
+<ul>
+<li>分布式锁，获取锁成功返回1，否则返回0</li>
+</ul>
+</li>
+<li><p>get key</p>
+<ul>
+<li>获取value</li>
+</ul>
+</li>
+<li><p>mget key [key…]</p>
+<ul>
+<li>批量获取value</li>
+</ul>
+</li>
+<li><p>del key </p>
+<ul>
+<li>删除key</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>原子加减</p>
+<ul>
+<li><p>incr key</p>
+<ul>
+<li>key中存储的数字值加1</li>
+</ul>
+</li>
+<li><p>decr key</p>
+<ul>
+<li>key中存储的数字值减1</li>
+</ul>
+</li>
+<li><p>incrby key increment</p>
+<ul>
+<li>将key所储存的值加上increment</li>
+</ul>
+</li>
+<li><p>decrby key increment</p>
+<ul>
+<li>将key所储存的值减去increment</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>应用场景</p>
+<ul>
+<li>文章阅读量</li>
+<li>web集群session共享</li>
+<li>分布式系统全局序列号</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>哈希</p>
+<ul>
+<li><p>记忆</p>
+<ul>
+<li>key类似对象，field类似属性，value类似属性值</li>
+</ul>
+</li>
+<li><p>常用操作</p>
+<ul>
+<li><p>hset key field value</p>
+<ul>
+<li>存储一个哈希表的键值</li>
+</ul>
+</li>
+<li><p>HSETNX  key  field  value</p>
+<ul>
+<li>分布式锁</li>
+</ul>
+</li>
+<li><p>HMSET  key  field  value [field value …]</p>
+<ul>
+<li>批量存储</li>
+</ul>
+</li>
+<li><p>HGET  key  field</p>
+<ul>
+<li>获取哈希表key对应的field键值</li>
+</ul>
+</li>
+<li><p>HMGET  key  field  [field …]</p>
+<ul>
+<li>批量获取</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>应用场景</p>
+<ul>
+<li><p>电商购物车</p>
+<ul>
+<li><p>存储</p>
+<ul>
+<li>1）以用户id为key</li>
+<li>2）商品id为field</li>
+<li>3）商品数量为value</li>
+</ul>
+</li>
+<li><p>操作</p>
+<ul>
+<li>添加商品：hset cart:1001 10088 1</li>
+<li>增加数量：hincrby cart:1001 10088 1</li>
+<li>商品总数：hlen cart:1001</li>
+<li>删除商品：hdel cart:1001 10088</li>
+<li>获取购物车所有商品：hgetall cart:1001</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>优缺点</p>
+<ul>
+<li><p>优点</p>
+<ul>
+<li>同类数据归类整合储存，方便数据管理</li>
+<li>相比string操作消耗内存与cpu更小</li>
+<li>相比string储存更节省空间</li>
+</ul>
+</li>
+<li><p>缺点</p>
+<ul>
+<li>过期功能不能使用在field上，只能用在key上</li>
+<li>Redis集群架构下不适合大规模使用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>列表</p>
+<ul>
+<li><p>常用操作</p>
+<ul>
+<li><p>LPUSH  key  value [value …]</p>
+<ul>
+<li>将一个或多个值value插入到key列表的表头(最左边)</li>
+</ul>
+</li>
+<li><p>RPUSH  key  value [value …]</p>
+<ul>
+<li>将一个或多个值value插入到key列表的表尾(最右边)</li>
+</ul>
+</li>
+<li><p>LPOP  key</p>
+<ul>
+<li>移除并返回key列表的头元素</li>
+</ul>
+</li>
+<li><p>RPOP  key</p>
+<ul>
+<li>移除并返回key列表的尾元素</li>
+</ul>
+</li>
+<li><p>LRANGE  key  start  stop</p>
+<ul>
+<li>返回列表key中指定区间内的元素，区间以偏移量start和stop指定</li>
+</ul>
+</li>
+<li><p>BLPOP  key  [key …]  timeout</p>
+<ul>
+<li>从key列表表头弹出一个元素，若列表中没有元素，阻塞等待timeout秒,如果timeout=0,一直阻塞等待</li>
+</ul>
+</li>
+<li><p>BRPOP  key  [key …]  timeout</p>
+<ul>
+<li>从key列表表尾弹出一个元素，若列表中没有元素，阻塞等待timeout秒,如果timeout=0,一直阻塞等待</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>常用数据结构</p>
+<ul>
+<li>Stack(栈) = LPUSH + LPOP</li>
+<li>Queue(队列）= LPUSH + RPOP</li>
+<li>Blocking MQ(阻塞队列）= LPUSH + BRPOP</li>
+</ul>
+</li>
+<li><p>和Java的区别</p>
+<ul>
+<li>分布式多台电脑访问</li>
+</ul>
+</li>
+<li><p>应用场景</p>
+<ul>
+<li><p>微信公众号推送消息流</p>
+<ul>
+<li>使用栈结构后进先出</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>集合</p>
+<ul>
+<li><p>常用操作</p>
+<ul>
+<li><p>SADD  key  member  [member …]</p>
+<ul>
+<li>往集合key中存入元素，元素存在则忽略，若key不存在则新建</li>
+</ul>
+</li>
+<li><p>SREM  key  member  [member …]</p>
+<ul>
+<li>从集合key中删除元素</li>
+</ul>
+</li>
+<li><p>SMEMBERS  key</p>
+<ul>
+<li>获取集合key中所有元素</li>
+</ul>
+</li>
+<li><p>SCARD  key</p>
+<ul>
+<li>获取集合key的元素个数</li>
+</ul>
+</li>
+<li><p>SISMEMBER  key  member</p>
+<ul>
+<li>判断member元素是否存在于集合key中</li>
+</ul>
+</li>
+<li><p>SRANDMEMBER  key  [count]</p>
+<ul>
+<li>从集合key中选出count个元素，元素不从key中删除</li>
+</ul>
+</li>
+<li><p>SPOP  key  [count]</p>
+<ul>
+<li>从集合key中选出count个元素，元素从key中删除</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>集合运算操作</p>
+<ul>
+<li><p>SINTER  key  [key …]</p>
+<ul>
+<li>交集运算</li>
+</ul>
+</li>
+<li><p>SUNION  key  [key ..]</p>
+<ul>
+<li>并集运算</li>
+</ul>
+</li>
+<li><p>SDIFF  key  [key …]</p>
+<ul>
+<li><p>差集运算</p>
+<ul>
+<li>集合A在集合B,C…中都没有的元素</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>SINTERSTORE  destination  key  [key ..]</p>
+<ul>
+<li>将交集结果存入新集合destination中</li>
+</ul>
+</li>
+<li><p>SUNIONSTORE  destination  key  [key …]</p>
+<ul>
+<li>将并集结果存入新集合destination中</li>
+</ul>
+</li>
+<li><p>SDIFFSTORE  destination  key  [key …]</p>
+<ul>
+<li>将差集结果存入新集合destination中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>应用场景</p>
+<ul>
+<li><p>微信抽奖</p>
+<ul>
+<li><p>参加过得不能参加，适合不重复抽奖</p>
+<ul>
+<li>SADD key {userlD}</li>
+</ul>
+</li>
+<li><p>抽取count名中奖者，适合重复抽奖</p>
+<ul>
+<li>SRANDMEMBER key [count] / SPOP key [count]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>微信朋友圈点赞</p>
+<ul>
+<li>点赞过不能在点赞</li>
+<li>取消点赞</li>
+</ul>
+</li>
+<li><p>微博微信关注模型</p>
+<ul>
+<li><p>1) 诸葛老师关注的人: </p>
+<ul>
+<li>zhugeSet-&gt; {guojia, xushu}</li>
+</ul>
+</li>
+<li><p>2) 杨过老师关注的人:</p>
+<ul>
+<li>yangguoSet—&gt; {zhuge, baiqi, guojia, xushu}</li>
+</ul>
+</li>
+<li><p>3) 郭嘉老师关注的人: </p>
+<ul>
+<li>guojiaSet-&gt; {zhuge, yangguo, baiqi, xushu, xunyu)</li>
+</ul>
+</li>
+<li><p>4) 我和杨过老师共同关注: </p>
+<ul>
+<li>SINTER zhugeSet yangguoSet—&gt; {guojia, xushu}</li>
+</ul>
+</li>
+<li><p>5) 我关注的人也关注他(杨过老师): </p>
+<ul>
+<li>SISMEMBER guojiaSet yangguo </li>
+<li>SISMEMBER xushuSet yangguo</li>
+</ul>
+</li>
+<li><p>6) 我可能认识的人: </p>
+<ul>
+<li>SDIFF yangguoSet zhugeSet-&gt;(zhuge, baiqi}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>集合操作实现电商商品筛选</p>
+<ul>
+<li><p>存储</p>
+<ul>
+<li>SADD  brand:huawei  P40</li>
+<li>SADD  brand:xiaomi  mi-10</li>
+<li>SADD  brand:iPhone iphone12</li>
+<li>SADD os:android  P40  mi-10</li>
+<li>SADD cpu:brand:intel  P40  mi-10</li>
+<li>SADD ram:8G  P40  mi-10  iphone12</li>
+</ul>
+</li>
+<li><p>操作</p>
+<ul>
+<li>SINTER  os:android  cpu:brand:intel  ram:8G -&gt;{P40，mi-10}</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>有序集合</p>
+<ul>
+<li><p>常用操作</p>
+<ul>
+<li><p>ZADD key score member [[score member]…]</p>
+<ul>
+<li>往有序集合key中加入带分值元素</li>
+</ul>
+</li>
+<li><p>ZREM key member [member …]</p>
+<ul>
+<li>从有序集合key中删除元素</li>
+</ul>
+</li>
+<li><p>ZSCORE key member</p>
+<ul>
+<li>返回有序集合key中元素member的分值</li>
+</ul>
+</li>
+<li><p>ZINCRBY key increment member</p>
+<ul>
+<li>为有序集合key中元素member的分值加上increment </li>
+</ul>
+</li>
+<li><p>ZCARD key</p>
+<ul>
+<li>返回有序集合key中元素个数</li>
+</ul>
+</li>
+<li><p>ZRANGE key start stop [WITHSCORES]</p>
+<ul>
+<li>正序获取有序集合key从start下标到stop下标的元素</li>
+</ul>
+</li>
+<li><p>ZREVRANGE key start stop [WITHSCORES]</p>
+<ul>
+<li>倒序获取有序集合key从start下标到stop下标的元素</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>应用场景</p>
+<ul>
+<li><p>排行榜</p>
+<ul>
+<li><p>1）点击新闻</p>
+<ul>
+<li>ZINCRBY  hotNews:20190819  1  守护香港</li>
+</ul>
+</li>
+<li><p>2）展示当日排行前十</p>
+<ul>
+<li>ZREVRANGE  hotNews:20190819  0  9  WITHSCORES </li>
+</ul>
+</li>
+<li><p>3）七日搜索榜单计算</p>
+<ul>
+<li>ZUNIONSTORE  hotNews:20190813-20190819  7 hotNews:20190813  hotNews:20190814… hotNews:20190819</li>
+</ul>
+</li>
+<li><p>4）展示七日排行前十</p>
+<ul>
+<li>ZREVRANGE hotNews:20190813-20190819  0  9  WITHSCORES</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="其他高级命令"><a href="#其他高级命令" class="headerlink" title="其他高级命令"></a>其他高级命令</h3><ul>
+<li><p>keys</p>
+<ul>
+<li>全量遍历键，效率低</li>
+</ul>
+</li>
+<li><p>scan</p>
+<ul>
+<li>SCAN cursor [MATCH pattern] [COUNT count]</li>
+<li><p>例子</p>
+<ul>
+<li>scan 0 match zhuge* count 3</li>
+</ul>
+</li>
+<li><p>上述例子，是指从全量键中获取，并不一定是3个，可能比3个多，而且还要考虑多线程下增删改操作</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ul>
+<li><p>Redis是单线程吗</p>
+<ul>
+<li>Redis 的单线程主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外 提供键值存储服务的主要流程。但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。</li>
+</ul>
+</li>
+<li><p>Redis不是单线程为什么还能这么快</p>
+<ul>
+<li>因为它所有数据都在内存中，所有的运算都是内存级别的运算</li>
+</ul>
+</li>
+<li><p>Redis 单线程如何处理那么多的并发客户端连接</p>
+<ul>
+<li><p>NIO多路复用</p>
+<ul>
+<li>redis利用epoll来实现IO多路复用，将连接信息和事件放到队列中，依次放到 文件事件分派器，事件分派器将事件分发给事件处理器</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-持久化、主从与哨兵集群架构"><a href="#2-持久化、主从与哨兵集群架构" class="headerlink" title="2.持久化、主从与哨兵集群架构"></a>2.持久化、主从与哨兵集群架构</h2><h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><ul>
+<li><p>RDB快照</p>
+<ul>
+<li>在默认情况下， Redis 将内存数据库快照保存在名字为 dump.rdb 的二进制文件中，也可以手动执行save或bgsave</li>
+<li><p>save</p>
+<ul>
+<li>save是同步的，会阻塞客户端命令，影响Redis性能</li>
+</ul>
+</li>
+<li><p>bgsave</p>
+<ul>
+<li>bgsave是异步的，使用copyonwrite机制</li>
+</ul>
+</li>
+<li><p>save与bgsave对比</p>
+</li>
+<li><p>关闭RDB</p>
+<ul>
+<li>只需要把所有save 60 10000(60s内有10000个键被改动)注释掉</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>AOF</p>
+<ul>
+<li><p>AOF默认关闭，修改配置文件打开AOF</p>
+<ul>
+<li>appendonly yes</li>
+</ul>
+</li>
+<li><p>可以配置多久将数据fsync到磁盘</p>
+<ul>
+<li><p>appendfsync always</p>
+<ul>
+<li>每次有新命令追加到 AOF 文件时就执行一次 fsync ，非常慢，也非常安全。</li>
+</ul>
+</li>
+<li><p>appendfsync everysec </p>
+<ul>
+<li>每秒 fsync 一次，足够快，并且在故障时只会丢失 1 秒钟的数据。</li>
+</ul>
+</li>
+<li><p>appendfsync no</p>
+<ul>
+<li>从不 fsync ，将数据交给操作系统来处理。更快，也更不安全的选择。</li>
+</ul>
+</li>
+<li><p>推荐（并且也是默认）的措施为每秒 fsync 一次， 这种 fsync 策略可以兼顾速度和安全性</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>RDB和AOF对比</p>
+<ul>
+<li>RDB更快是因为RDB是二进制存储的</li>
+</ul>
+</li>
+<li><p>混合持久化</p>
+<ul>
+<li><p>redis4.0之后，其实就是AOF使用二进制存储</p>
+</li>
+<li><p>开启</p>
+<ul>
+<li><h1 id="aof‐use‐rdb‐preamble-yes"><a href="#aof‐use‐rdb‐preamble-yes" class="headerlink" title="aof‐use‐rdb‐preamble yes"></a>aof‐use‐rdb‐preamble yes</h1></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Redis数据备份策略</p>
+<ul>
+<li><ol>
+<li>写crontab定时调度脚本，每小时都copy一份rdb或aof的备份到一个目录中去，仅仅保留最近48 小时的备份 </li>
+</ol>
+</li>
+<li><ol>
+<li>每天都保留一份当日的数据备份到一个目录中去，可以保留最近1个月的备份</li>
+</ol>
+</li>
+<li><ol>
+<li>每次copy备份的时候，都把太旧的备份给删了 </li>
+</ol>
+</li>
+<li><ol>
+<li>每天晚上将当前机器上的备份复制一份到其他机器上，以防机器损坏</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>细节</p>
+<ul>
+<li>RDB和AOF若同时开启，RDB和AOF只要满足相应条件，都会各自备份</li>
+</ul>
+</li>
+</ul>
+<h3 id="主从架构"><a href="#主从架构" class="headerlink" title="主从架构"></a>主从架构</h3><ul>
+<li><p>工作原理</p>
+<ul>
+<li><p>全量复制</p>
+<ul>
+<li>1.slave发送psync同步数据与master建立socket连接</li>
+<li>2.master收到psync执行bgsave生成最新rdb数据</li>
+<li>2.2做rdb之后缓存写命令</li>
+<li>3.master发送给slave  rdb数据</li>
+<li>4.slave清空老数据并加载rdb文件(会在slave生成一份rdb文件)</li>
+<li>5.master发给slave做rdb之后repl buffer中的写命令</li>
+<li>6.slave将执行buffer中的写命令</li>
+<li>7.master通过socket长连接持续给从节点发送写命令</li>
+</ul>
+</li>
+<li><p>部分复制(断点续传)</p>
+<ul>
+<li>1.slave断开连接(故障)</li>
+<li>2.master会在repl backlog buffer中缓存最近的写命令和slave的复制数据下标offset</li>
+<li>3.之后slave和master在此建立socket连接</li>
+<li>4.slave发送psync</li>
+<li>5.slave的offset若在repl backlog buffer中，从缓存中取offset之后的数据一次性同步给slave，否则会全量更新</li>
+<li>6.master通过socket长连接持续吧写命令发给从节点</li>
+</ul>
+</li>
+<li><p>细节</p>
+<ul>
+<li>如果master收到了多 个slave并发连接请求，它只会进行一次持久化，而不是一个连接一次，然后再把这一份持久化的数据发送 给多个并发连接的slave</li>
+<li><p>主从复制风暴(多个从节点同时复制主节点导致主节点压力过大)</p>
+<ul>
+<li>解决方案：让部分从节点与从节点(与主节点同步)同步数据</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>操作</p>
+<ul>
+<li><p>master结点配置文件不变</p>
+</li>
+<li><p>slave结点配置文件</p>
+<ul>
+<li><p>1.复制一份redis.conf文件(修改初始配置)</p>
+</li>
+<li><p>2.修改基本配置</p>
+<ul>
+<li><p>端口号</p>
+<ul>
+<li>port 6380</li>
+</ul>
+</li>
+<li><p>pidfile文件</p>
+<ul>
+<li>只有linux有</li>
+<li>pidfile /var/run/redis_6380.pid # 把pid进程号写入pidfile配置的文件</li>
+</ul>
+</li>
+<li><p>日志文件</p>
+<ul>
+<li>logfile “6380.log”</li>
+</ul>
+</li>
+<li><p>修改工作目录</p>
+<ul>
+<li>windows从cmd出来默认把用户目录当做工作目录</li>
+<li>dir ./data</li>
+</ul>
+</li>
+<li><p>注释bind</p>
+<ul>
+<li><p>windows试过不用注释掉(因为这次是在一台电脑上测试的，若是多台机器上测试要注释掉)</p>
+</li>
+<li><h1 id="bind-127-0-0-1"><a href="#bind-127-0-0-1" class="headerlink" title="bind 127.0.0.1"></a>bind 127.0.0.1</h1><ul>
+<li>若是在一台机器上，这样配置没有问题；若主从结点在不同机器上用127.0.0.1访问不了其他节点，必须要用对外的ip地址</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>修改dbfilename或工作目录都行</p>
+<ul>
+<li>dbfilename dump-6380.rdb</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>3.配置主从复制</p>
+<ul>
+<li><p>replicaof 127.0.0.1 6379</p>
+<ul>
+<li>从本机6379的redis实例复制数据，Redis 5.0之前使用slaveof</li>
+</ul>
+</li>
+<li><p>replica‐read‐only yes</p>
+<ul>
+<li>配置从节点只读</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>启动从结点</p>
+<ul>
+<li>redis-server ./conf/redis-6380.conf</li>
+</ul>
+</li>
+<li><p>连接从节点</p>
+<ul>
+<li>redis‐cli ‐p 6380</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="哨兵高可用架构"><a href="#哨兵高可用架构" class="headerlink" title="哨兵高可用架构"></a>哨兵高可用架构</h3><ul>
+<li><p>原理</p>
+<ul>
+<li><p>sentinel哨兵权限</p>
+<ul>
+<li>sentinel哨兵是特殊的redis服务，不提供读写服务，主要用来监控redis实例节点</li>
+</ul>
+</li>
+<li><p>访问数据步骤</p>
+<ul>
+<li>哨兵架构下client端第一次从哨兵找出redis的主节点，后续就直接访问redis的主节点，不会每次都通过 sentinel代理访问redis的主节点</li>
+<li>当redis的主节点发生变化，哨兵会第一时间感知到，并且将新的redis 主节点通知给client端(这里面redis的client端一般都实现了订阅功能，订阅sentinel发布的节点变动消息)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>实验操作</p>
+<ul>
+<li><p>sentinel结点配置文件</p>
+<ul>
+<li><p>windows配置</p>
+<ul>
+<li>复制一份redis.conf文件(修改初始配置)</li>
+<li><p>端口号</p>
+<ul>
+<li>port 26380</li>
+</ul>
+</li>
+<li><p>pidfile文件</p>
+<ul>
+<li>只有linux有</li>
+<li>pidfile /var/run/redis_6380.pid # 把pid进程号写入pidfile配置的文件</li>
+</ul>
+</li>
+<li><p>daemonize yes</p>
+<ul>
+<li>只有linux有</li>
+<li>用来指定redis是否要用守护线程的方式启动</li>
+</ul>
+</li>
+<li><p>日志文件</p>
+<ul>
+<li>logfile “6380.log”</li>
+</ul>
+</li>
+<li><p>修改工作目录</p>
+<ul>
+<li>windows从cmd出来默认把用户目录当做工作目录</li>
+<li>dir ./data</li>
+</ul>
+</li>
+<li><p>修改sentinel monitor</p>
+<ul>
+<li>sentinel monitor mymaster 192.168.0.60 6379 2</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>windows配置</p>
+<ul>
+<li><p>新建sentinel.conf文件</p>
+</li>
+<li><p>port 26379</p>
+<ul>
+<li><h1 id="端口号"><a href="#端口号" class="headerlink" title="端口号"></a>端口号</h1></li>
+</ul>
+</li>
+<li><p>sentinel monitor mymaster 127.0.0.1 6379 2</p>
+<ul>
+<li><h1 id="哨兵监听的主服务器-后面的2表示主机挂掉以后进行投票，只需要2票就可以从机编程主机"><a href="#哨兵监听的主服务器-后面的2表示主机挂掉以后进行投票，只需要2票就可以从机编程主机" class="headerlink" title="哨兵监听的主服务器    后面的2表示主机挂掉以后进行投票，只需要2票就可以从机编程主机"></a>哨兵监听的主服务器 <master名称> <master的ip> <master端口号> 后面的2表示主机挂掉以后进行投票，只需要2票就可以从机编程主机</master端口号></master的ip></master名称></h1></li>
+</ul>
+</li>
+<li><p>sentinel down-after-milliseconds mymaster 5000</p>
+<ul>
+<li><h1 id="指定了Sentinel认为Redis实例已经失效所需的毫秒数。"><a href="#指定了Sentinel认为Redis实例已经失效所需的毫秒数。" class="headerlink" title="指定了Sentinel认为Redis实例已经失效所需的毫秒数。"></a>指定了Sentinel认为Redis实例已经失效所需的毫秒数。</h1></li>
+</ul>
+</li>
+<li><h1 id="sentinel-failover-timeout-mymaster-18000"><a href="#sentinel-failover-timeout-mymaster-18000" class="headerlink" title="sentinel failover-timeout mymaster 18000"></a>sentinel failover-timeout mymaster 18000</h1><ul>
+<li><h1 id="如果在该时间（ms）内未能完成failover操作，则认为该failover失败"><a href="#如果在该时间（ms）内未能完成failover操作，则认为该failover失败" class="headerlink" title="如果在该时间（ms）内未能完成failover操作，则认为该failover失败"></a>如果在该时间（ms）内未能完成failover操作，则认为该failover失败</h1></li>
+</ul>
+</li>
+<li><h1 id="sentinel-notification-script"><a href="#sentinel-notification-script" class="headerlink" title="sentinel notification-script  "></a>sentinel notification-script <master-name> <script-path></script-path></master-name></h1><ul>
+<li><h1 id="指定sentinel检测到该监控的redis实例指向的实例异常时，调用的报警脚本。该配置项可选，但是很常用"><a href="#指定sentinel检测到该监控的redis实例指向的实例异常时，调用的报警脚本。该配置项可选，但是很常用" class="headerlink" title="指定sentinel检测到该监控的redis实例指向的实例异常时，调用的报警脚本。该配置项可选，但是很常用"></a>指定sentinel检测到该监控的redis实例指向的实例异常时，调用的报警脚本。该配置项可选，但是很常用</h1></li>
+</ul>
+</li>
+<li><p>dir ./data/s26380</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>启动</p>
+<ul>
+<li><p>redis</p>
+<ul>
+<li>src/redis‐sentinel sentinel‐26379.conf</li>
+</ul>
+</li>
+<li><p>windows</p>
+<ul>
+<li>redis-server ./conf/sentinel-26379.conf —sentinel</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>实验结果</p>
+<ul>
+<li>启动一个循环往主结点中丢数据的程序，然后，将主节点手动关闭，可以观察到在报错过了3-5s后，又开始往redis中放数据(sentinel选举出了新的master结点)</li>
+<li><p>主节点挂掉的话</p>
+<ul>
+<li>会修改相应sentinel的conf文件</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Jedis-RedisTemplate"><a href="#Jedis-RedisTemplate" class="headerlink" title="Jedis/RedisTemplate"></a>Jedis/RedisTemplate</h3><ul>
+<li><p>lua脚本事务</p>
+<ul>
+<li><p>减少网络开销</p>
+<ul>
+<li>本来5次网络请求的操作，可以用一个请求完成，原先5次请求的逻辑放在redis服务器 上完成。使用脚本，减少了网络往返时延。这点跟管道类似</li>
+</ul>
+</li>
+<li><p>原子操作</p>
+<ul>
+<li>Redis会将整个脚本作为一个整体执行，中间不会被其他命令插入。管道不是原子的，不过 redis的批量操作命令(类似mset)是原子的</li>
+</ul>
+</li>
+<li><p>替代redis的事务功能</p>
+</li>
+</ul>
+</li>
+<li><p>管道</p>
+<ul>
+<li>客户端可以一次性发送多个请求而不用等待服务器的响应(不然每条命令都需要连接(比较耗时))</li>
+<li>管道中前面命令失败，后面命令 不会有影响，继续执行</li>
+</ul>
+</li>
+<li><p>RedisTemplate</p>
+<ul>
+<li>StringRedisTemplate继承自RedisTemplate，在redis命令窗口查看不会是/xx,/xx的形式</li>
+<li>RedisTemplate与Redis命令对应参考</li>
+</ul>
+</li>
+</ul>
+<h3 id="实验注意"><a href="#实验注意" class="headerlink" title="实验注意"></a>实验注意</h3><ul>
+<li>redis-server要在安装目录下执行，否则用的不是安装目录下的配置文件，直接win+R运行，当前的工作目录就是用户文件夹</li>
+<li>windows实验的时候点击开启redis的黑窗口可能阻塞该进程</li>
+</ul>
+<h2 id="3-Redis-Cluster集群、原理"><a href="#3-Redis-Cluster集群、原理" class="headerlink" title="3.Redis Cluster集群、原理"></a>3.Redis Cluster集群、原理</h2><h3 id="集群实验"><a href="#集群实验" class="headerlink" title="集群实验"></a>集群实验</h3><ul>
+<li><p>集群配置</p>
+<ul>
+<li><p>1.复制redis.conf</p>
+</li>
+<li><p>2.修改配置文件</p>
+<ul>
+<li><p>daemonize yes</p>
+<ul>
+<li>windows无</li>
+</ul>
+</li>
+<li><p>port 8001</p>
+</li>
+<li><p>pidfile /var/run/redis_8001.pid</p>
+<ul>
+<li>windows无</li>
+</ul>
+</li>
+<li><p>dir /usr/local/redis‐cluster/8001/</p>
+</li>
+<li><p>cluster‐enabled yes</p>
+</li>
+<li><p>cluster‐config‐file nodes‐8001.conf</p>
+<ul>
+<li>集群节点信息文件，这里800x最好和port对应上</li>
+</ul>
+</li>
+<li><p>cluster‐node‐timeout 10000</p>
+</li>
+<li><h1 id="bind-127-0-0-1-1"><a href="#bind-127-0-0-1-1" class="headerlink" title="bind 127.0.0.1"></a>bind 127.0.0.1</h1><ul>
+<li>bind绑定的是自己机器网卡的ip，如果有多块网卡可以配多个ip，代表允许客户端通 过机器的哪些网卡ip去访问，内网一般可以不配置bind，注释掉即可</li>
+<li>若是在一台机器上，这样配置没有问题；若主从结点在不同机器上用127.0.0.1访问不了其他节点，必须要用对外的ip地址</li>
+</ul>
+</li>
+<li><p>protected‐mode no</p>
+<ul>
+<li>关闭保护模式</li>
+</ul>
+</li>
+<li><p>appendonly yes</p>
+</li>
+<li><p>设置密码</p>
+<ul>
+<li>requirepass zhuge</li>
+<li>masterauth zhuge</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>开启结点</p>
+<ul>
+<li>redis-server ./cluster_conf/8001/redis-8001.conf</li>
+</ul>
+</li>
+<li><p>3.创建集群</p>
+<ul>
+<li><p>细节</p>
+<ul>
+<li>在创建集群之前，要先把所有节点启动起来</li>
+<li>不创建集群的话，所有节点只是独立的</li>
+</ul>
+</li>
+<li><p>windows</p>
+<ul>
+<li>redis-cli —cluster create —cluster-replicas 1 127.0.0.1:8001 127.0.0.1:8002 127.0.0.1:8003 127.0.0.1:8004 127.0.0.1:8005 127.0.0.1:8006</li>
+<li>‐‐cluster‐replicas后的1表示为每个master配置1个从节点</li>
+</ul>
+</li>
+<li><p>linux</p>
+<ul>
+<li>/usr/local/redis‐5.0.3/src/redis-cli -a zhuge —cluster create —cluster-replicas 1 192.168.0.61:8001 192.168.0.62:8002 192.168.0.63:8003 192.168.0.61:8004 192.168.0.62:8005 192. 168.0.63:8006</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>4.验证</p>
+<ul>
+<li>redis-cli -c -p 8001</li>
+<li>cluster nodes</li>
+<li>cluster info</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>水平扩展</p>
+<ul>
+<li><p>水平扩展</p>
+<ul>
+<li>不关闭集群的情况下增加结点</li>
+</ul>
+</li>
+<li><p>步骤</p>
+<ul>
+<li>复制修改redis.conf同集群配置</li>
+<li><p>开启结点(8007,8008)</p>
+<ul>
+<li>redis-server ./cluster_conf/8007/redis-8007.conf</li>
+</ul>
+</li>
+<li><p>配置水平扩展的集群主节点</p>
+<ul>
+<li>redis-cli —cluster add-node 127.0.0.1:8007 127.0.0.1:8001</li>
+<li>add-node第一个是要添加的，第二个是已知的结点(要连上这个网络分区，随便选一个此网络分区的结点即可)</li>
+</ul>
+</li>
+<li><p>给新的集群主节点分配槽位</p>
+<ul>
+<li>redis-cli —cluster reshard 127.0.0.1:8007(任意改网络分区的节点)</li>
+<li>细节</li>
+</ul>
+</li>
+<li><p>添加从节点8008</p>
+<ul>
+<li><p>redis-cli —cluster add-node 127.0.0.1:8008 127.0.0.1:8001</p>
+<ul>
+<li>加入该网络分区</li>
+</ul>
+</li>
+<li><p>redis-cli进入8008</p>
+<ul>
+<li>cluster replicate 2728a594a0498e98e4b83a537e19f9a0a3790f38 #后面这串id为8007的节点id</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>删除结点参考文件</p>
+</li>
+</ul>
+</li>
+<li><p>图解</p>
+</li>
+</ul>
+</li>
+<li><p>细节</p>
+<ul>
+<li>集群信息都保存在了nodes-8002.conf中，关闭之后重新启动，不需要再创建集群</li>
+</ul>
+</li>
+</ul>
+<h3 id="集群原理"><a href="#集群原理" class="headerlink" title="集群原理"></a>集群原理</h3><ul>
+<li><p>槽位定位</p>
+<ul>
+<li>Redis Cluster 将所有数据划分为 16384 个 slots(槽位)，每个节点负责其中一部分槽位。槽位的信息存储于每个节点中。</li>
+<li>Cluster 默认会对 key 值使用 crc16 算法进行 hash 得到一个整数值，然后用这个整数值对 16384 进行取模 来得到具体槽位。</li>
+</ul>
+</li>
+<li><p>集群结点通信机制</p>
+<ul>
+<li>redis cluster节点间采取gossip协议进行通信</li>
+<li><p>gossip通知</p>
+<ul>
+<li>meet </li>
+<li>ping</li>
+<li>pong</li>
+<li>fail</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>redis集群选举原理</p>
+<ul>
+<li>1.slave发现自己的master变为FAIL </li>
+<li>2.将自己记录的集群currentEpoch加1，并广播FAILOVER_AUTH_REQUEST 信息</li>
+<li>3.其他节点收到该信息，只有master响应，判断请求者的合法性，并发送FAILOVER_AUTH_ACK，对每一个 epoch只发送一次ack </li>
+<li>4.尝试failover的slave收集master返回的FAILOVER_AUTH_ACK </li>
+<li>5.slave收到超过半数master的ack后变成新Master(这里解释了集群为什么至少需要三个主节点，如果只有两个，当其中一个挂了，只剩一个主节点是不能选举成功的)</li>
+<li>6.slave广播Pong消息通知其他集群节点</li>
+<li><p>细节</p>
+<ul>
+<li><p>从节点并不是在主节点一进入 FAIL 状态就马上尝试发起选举，而是有一定延迟</p>
+<ul>
+<li>DELAY = 500ms + random(0 ~ 500ms) + SLAVE_RANK * 1000ms</li>
+<li>SLAVE_RANK表示此slave已经从master复制数据的总量的rank</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>集群相关问题</p>
+<ul>
+<li><p>网络抖动</p>
+<ul>
+<li>突然之间部分连接变得不可访问，然后很快又恢复正常</li>
+<li><p>为解决这种问题，Redis Cluster 提供了一种选项cluster­node­timeout，表示当某个节点持续 timeout 的时间失联时，才可以认定该节点出现故障，需要进行主从切换。</p>
+<ul>
+<li>如果没有这个选项，网络抖动会导致主从频 繁切换 (数据的重新复制</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>脑裂问题</p>
+<ul>
+<li>redis集群没有过半同意机制会有脑裂问题</li>
+<li><p>产生结果</p>
+<ul>
+<li>网络分区导致脑裂后多个主节点对外提供写服务(人话：主节点一开始挂了，之后选举出了新主节点，然后老主节点(没有过半机制可能会被选上)恢复了，就发生脑裂现象)，一旦网络分区恢复， 会将其中一个主节点变为从节点，这时会有大量数据丢失</li>
+</ul>
+</li>
+<li><p>解决方法</p>
+<ul>
+<li><p>min‐replicas‐to‐write 1</p>
+<ul>
+<li>写数据成功最少同步的slave数量，这个数量可以模仿大于半数机制配置，比如 集群总共三个节点可以配置1，加上leader就是2，超过了半数</li>
+<li>会影响CAP中的可用性</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>集群是否完整才能对外提供服务</p>
+<ul>
+<li>当redis.conf的配置cluster-require-full-coverage为no时，表示当负责一个插槽的主库下线且没有相应的从 库进行故障恢复时，集群仍然可用，如果为yes则集群不可用</li>
+</ul>
+</li>
+<li><p>Redis集群为什么至少需要三个master节点，并且推荐节点数为奇数？</p>
+<ul>
+<li><p>至少需要三个master</p>
+<ul>
+<li>因为新master的选举需要大于半数的集群master节点同意才能选举成功，如果只有两个master节点，当其中一个挂了，是达不到选举新master的条件的</li>
+</ul>
+</li>
+<li><p>节点数(master)为什么推荐奇数</p>
+<ul>
+<li>4个和3个master节点，都至多只能挂一个(3/4或2/3，因为要半数以上)，从资源利用上来说奇数个master更优</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Redis集群对批量操作命令的支持</p>
+<ul>
+<li>redis集群只支持所有key落在同一slot的情况，如果有多个key一定要用mset命令在redis集群上操作，则可以在key的前面加上{XX}，这样参数数据分片hash计 算的只会是大括号里的值，这样能确保不同的key能落到同一slot里去</li>
+<li><p>示例</p>
+<ul>
+<li>mset {user1}:1:name zhuge {user1}:1:age 18</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-C源码解读"><a href="#4-C源码解读" class="headerlink" title="4.C源码解读(*)"></a>4.C源码解读(*)</h2><h2 id="5-redis-6新特性"><a href="#5-redis-6新特性" class="headerlink" title="5.redis 6新特性(*)"></a>5.redis 6新特性(*)</h2><h2 id="6-缓存设计与性能优化"><a href="#6-缓存设计与性能优化" class="headerlink" title="6.缓存设计与性能优化"></a>6.缓存设计与性能优化</h2><h3 id="缓存设计的问题"><a href="#缓存设计的问题" class="headerlink" title="缓存设计的问题"></a>缓存设计的问题</h3><ul>
+<li><p>缓存穿透</p>
+<ul>
+<li><p>含义</p>
+<ul>
+<li>大量请求的 key 是不合理的，根本不存在于缓存中，也不存在于数据库中 。这就导致这些请求直接到了数据库上，根本没有经过缓存这一层，对数据库造成了巨大的压力，可能直接就被这么多请求弄宕机了。</li>
+</ul>
+</li>
+<li><p>产生原因</p>
+<ul>
+<li>自身业务代码或者数据出现问题。</li>
+<li>一些恶意攻击、 爬虫等造成大量空命中</li>
+</ul>
+</li>
+<li><p>解决方案</p>
+<ul>
+<li>1.缓存空对象</li>
+<li>2.布隆过滤器</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>缓存失效(击穿)</p>
+<ul>
+<li><p>含义</p>
+<ul>
+<li>请求的 key 对应的是 热点数据 ，该数据 存在于数据库中，但不存在于缓存中（通常是因为缓存中的那份数据已经过期）。这就可能会导致瞬时大量的请求直接打到了数据库上，对数据库造成了巨大的压力，可能直接就被这么多请求弄宕机了。</li>
+</ul>
+</li>
+<li><p>产生原因</p>
+</li>
+<li><p>解决方案</p>
+<ul>
+<li>设置热点数据永不过期或者过期时间比较长。</li>
+<li>针对热点数据提前预热，将其存入缓存中并设置合理的过期时间比如秒杀场景下的数据在秒杀结束之前不过期。</li>
+<li>请求数据库写数据到缓存之前，先获取互斥锁，保证只有一个请求会落到数据库上，减少数据库的压力。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>缓存雪崩</p>
+<ul>
+<li><p>含义</p>
+<ul>
+<li>缓存在同一时间大面积的失效，导致大量的请求都直接落到了数据库上，对数据库造成了巨大的压力。 这就好比雪崩一样，摧枯拉朽之势，数据库的压力可想而知，可能直接就被这么多请求弄宕机了。</li>
+</ul>
+</li>
+<li><p>产生原因</p>
+</li>
+<li><p>解决方案</p>
+<ul>
+<li><p>针对 Redis 服务不可用的情况</p>
+<ul>
+<li>1.采用 Redis 集群，避免单机出现问题整个缓存服务都没办法使用。</li>
+<li>2.限流，避免同时处理大量的请求。</li>
+</ul>
+</li>
+<li><p>针对热点缓存失效的情况</p>
+<ul>
+<li>1.设置不同的失效时间比如随机设置缓存的失效时间。</li>
+<li>2.缓存永不失效（不太推荐，实用性太差）。</li>
+<li>3.设置二级缓存。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>热点缓存key</p>
+<ul>
+<li><p>含义</p>
+<ul>
+<li>在缓存失效的瞬间， 有大量线程来重建缓存， 造成后端负载加大， 甚至可能会让应用崩溃。</li>
+</ul>
+</li>
+<li><p>产生原因</p>
+<ul>
+<li>当前key是一个热点key（例如一个热门的娱乐新闻），并发量非常大。重建缓存不能在短时间完成， 可能是一个复杂计算， 例如复杂的SQL、 多次IO、 多个依赖等。</li>
+</ul>
+</li>
+<li><p>解决方案</p>
+<ul>
+<li>利用互斥锁来解决，此方法只允许一个线程重建缓存， 其他线程等待重建缓存的线程执行完， 重新从缓存获取数据即可。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>缓存与数据库双写不一致</p>
+<ul>
+<li><p>含义</p>
+<ul>
+<li>缓存与数据库存在数据不一致问题</li>
+</ul>
+</li>
+<li><p>产生原因</p>
+<ul>
+<li>大并发导致。。</li>
+</ul>
+</li>
+<li><p>解决方案</p>
+<ul>
+<li>1、对于并发几率很小的数据(如个人维度的订单数据、用户数据等)，这种几乎不用考虑这个问题，很少会发生缓存不一致，可以给缓存数据加上过期时间，每隔一段时间触发读的主动更新即可。</li>
+<li>2、就算并发很高，如果业务上能容忍短时间的缓存数据不一致(如商品名称，商品分类菜单等)，缓存加上过期时间依然可以解决大部分业务对于缓存的要求。</li>
+<li>3、如果不能容忍缓存数据不一致，可以通过加读写锁保证并发读写或写写的时候按顺序排好队，读读的时候相当于无锁。</li>
+<li>4、也可以用阿里开源的canal通过监听数据库的binlog日志及时的去修改缓存，但是引入了新的中间件，增加了系统的复杂度。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="开发规范与性能优化"><a href="#开发规范与性能优化" class="headerlink" title="开发规范与性能优化"></a>开发规范与性能优化</h3>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/alex-next/tags/redis/" rel="tag"># redis</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/alex-next/2021/05/29/算法/数据结构/数组模拟/" rel="next" title="数组模拟">
+                  <i class="fa fa-chevron-left"></i> 数组模拟
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/alex-next/2021/08/12/javaEE/RabbitMQ学习笔记/" rel="prev" title="RabbitMQ学习记录">
+                  RabbitMQ学习记录 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis"><span class="nav-number">1.</span> <span class="nav-text">Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-入门"><span class="nav-number">1.1.</span> <span class="nav-text">1.入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">1.1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五种数据结构"><span class="nav-number">1.1.2.</span> <span class="nav-text">五种数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他高级命令"><span class="nav-number">1.1.3.</span> <span class="nav-text">其他高级命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题"><span class="nav-number">1.1.4.</span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-持久化、主从与哨兵集群架构"><span class="nav-number">1.2.</span> <span class="nav-text">2.持久化、主从与哨兵集群架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#持久化"><span class="nav-number">1.2.1.</span> <span class="nav-text">持久化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#aof‐use‐rdb‐preamble-yes"><span class="nav-number">2.</span> <span class="nav-text">aof‐use‐rdb‐preamble yes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主从架构"><span class="nav-number">2.0.1.</span> <span class="nav-text">主从架构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bind-127-0-0-1"><span class="nav-number">3.</span> <span class="nav-text">bind 127.0.0.1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#哨兵高可用架构"><span class="nav-number">3.0.1.</span> <span class="nav-text">哨兵高可用架构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#端口号"><span class="nav-number">4.</span> <span class="nav-text">端口号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#哨兵监听的主服务器-后面的2表示主机挂掉以后进行投票，只需要2票就可以从机编程主机"><span class="nav-number">5.</span> <span class="nav-text">哨兵监听的主服务器    后面的2表示主机挂掉以后进行投票，只需要2票就可以从机编程主机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指定了Sentinel认为Redis实例已经失效所需的毫秒数。"><span class="nav-number">6.</span> <span class="nav-text">指定了Sentinel认为Redis实例已经失效所需的毫秒数。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#sentinel-failover-timeout-mymaster-18000"><span class="nav-number">7.</span> <span class="nav-text">sentinel failover-timeout mymaster 18000</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如果在该时间（ms）内未能完成failover操作，则认为该failover失败"><span class="nav-number">8.</span> <span class="nav-text">如果在该时间（ms）内未能完成failover操作，则认为该failover失败</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#sentinel-notification-script"><span class="nav-number">9.</span> <span class="nav-text">sentinel notification-script  </span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指定sentinel检测到该监控的redis实例指向的实例异常时，调用的报警脚本。该配置项可选，但是很常用"><span class="nav-number">10.</span> <span class="nav-text">指定sentinel检测到该监控的redis实例指向的实例异常时，调用的报警脚本。该配置项可选，但是很常用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Jedis-RedisTemplate"><span class="nav-number">10.0.1.</span> <span class="nav-text">Jedis/RedisTemplate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验注意"><span class="nav-number">10.0.2.</span> <span class="nav-text">实验注意</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Redis-Cluster集群、原理"><span class="nav-number">10.1.</span> <span class="nav-text">3.Redis Cluster集群、原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#集群实验"><span class="nav-number">10.1.1.</span> <span class="nav-text">集群实验</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bind-127-0-0-1-1"><span class="nav-number">11.</span> <span class="nav-text">bind 127.0.0.1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#集群原理"><span class="nav-number">11.0.1.</span> <span class="nav-text">集群原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-C源码解读"><span class="nav-number">11.1.</span> <span class="nav-text">4.C源码解读(*)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-redis-6新特性"><span class="nav-number">11.2.</span> <span class="nav-text">5.redis 6新特性(*)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-缓存设计与性能优化"><span class="nav-number">11.3.</span> <span class="nav-text">6.缓存设计与性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存设计的问题"><span class="nav-number">11.3.1.</span> <span class="nav-text">缓存设计的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开发规范与性能优化"><span class="nav-number">11.3.2.</span> <span class="nav-text">开发规范与性能优化</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/alex-next/images/avatar.jpg"
+      alt="alex">
+  <p class="site-author-name" itemprop="name">alex</p>
+  <div class="site-description" itemprop="description">时光静好,与君语;细水流年,与君同;繁华落尽,与君老.</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/alex-next/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/alex-next/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/alex-next/tags/">
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/alex-next/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">alex</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/alex-next/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/alex-next/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/pjax/pjax.min.js?v=0.2.8"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/alex-next/js/utils.js?v=7.4.0"></script><script src="/alex-next/js/motion.js?v=7.4.0"></script>
+<script src="/alex-next/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/alex-next/js/next-boot.js?v=7.4.0"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var id = element.id || '';
+    var src = element.src || '';
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (id !=='') {
+      script.id = element.id;
+    }
+    if (src !== '') {
+      script.src = src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/alex-next/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '84888b5ba3be0f56b2ed',
+      clientSecret: '1306406ecbdc02b679df3c95b94985753d302d6a',
+      repo: 'alex-next',
+      owner: 'alexander-wd',
+      admin: ['alexander-wd'],
+      id: 'c350f49c8a9702bbff2eb82dee8fc163',
+        language: 'zh-CN',
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+    </div>
+</body>
+</html>

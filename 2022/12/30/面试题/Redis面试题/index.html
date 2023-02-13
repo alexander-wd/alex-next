@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/alex-next/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/alex-next/images/logo.svg?v=7.4.0" color="#222">
+  <link rel="alternate" href="/alex-next/atom.xml" title="alex的博客 - github.com" type="application/atom+xml">
+
+<link rel="stylesheet" href="/alex-next/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/alex-next/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/alex-next/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="基础1.为什么要用 Redis/为什么要用缓存？高性能 假如用户第一次访问数据库中的某些数据的话，这个过程是比较慢，毕竟是从硬盘中读取的。但是，如果说，用户访问的数据属于高频数据并且不会经常改变的话，那么我们就可以很放心地将该用户访问的数据存在缓存中。 这样有什么好处呢？ 那就是保证用户下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。 高并发 一般像">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis面试题">
+<meta property="og:url" content="https://alexander-wd.github.io/2022/12/30/面试题/Redis面试题/index.html">
+<meta property="og:site_name" content="alex的博客 - github.com">
+<meta property="og:description" content="基础1.为什么要用 Redis/为什么要用缓存？高性能 假如用户第一次访问数据库中的某些数据的话，这个过程是比较慢，毕竟是从硬盘中读取的。但是，如果说，用户访问的数据属于高频数据并且不会经常改变的话，那么我们就可以很放心地将该用户访问的数据存在缓存中。 这样有什么好处呢？ 那就是保证用户下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。 高并发 一般像">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2023-02-13T10:11:56.867Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis面试题">
+<meta name="twitter:description" content="基础1.为什么要用 Redis/为什么要用缓存？高性能 假如用户第一次访问数据库中的某些数据的话，这个过程是比较慢，毕竟是从硬盘中读取的。但是，如果说，用户访问的数据属于高频数据并且不会经常改变的话，那么我们就可以很放心地将该用户访问的数据存在缓存中。 这样有什么好处呢？ 那就是保证用户下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。 高并发 一般像">
+  <link rel="canonical" href="https://alexander-wd.github.io/2022/12/30/面试题/Redis面试题/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Redis面试题 | alex的博客 - github.com</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/alex-next/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">alex的博客 - github.com</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/alex-next/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/alex-next/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/alex-next/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/alex-next/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/alexander-wd" class="github-corner" title="alex GitHub" aria-label="alex GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/12/30/面试题/Redis面试题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Redis面试题
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-12-30 17:10:20" itemprop="dateCreated datePublished" datetime="2022-12-30T17:10:20+08:00">2022-12-30</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 18:11:56" itemprop="dateModified" datetime="2023-02-13T18:11:56+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/面试题/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><h4 id="1-为什么要用-Redis-为什么要用缓存？"><a href="#1-为什么要用-Redis-为什么要用缓存？" class="headerlink" title="1.为什么要用 Redis/为什么要用缓存？"></a>1.为什么要用 Redis/为什么要用缓存？</h4><p><strong>高性能</strong></p>
+<p>假如用户第一次访问数据库中的某些数据的话，这个过程是比较慢，毕竟是从硬盘中读取的。但是，如果说，用户访问的数据属于高频数据并且不会经常改变的话，那么我们就可以很放心地将该用户访问的数据存在缓存中。</p>
+<p><strong>这样有什么好处呢？</strong> 那就是保证用户下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。</p>
+<p><strong>高并发</strong></p>
+<p>一般像 MySQL 这类的数据库的 QPS 大概都在 1w 左右（4 核 8g） ，但是使用 Redis 缓存之后很容易达到 10w+，甚至最高能达到 30w+（就单机 Redis 的情况，Redis 集群的话会更高）。</p>
+<h4 id="2-Redis-除了做缓存，还能做什么？"><a href="#2-Redis-除了做缓存，还能做什么？" class="headerlink" title="2.Redis 除了做缓存，还能做什么？"></a>2.Redis 除了做缓存，还能做什么？</h4><p><strong>分布式锁</strong> ： 通过 Redis 来做分布式锁是一种比较常见的方式。通常情况下，我们都是基于 Redisson 来实现分布式锁。关于 Redis 实现分布式锁的详细介绍，可以看我写的这篇文章：<a href="https://javaguide.cn/distributed-system/distributed-lock.html" target="_blank" rel="noopener">分布式锁详解open in new window</a> 。</p>
+<p><strong>限流</strong> ：一般是通过 Redis + Lua 脚本的方式来实现限流。相关阅读：<a href="https://mp.weixin.qq.com/s/kyFAWH3mVNJvurQDt4vchA" target="_blank" rel="noopener">《我司用了 6 年的 Redis 分布式限流器，可以说是非常厉害了！》open in new window</a>。</p>
+<p><strong>消息队列</strong> ：Redis 自带的 list 数据结构可以作为一个简单的队列使用。Redis 5.0 中增加的 Stream 类型的数据结构更加适合用来做消息队列。它比较类似于 Kafka，有主题和消费组的概念，支持消息持久化以及 ACK 机制。</p>
+<p><strong>复杂业务场景</strong> ：通过 Redis 以及 Redis 扩展（比如 Redisson）提供的数据结构，我们可以很方便地完成很多复杂的业务场景比如通过 bitmap 统计活跃用户、通过 sorted set 维护排行榜。</p>
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="1-Redis-常用的数据结构有哪些？"><a href="#1-Redis-常用的数据结构有哪些？" class="headerlink" title="1.Redis 常用的数据结构有哪些？"></a>1.Redis 常用的数据结构有哪些？</h4><ul>
+<li><strong>5 种基础数据结构</strong> ：String（字符串）、List（列表）、Set（集合）、Hash（散列）、Zset（有序集合）。</li>
+<li><strong>3 种特殊数据结构</strong> ：HyperLogLogs（基数统计）、Bitmap （位存储）、Geospatial (地理位置)。</li>
+</ul>
+<h4 id="2-String-的应用场景有哪些？"><a href="#2-String-的应用场景有哪些？" class="headerlink" title="2.String 的应用场景有哪些？"></a>2.String 的应用场景有哪些？</h4><ul>
+<li>常规数据（比如 session、token、、序列化后的对象）的缓存；</li>
+<li>计数比如用户单位时间的请求数（简单限流可以用到）、页面单位时间的访问数；</li>
+<li>分布式锁(利用 <code>SETNX key value</code> 命令可以实现一个最简易的分布式锁)；</li>
+</ul>
+<h4 id="3-String-还是-Hash-存储对象数据更好呢？"><a href="#3-String-还是-Hash-存储对象数据更好呢？" class="headerlink" title="3.String 还是 Hash 存储对象数据更好呢？"></a>3.String 还是 Hash 存储对象数据更好呢？</h4><ul>
+<li>String 存储的是序列化后的对象数据，存放的是整个对象。Hash 是对对象的每个字段单独存储，可以获取部分字段的信息，也可以修改或者添加部分字段，节省网络流量。如果对象中某些字段需要经常变动或者经常需要单独查询对象中的个别字段信息，Hash 就非常适合。</li>
+<li>String 存储相对来说更加节省内存，缓存相同数量的对象数据，String 消耗的内存约是 Hash 的一半。并且，存储具有多层嵌套的对象时也方便很多。如果系统对性能和资源消耗非常敏感的话，String 就非常适合。</li>
+</ul>
+<p>在绝大部分情况，我们建议使用 String 来存储对象数据即可！</p>
+<h4 id="4-购物车信息用-String-还是-Hash-存储更好呢"><a href="#4-购物车信息用-String-还是-Hash-存储更好呢" class="headerlink" title="4.购物车信息用 String 还是 Hash 存储更好呢?"></a>4.购物车信息用 String 还是 Hash 存储更好呢?</h4><p>由于购物车中的商品频繁修改和变动，购物车信息建议使用 Hash 存储：</p>
+<ul>
+<li>用户 id 为 key</li>
+<li>商品 id 为 field，商品数量为 value</li>
+</ul>
+<p><img alt="3" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230131143501.png"><br>操作<br>    添加商品：hset cart:1001 10088 1<br>    增加数量：hincrby cart:1001 10088 1<br>    商品总数：hlen cart:1001<br>    删除商品：hdel cart:1001 10088<br>    获取购物车所有商品：hgetall cart:1001</p>
+<h4 id="5-使用-Redis-实现一个排行榜怎么做？"><a href="#5-使用-Redis-实现一个排行榜怎么做？" class="headerlink" title="5.使用 Redis 实现一个排行榜怎么做？"></a>5.使用 Redis 实现一个排行榜怎么做？</h4><p>Redis 中有一个叫做 <code>sorted set</code> 的数据结构经常被用在各种排行榜的场景，比如直播间送礼物的排行榜、朋友圈的微信步数排行榜、王者荣耀中的段位排行榜、话题热度排行榜等等。</p>
+<p>相关的一些 Redis 命令: <code>ZRANGE</code> (从小到大排序) 、 <code>ZREVRANGE</code> （从大到小排序）、<code>ZREVRANK</code> (指定元素排名)。</p>
+<p><img alt="8" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230131143757.png"></p>
+<h4 id="6-使用-Set-实现抽奖系统需要用到什么命令？"><a href="#6-使用-Set-实现抽奖系统需要用到什么命令？" class="headerlink" title="6.使用 Set 实现抽奖系统需要用到什么命令？"></a>6.使用 Set 实现抽奖系统需要用到什么命令？</h4><ul>
+<li><code>SPOP key count</code> ： 随机移除并获取指定集合中一个或多个元素，适合不允许重复中奖的场景。</li>
+<li><code>SRANDMEMBER key count</code> : 随机获取指定集合中指定数量的元素，适合允许重复中奖的场景。</li>
+</ul>
+<h3 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h3><h4 id="1-Redis是单线程吗"><a href="#1-Redis是单线程吗" class="headerlink" title="1.Redis是单线程吗"></a>1.Redis是单线程吗</h4><p>​    Redis 的单线程主要是指 Redis 的网络 IO 和键值对读写是由一个线程来完成的，这也是 Redis 对外 提供键值存储服务的主要流程。但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。</p>
+<h4 id="2-Redis不是单线程为什么还能这么快"><a href="#2-Redis不是单线程为什么还能这么快" class="headerlink" title="2.Redis不是单线程为什么还能这么快"></a>2.Redis不是单线程为什么还能这么快</h4><p>​    因为它所有数据都在内存中，所有的运算都是内存级别的运算</p>
+<h4 id="3-Redis-单线程如何处理那么多的并发客户端连接"><a href="#3-Redis-单线程如何处理那么多的并发客户端连接" class="headerlink" title="3.Redis 单线程如何处理那么多的并发客户端连接"></a>3.Redis 单线程如何处理那么多的并发客户端连接</h4><p>​    NIO多路复用<br>​        redis利用epoll来实现IO多路复用，将连接信息和事件放到队列中，依次放到 文件事件分派器，事件分派器将事件分发给事件处理器</p>
+<p><img alt="10" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230131144326.png"></p>
+<h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><h4 id="1-Redis-给缓存数据设置过期时间有啥用？"><a href="#1-Redis-给缓存数据设置过期时间有啥用？" class="headerlink" title="1.Redis 给缓存数据设置过期时间有啥用？"></a>1.Redis 给缓存数据设置过期时间有啥用？</h4><p>1.<strong>有助于缓解内存的消耗</strong></p>
+<p>2.自动判断过期数据并删除，比传统数据库要方便</p>
+<h4 id="2-过期的数据的删除策略了解么？"><a href="#2-过期的数据的删除策略了解么？" class="headerlink" title="2.过期的数据的删除策略了解么？"></a>2.过期的数据的删除策略了解么？</h4><p>如果假设你设置了一批 key 只能存活 1 分钟，那么 1 分钟后，Redis 是怎么对这批 key 进行删除的呢？</p>
+<p>常用的过期数据的删除策略就两个（重要！自己造缓存轮子的时候需要格外考虑的东西）：</p>
+<ol>
+<li><strong>惰性删除</strong> ：只会在取出 key 的时候才对数据进行过期检查。这样对 CPU 最友好，但是可能会造成太多过期 key 没有被删除。</li>
+<li><strong>定期删除</strong> ： 每隔一段时间抽取一批 key 执行删除过期 key 操作。并且，Redis 底层会通过限制删除操作执行的时长和频率来减少删除操作对 CPU 时间的影响。</li>
+</ol>
+<p>定期删除对内存更加友好，惰性删除对 CPU 更加友好。两者各有千秋，所以 Redis 采用的是 <strong>定期删除+惰性/懒汉式删除</strong> 。</p>
+<p>但是，仅仅通过给 key 设置过期时间还是有问题的。因为还是可能存在定期删除和惰性删除漏掉了很多过期 key 的情况。这样就导致大量过期 key 堆积在内存里，然后就 Out of memory 了。</p>
+<p>怎么解决这个问题呢？答案就是：<strong>Redis 内存淘汰机制。</strong></p>
+<h4 id="3-Redis-内存淘汰机制了解么？"><a href="#3-Redis-内存淘汰机制了解么？" class="headerlink" title="3.Redis 内存淘汰机制了解么？"></a>3.Redis 内存淘汰机制了解么？</h4><blockquote>
+<p>相关问题：MySQL 里有 2000w 数据，Redis 中只存 20w 的数据，如何保证 Redis 中的数据都是热点数据?</p>
+</blockquote>
+<p>Redis 提供 6 种数据淘汰策略：</p>
+<p><strong>volatile-lru（least recently used）</strong>：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰</p>
+<p><strong>volatile-ttl</strong>：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰</p>
+<p><strong>volatile-random</strong>：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰</p>
+<p><strong>allkeys-lru（least recently used）</strong>：当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的 key（这个是最常用的）</p>
+<p><strong>allkeys-random</strong>：从数据集（server.db[i].dict）中任意选择数据淘汰</p>
+<p><strong>no-eviction</strong>：禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会报错。这个应该没人使用吧！</p>
+<p>4.0 版本后增加以下两种：</p>
+<p><strong>volatile-lfu（least frequently used）</strong>：从已设置过期时间的数据集（server.db[i].expires）中挑选最不经常使用的数据淘汰</p>
+<p><strong>allkeys-lfu（least frequently used）</strong>：当内存不足以容纳新写入数据时，在键空间中，移除最不经常使用的 key</p>
+<h3 id="持久化机制"><a href="#持久化机制" class="headerlink" title="持久化机制"></a>持久化机制</h3><h4 id="1-怎么保证-Redis-挂掉之后再重启数据可以进行恢复"><a href="#1-怎么保证-Redis-挂掉之后再重启数据可以进行恢复" class="headerlink" title="1.怎么保证 Redis 挂掉之后再重启数据可以进行恢复"></a>1.怎么保证 Redis 挂掉之后再重启数据可以进行恢复</h4><h4 id="2-什么是-RDB-持久化？"><a href="#2-什么是-RDB-持久化？" class="headerlink" title="2.什么是 RDB 持久化？"></a>2.什么是 RDB 持久化？</h4><p>Redis 可以通过创建快照来获得存储在内存里面的数据在某个时间点上的副本。Redis 创建快照之后，可以对快照进行备份，可以将快照复制到其他服务器从而创建具有相同数据的服务器副本（Redis 主从结构，主要用来提高 Redis 性能），还可以将快照留在原地以便重启服务器的时候使用。</p>
+<p>快照持久化是 Redis 默认采用的持久化方式，在 <code>redis.conf</code> 配置文件中默认有此下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">save 900 1           #在900秒(15分钟)之后，如果至少有1个key发生变化，Redis就会自动触发bgsave命令创建快照。</span><br><span class="line"></span><br><span class="line">save 300 10          #在300秒(5分钟)之后，如果至少有10个key发生变化，Redis就会自动触发bgsave命令创建快照。</span><br><span class="line"></span><br><span class="line">save 60 10000        #在60秒(1分钟)之后，如果至少有10000个key发生变化，Redis就会自动触发bgsave命令创建快照。</span><br></pre></td></tr></table></figure>
+<h4 id="3-RDB-创建快照时会阻塞主线程吗？"><a href="#3-RDB-创建快照时会阻塞主线程吗？" class="headerlink" title="3.RDB 创建快照时会阻塞主线程吗？"></a>3.RDB 创建快照时会阻塞主线程吗？</h4><p>Redis 提供了两个命令来生成 RDB 快照文件：</p>
+<ul>
+<li><code>save</code> : 主线程执行，会阻塞主线程；</li>
+<li><code>bgsave</code> : 子线程执行，不会阻塞主线程，默认选项。</li>
+</ul>
+<h4 id="4-什么是-AOF-持久化？"><a href="#4-什么是-AOF-持久化？" class="headerlink" title="4.什么是 AOF 持久化？"></a>4.什么是 AOF 持久化？</h4><p>与快照持久化相比，AOF 持久化的实时性更好，因此已成为主流的持久化方案。默认情况下 Redis 没有开启 AOF（append only file）方式的持久化，可以通过 appendonly 参数开启：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
+<p>开启 AOF 持久化后每执行一条会更改 Redis 中的数据的命令，Redis 就会将该命令写入到内存缓存 <code>server.aof_buf</code> 中，然后再根据 <code>appendfsync</code> 配置来决定何时将其同步到硬盘中的 AOF 文件。</p>
+<p>AOF 文件的保存位置和 RDB 文件的位置相同，都是通过 dir 参数设置的，默认的文件名是 <code>appendonly.aof</code></p>
+<p>在 Redis 的配置文件中存在三种不同的 AOF 持久化方式，它们分别是：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">appendfsync always    <span class="comment">#每次有数据修改发生时都会写入AOF文件,这样会严重降低Redis的速度</span></span><br><span class="line">appendfsync everysec  <span class="comment">#每秒钟同步一次，显式地将多个写命令同步到硬盘</span></span><br><span class="line">appendfsync no        <span class="comment">#让操作系统决定何时进行同步</span></span><br></pre></td></tr></table></figure>
+<p>为了兼顾数据和写入性能，用户可以考虑 <code>appendfsync everysec</code> 选项 ，让 Redis 每秒同步一次 AOF 文件，Redis 性能几乎没受到任何影响。而且这样即使出现系统崩溃，用户最多只会丢失一秒之内产生的数据。当硬盘忙于执行写入操作的时候，Redis 还会优雅的放慢自己的速度以便适应硬盘的最大写入速度。</p>
+<h4 id="5-AOF-日志是如何实现的？"><a href="#5-AOF-日志是如何实现的？" class="headerlink" title="5.AOF 日志是如何实现的？"></a>5.AOF 日志是如何实现的？</h4><p>关系型数据库（如 MySQL）通常都是执行命令之前记录日志（方便故障恢复），而 Redis AOF 持久化机制是在执行完命令之后再记录日志。</p>
+<p><img alt="AOF 记录日志过程" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230131155723.png"></p>
+<p><strong>为什么是在执行完命令之后记录日志呢？</strong></p>
+<ul>
+<li>避免额外的检查开销，AOF 记录日志不会对命令进行语法检查；</li>
+<li>在命令执行完之后再记录，不会阻塞当前的命令执行。</li>
+</ul>
+<p>这样也带来了风险（我在前面介绍 AOF 持久化的时候也提到过）：</p>
+<ul>
+<li>如果刚执行完命令 Redis 就宕机会导致对应的修改丢失；</li>
+<li>可能会阻塞后续其他命令的执行（AOF 记录日志是在 Redis 主线程中进行的）。</li>
+</ul>
+<h4 id="6-如何选择-RDB-和-AOF？"><a href="#6-如何选择-RDB-和-AOF？" class="headerlink" title="6.如何选择 RDB 和 AOF？"></a>6.如何选择 RDB 和 AOF？</h4><p>关于 RDB 和 AOF 的优缺点，官网上面也给了比较详细的说明<a href="https://redis.io/docs/manual/persistence/" target="_blank" rel="noopener">Redis persistenceopen in new window</a>，这里结合自己的理解简单总结一下。</p>
+<p><strong>RDB 比 AOF 优秀的地方</strong> ：</p>
+<ul>
+<li>RDB 文件存储的内容是经过压缩的二进制数据， 保存着某个时间点的数据集，文件很小，适合做数据的备份，灾难恢复。AOF 文件存储的是每一次写命令，类似于 MySQL 的 binlog 日志，通常会必 RDB 文件大很多。当 AOF 变得太大时，Redis 能够在后台自动重写 AOF。新的 AOF 文件和原有的 AOF 文件所保存的数据库状态一样，但体积更小。不过， Redis 7.0 版本之前，如果在重写期间有写入命令，AOF 可能会使用大量内存，重写期间到达的所有写入命令都会写入磁盘两次。</li>
+<li>使用 RDB 文件恢复数据，直接解析还原数据即可，不需要一条一条地执行命令，速度非常快。而 AOF 则需要依次执行每个写命令，速度非常慢。也就是说，与 AOF 相比，恢复大数据集的时候，RDB 速度更快。</li>
+</ul>
+<p><strong>AOF 比 RDB 优秀的地方</strong> ：</p>
+<ul>
+<li>RDB 的数据安全性不如 AOF，没有办法实时或者秒级持久化数据。生成 RDB 文件的过程是比繁重的， 虽然 BGSAVE 子进程写入 RDB 文件的工作不会阻塞主线程，但会对机器的 CPU 资源和内存资源产生影响，严重的情况下甚至会直接把 Redis 服务干宕机。AOF 支持秒级数据丢失（取决 fsync 策略，如果是 everysec，最多丢失 1 秒的数据），仅仅是追加命令到 AOF 文件，操作轻量。</li>
+<li>RDB 文件是以特定的二进制格式保存的，并且在 Redis 版本演进中有多个版本的 RDB，所以存在老版本的 Redis 服务不兼容新版本的 RDB 格式的问题。</li>
+<li>AOF 以一种易于理解和解析的格式包含所有操作的日志。你可以轻松地导出 AOF 文件进行分析，你也可以直接操作 AOF 文件来解决一些问题。比如，如果执行<code>FLUSHALL</code>命令意外地刷新了所有内容后，只要 AOF 文件没有被重写，删除最新命令并重启即可恢复之前的状态。</li>
+</ul>
+<h4 id="7-AOF-重写了解吗？"><a href="#7-AOF-重写了解吗？" class="headerlink" title="7.AOF 重写了解吗？"></a>7.AOF 重写了解吗？</h4><p>当 AOF 变得太大时，Redis 能够在后台自动重写 AOF 产生一个新的 AOF 文件，这个新的 AOF 文件和原有的 AOF 文件所保存的数据库状态一样，但体积更小。</p>
+<p>AOF 重写是一个有歧义的名字，该功能是通过读取数据库中的键值对来实现的，程序无须对现有 AOF 文件进行任何读入、分析或者写入操作。</p>
+<p>在执行 <code>BGREWRITEAOF</code> 命令时，Redis 服务器会维护一个 AOF 重写缓冲区，该缓冲区会在子进程创建新 AOF 文件期间，记录服务器执行的所有写命令。当子进程完成创建新 AOF 文件的工作之后，服务器会将重写缓冲区中的所有内容追加到新 AOF 文件的末尾，使得新的 AOF 文件保存的数据库状态与现有的数据库状态一致。最后，服务器用新的 AOF 文件替换旧的 AOF 文件，以此来完成 AOF 文件重写操作。</p>
+<p>Redis 7.0 版本之前，如果在重写期间有写入命令，AOF 可能会使用大量内存，重写期间到达的所有写入命令都会写入磁盘两次。</p>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><h4 id="1-什么是-bigkey？有什么危害？怎么发现？如何解决？"><a href="#1-什么是-bigkey？有什么危害？怎么发现？如何解决？" class="headerlink" title="1.什么是 bigkey？有什么危害？怎么发现？如何解决？"></a>1.什么是 bigkey？有什么危害？怎么发现？如何解决？</h4><p><strong>是什么</strong>：简单来说，如果一个 key 对应的 value 所占用的内存比较大，那这个 key 就可以看作是 bigkey。具体多大才算大呢？有一个不是特别精确的参考标准：string 类型的 value 超过 10 kb，复合类型的 value 包含的元素超过 5000 个（对于复合类型的 value 来说，不一定包含的元素越多，占用的内存就越多）。：</p>
+<p><strong>危害</strong>：除了会消耗更多的内存空间，bigkey 对性能也会有比较大的影响。因此，我们应该尽量避免写入 bigkey！</p>
+<p><strong>发现</strong>：</p>
+<blockquote>
+<p> <strong>1、使用 Redis 自带的 <code>--bigkeys</code> 参数来查找。</strong></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&gt;  C:\Users\alex&gt;redis-cli --bigkeys</span><br><span class="line">&gt;  </span><br><span class="line">&gt;  <span class="comment"># Scanning the entire keyspace to find biggest keys as well as</span></span><br><span class="line">&gt;  <span class="comment"># average sizes per key type.  You can use -i 0.1 to sleep 0.1 sec</span></span><br><span class="line">&gt;  <span class="comment"># per 100 SCAN commands (not usually needed).</span></span><br><span class="line">&gt;  </span><br><span class="line">&gt;  [00.00%] Biggest string found so far <span class="string">'zhuge10'</span> with 2 bytes</span><br><span class="line">&gt;  [00.00%] Biggest string found so far <span class="string">'groupLeapfrog'</span> with 478 bytes</span><br><span class="line">&gt;  [62.50%] Biggest string found so far <span class="string">'storeLeapfrog'</span> with 555 bytes</span><br><span class="line">&gt;  </span><br><span class="line">&gt;  -------- summary -------</span><br><span class="line">&gt;  </span><br><span class="line">&gt;  Sampled 16 keys <span class="keyword">in</span> the keyspace!</span><br><span class="line">&gt;  Total key length <span class="keyword">in</span> bytes is 120 (avg len 7.50)</span><br><span class="line">&gt;  </span><br><span class="line">&gt;  Biggest string found <span class="string">'storeLeapfrog'</span> has 555 bytes</span><br><span class="line">&gt;  </span><br><span class="line">&gt;  0 lists with 0 items (00.00% of keys, avg size 0.00)</span><br><span class="line">&gt;  0 hashs with 0 fields (00.00% of keys, avg size 0.00)</span><br><span class="line">&gt;  16 strings with 1053 bytes (100.00% of keys, avg size 65.81)</span><br><span class="line">&gt;  0 streams with 0 entries (00.00% of keys, avg size 0.00)</span><br><span class="line">&gt;  0 sets with 0 members (00.00% of keys, avg size 0.00)</span><br><span class="line">&gt;  0 zsets with 0 members (00.00% of keys, avg size 0.00)</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p> 从这个命令的运行结果，我们可以看出：这个命令会扫描(Scan) Redis 中的所有 key ，会对 Redis 的性能有一点影响。并且，这种方式只能找出每种数据结构 top 1 bigkey（占用内存最大的 string 数据类型，包含元素最多的复合数据类型）。</p>
+<p> <strong>2、分析 RDB 文件</strong></p>
+<p> 通过分析 RDB 文件来找出 big key。这种方案的前提是你的 Redis 采用的是 RDB 持久化。</p>
+<p> 网上有现成的代码/工具可以直接拿来使用：</p>
+<ul>
+<li><a href="https://github.com/sripathikrishnan/redis-rdb-tools" target="_blank" rel="noopener">redis-rdb-toolsopen in new window</a> ：Python 语言写的用来分析 Redis 的 RDB 快照文件用的工具</li>
+<li><a href="https://github.com/weiyanwei412/rdb_bigkeys" target="_blank" rel="noopener">rdb_bigkeysopen in new window</a> : Go 语言写的用来分析 Redis 的 RDB 快照文件用的工具，性能更好。</li>
+</ul>
+</blockquote>
+<h4 id="2-大量-key-集中过期问题"><a href="#2-大量-key-集中过期问题" class="headerlink" title="2.大量 key 集中过期问题"></a>2.大量 key 集中过期问题</h4><p>我在上面提到过：对于过期 key，Redis 采用的是 <strong>定期删除+惰性/懒汉式删除</strong> 策略。</p>
+<p>定期删除执行过程中，如果突然遇到大量过期 key 的话，客户端请求必须等待定期清理过期 key 任务线程执行完成，因为这个这个定期任务线程是在 Redis 主线程中执行的。这就导致客户端请求没办法被及时处理，响应速度会比较慢。</p>
+<p>如何解决呢？下面是两种常见的方法：</p>
+<p>1.给 key 设置随机过期时间。</p>
+<p>2.开启 lazy-free（惰性删除/延迟释放）。lazy-free 特性是 Redis 4.0 开始引入的，指的是让 Redis 采用异步方式延迟释放 key 使用的内存，将该操作交给单独的子线程处理，避免阻塞主线程。</p>
+<p>个人建议不管是否开启 lazy-free，我们都尽量给 key 设置随机过期时间。</p>
+<h3 id="生产问题"><a href="#生产问题" class="headerlink" title="生产问题"></a>生产问题</h3><h4 id="1-什么是缓存穿透？解决方法？"><a href="#1-什么是缓存穿透？解决方法？" class="headerlink" title="1.什么是缓存穿透？解决方法？"></a>1.什么是缓存穿透？解决方法？</h4><p>含义：缓存穿透说简单点就是大量请求的 key 是不合理的，<strong>根本不存在于缓存中，也不存在于数据库中</strong> 。这就导致这些请求直接到了数据库上，根本没有经过缓存这一层，对数据库造成了巨大的压力，可能直接就被这么多请求弄宕机了。</p>
+<p>示意图：</p>
+<p><img alt="缓存穿透" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230131225232.png"></p>
+<p>产生原因：某个黑客故意制造一些非法的 key 发起大量请求，导致大量请求落到数据库，结果数据库上也没有查到对应的数据。也就是说这些请求最终都落到了数据库上，对数据库造成了巨大的压力。</p>
+<p>解决方法：最基本的就是首先做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。比如查询的数据库 id 不能小于 0、传入的邮箱格式不对的时候直接返回错误消息给客户端等等。</p>
+<p><strong>1）缓存无效 key</strong></p>
+<p>如果缓存和数据库都查不到某个 key 的数据就写一个到 Redis 中去并设置过期时间，具体命令如下： <code>SET key value EX 10086</code> 。这种方式可以解决请求的 key 变化不频繁的情况，如果黑客恶意攻击，每次构建不同的请求 key，会导致 Redis 中缓存大量无效的 key 。很明显，这种方案并不能从根本上解决此问题。如果非要用这种方式来解决穿透问题的话，尽量将无效的 key 的过期时间设置短一点比如 1 分钟。</p>
+<p>另外，这里多说一嘴，一般情况下我们是这样设计 key 的： <code>表名:列名:主键名:主键值</code> 。</p>
+<p>如果用 Java 代码展示的话，差不多是下面这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getObjectInclNullById</span><span class="params">(Integer id)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从缓存中获取数据</span></span><br><span class="line">    Object cacheValue = cache.get(id);</span><br><span class="line">    <span class="comment">// 缓存为空</span></span><br><span class="line">    <span class="keyword">if</span> (cacheValue == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 从数据库中获取</span></span><br><span class="line">        Object storageValue = storage.get(key);</span><br><span class="line">        <span class="comment">// 缓存空对象</span></span><br><span class="line">        cache.set(key, storageValue);</span><br><span class="line">        <span class="comment">// 如果存储数据为空，需要设置一个过期时间(300秒)</span></span><br><span class="line">        <span class="keyword">if</span> (storageValue == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 必须设置过期时间，否则有被攻击的风险</span></span><br><span class="line">            cache.expire(key, <span class="number">60</span> * <span class="number">5</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> storageValue;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cacheValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2）布隆过滤器</strong></p>
+<blockquote>
+<p>对于恶意攻击，向服务器请求大量不存在的数据造成的缓存穿透，还可以用布隆过滤器先做一次过滤，对于不</p>
+<p>存在的数据布隆过滤器一般都能够过滤掉，不让请求再往后端发送。当布隆过滤器说<strong>某个值存在时，这个值可</strong></p>
+<p><strong>能不存在；当它说不存在时，那就肯定不存在。</strong></p>
+</blockquote>
+<p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地判断一个给定数据是否存在于海量数据中。我们需要的就是判断 key 是否合法，有没有感觉布隆过滤器就是我们想要找的那个“人”。</p>
+<p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话才会走下面的流程。</p>
+<p>加入布隆过滤器之后的缓存处理流程图如下。</p>
+<p><img alt="加入布隆过滤器之后的缓存处理流程图" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230201110610.png"></p>
+<p><strong>布隆过滤器的原理</strong>：</p>
+<p>我们先来看一下，<strong>当一个元素加入布隆过滤器中的时候，会进行哪些操作：</strong></p>
+<p>1.使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</p>
+<p>2.根据得到的哈希值，在位数组中把对应下标的值置为 1。</p>
+<p>我们再来看一下，<strong>当我们需要判断一个元素是否存在于布隆过滤器的时候，会进行哪些操作：</strong></p>
+<p>1.对给定元素再次进行相同的哈希计算；</p>
+<p>2.得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</p>
+<p>然后，一定会出现这样一种情况：<strong>不同的字符串可能哈希出来的位置相同。</strong> （可以适当增加位数组大小或者调整我们的哈希函数来降低概率。</p>
+<h4 id="2-什么是缓存击穿？怎么解决？"><a href="#2-什么是缓存击穿？怎么解决？" class="headerlink" title="2.什么是缓存击穿？怎么解决？"></a>2.什么是缓存击穿？怎么解决？</h4><p>缓存击穿中，请求的 key 对应的是 <strong>热点数据</strong> ，该数据 <strong>存在于数据库中，但不存在于缓存中（通常是因为缓存中的那份数据已经过期）</strong> 。这就可能会导致瞬时大量的请求直接打到了数据库上，对数据库造成了巨大的压力，可能直接就被这么多请求弄宕机了。</p>
+<p><img alt="缓存击穿" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230201142053.png"></p>
+<p>举个例子 ：秒杀进行过程中，缓存中的某个秒杀商品的数据突然过期，这就导致瞬时大量对该商品的请求直接落到数据库上，对数据库造成了巨大的压力。</p>
+<h5 id="有哪些解决办法？"><a href="#有哪些解决办法？" class="headerlink" title="有哪些解决办法？"></a>有哪些解决办法？</h5><ul>
+<li>设置热点数据永不过期或者过期时间比较长。</li>
+<li>针对热点数据提前预热，将其存入缓存中并设置合理的过期时间比如秒杀场景下的数据在秒杀结束之前不过期。</li>
+<li>请求数据库写数据到缓存之前，先获取互斥锁，保证只有一个请求会落到数据库上，减少数据库的压力。</li>
+</ul>
+<h4 id="3-缓存穿透和缓存击穿有什么区别？"><a href="#3-缓存穿透和缓存击穿有什么区别？" class="headerlink" title="3.缓存穿透和缓存击穿有什么区别？"></a>3.缓存穿透和缓存击穿有什么区别？</h4><p>缓存穿透中，请求的 key 既不存在于缓存中，也不存在于数据库中。</p>
+<p>缓存击穿中，请求的 key 对应的是 <strong>热点数据</strong> ，该数据 <strong>存在于数据库中，但不存在于缓存中（通常是因为缓存中的那份数据已经过期）</strong> 。</p>
+<h4 id="4-什么是缓存雪崩？解决方法？"><a href="#4-什么是缓存雪崩？解决方法？" class="headerlink" title="4.什么是缓存雪崩？解决方法？"></a>4.什么是缓存雪崩？解决方法？</h4><p>实际上，缓存雪崩描述的就是这样一个简单的场景：<strong>缓存在同一时间大面积的失效，导致大量的请求都直接落到了数据库上，对数据库造成了巨大的压力。</strong> 这就好比雪崩一样，摧枯拉朽之势，数据库的压力可想而知，可能直接就被这么多请求弄宕机了。</p>
+<p>另外，缓存服务宕机也会导致缓存雪崩现象，导致所有的请求都落到了数据库上。</p>
+<p><img alt="缓存雪崩" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Redis/20230201142448.png"></p>
+<p>举个例子 ：数据库中的大量数据在同一时间过期，这个时候突然有大量的请求需要访问这些过期的数据。这就导致大量的请求直接落到数据库上，对数据库造成了巨大的压力。</p>
+<h5 id="有哪些解决办法？-1"><a href="#有哪些解决办法？-1" class="headerlink" title="有哪些解决办法？"></a>有哪些解决办法？</h5><p><strong>针对 Redis 服务不可用的情况：</strong></p>
+<p>1.采用 Redis 集群，避免单机出现问题整个缓存服务都没办法使用。</p>
+<p>2.限流，避免同时处理大量的请求。</p>
+<p><strong>针对热点缓存失效的情况：</strong></p>
+<p>==1.设置不同的失效时间比如随机设置缓存的失效时间。==</p>
+<p>2.缓存永不失效（不太推荐，实用性太差）。</p>
+<p>3.设置二级缓存。</p>
+<h4 id="5-缓存雪崩和缓存击穿有什么区别？"><a href="#5-缓存雪崩和缓存击穿有什么区别？" class="headerlink" title="5.缓存雪崩和缓存击穿有什么区别？"></a>5.缓存雪崩和缓存击穿有什么区别？</h4><p>缓存雪崩和缓存击穿比较像，但缓存雪崩导致的原因是缓存中的大量或者所有数据失效，缓存击穿导致的原因主要是某个热点数据不存在与缓存中（通常是因为缓存中的那份数据已经过期）。</p>
+<h3 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h3><h4 id="Redis-Sentinel"><a href="#Redis-Sentinel" class="headerlink" title="Redis Sentinel"></a><strong>Redis Sentinel</strong></h4><h5 id="什么是-Sentinel？-有什么用？"><a href="#什么是-Sentinel？-有什么用？" class="headerlink" title="什么是 Sentinel？ 有什么用？"></a>什么是 Sentinel？ 有什么用？</h5><h5 id="Sentinel-如何检测节点是否下线？主观下线与客观下线的区别"><a href="#Sentinel-如何检测节点是否下线？主观下线与客观下线的区别" class="headerlink" title="Sentinel 如何检测节点是否下线？主观下线与客观下线的区别?"></a>Sentinel 如何检测节点是否下线？主观下线与客观下线的区别?</h5><h5 id="Sentinel-是如何实现故障转移的？"><a href="#Sentinel-是如何实现故障转移的？" class="headerlink" title="Sentinel 是如何实现故障转移的？"></a>Sentinel 是如何实现故障转移的？</h5><h5 id="为什么建议部署多个-sentinel-节点（哨兵集群）？"><a href="#为什么建议部署多个-sentinel-节点（哨兵集群）？" class="headerlink" title="为什么建议部署多个 sentinel 节点（哨兵集群）？"></a>为什么建议部署多个 sentinel 节点（哨兵集群）？</h5><h5 id="Sentinel-如何选择出新的-master（选举机制）"><a href="#Sentinel-如何选择出新的-master（选举机制）" class="headerlink" title="Sentinel 如何选择出新的 master（选举机制）?"></a>Sentinel 如何选择出新的 master（选举机制）?</h5><h5 id="如何从-Sentinel-集群中选择出-Leader-？"><a href="#如何从-Sentinel-集群中选择出-Leader-？" class="headerlink" title="如何从 Sentinel 集群中选择出 Leader ？"></a>如何从 Sentinel 集群中选择出 Leader ？</h5><h5 id="Sentinel-可以防止脑裂吗？"><a href="#Sentinel-可以防止脑裂吗？" class="headerlink" title="Sentinel 可以防止脑裂吗？"></a>Sentinel 可以防止脑裂吗？</h5><h4 id="Redis-Cluster"><a href="#Redis-Cluster" class="headerlink" title="Redis Cluster"></a><strong>Redis Cluster</strong></h4><h5 id="为什么需要-Redis-Cluster？解决了什么问题？有什么优势？"><a href="#为什么需要-Redis-Cluster？解决了什么问题？有什么优势？" class="headerlink" title="为什么需要 Redis Cluster？解决了什么问题？有什么优势？"></a>为什么需要 Redis Cluster？解决了什么问题？有什么优势？</h5><h5 id="Redis-Cluster-是如何分片的？"><a href="#Redis-Cluster-是如何分片的？" class="headerlink" title="Redis Cluster 是如何分片的？"></a>Redis Cluster 是如何分片的？</h5><h5 id="为什么-Redis-Cluster-的哈希槽是-16384-个"><a href="#为什么-Redis-Cluster-的哈希槽是-16384-个" class="headerlink" title="为什么 Redis Cluster 的哈希槽是 16384 个?"></a>为什么 Redis Cluster 的哈希槽是 16384 个?</h5><h5 id="如何确定给定-key-的应该分布到哪个哈希槽中？"><a href="#如何确定给定-key-的应该分布到哪个哈希槽中？" class="headerlink" title="如何确定给定 key 的应该分布到哪个哈希槽中？"></a>如何确定给定 key 的应该分布到哪个哈希槽中？</h5><h5 id="Redis-Cluster-支持重新分配哈希槽吗？"><a href="#Redis-Cluster-支持重新分配哈希槽吗？" class="headerlink" title="Redis Cluster 支持重新分配哈希槽吗？"></a>Redis Cluster 支持重新分配哈希槽吗？</h5><h5 id="Redis-Cluster-扩容缩容期间可以提供服务吗？"><a href="#Redis-Cluster-扩容缩容期间可以提供服务吗？" class="headerlink" title="Redis Cluster 扩容缩容期间可以提供服务吗？"></a>Redis Cluster 扩容缩容期间可以提供服务吗？</h5><h5 id="Redis-Cluster-中的节点是怎么进行通信的？"><a href="#Redis-Cluster-中的节点是怎么进行通信的？" class="headerlink" title="Redis Cluster 中的节点是怎么进行通信的？"></a>Redis Cluster 中的节点是怎么进行通信的？</h5>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/alex-next/tags/redis/" rel="tag"># redis</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/alex-next/2022/12/24/面试题/SpringMVC面试题/" rel="next" title="SpringMVC面试题">
+                  <i class="fa fa-chevron-left"></i> SpringMVC面试题
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础"><span class="nav-number">1.</span> <span class="nav-text">基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-为什么要用-Redis-为什么要用缓存？"><span class="nav-number">1.1.</span> <span class="nav-text">1.为什么要用 Redis/为什么要用缓存？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Redis-除了做缓存，还能做什么？"><span class="nav-number">1.2.</span> <span class="nav-text">2.Redis 除了做缓存，还能做什么？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构"><span class="nav-number">2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Redis-常用的数据结构有哪些？"><span class="nav-number">2.1.</span> <span class="nav-text">1.Redis 常用的数据结构有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-String-的应用场景有哪些？"><span class="nav-number">2.2.</span> <span class="nav-text">2.String 的应用场景有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-String-还是-Hash-存储对象数据更好呢？"><span class="nav-number">2.3.</span> <span class="nav-text">3.String 还是 Hash 存储对象数据更好呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-购物车信息用-String-还是-Hash-存储更好呢"><span class="nav-number">2.4.</span> <span class="nav-text">4.购物车信息用 String 还是 Hash 存储更好呢?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-使用-Redis-实现一个排行榜怎么做？"><span class="nav-number">2.5.</span> <span class="nav-text">5.使用 Redis 实现一个排行榜怎么做？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-使用-Set-实现抽奖系统需要用到什么命令？"><span class="nav-number">2.6.</span> <span class="nav-text">6.使用 Set 实现抽奖系统需要用到什么命令？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程模型"><span class="nav-number">3.</span> <span class="nav-text">线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Redis是单线程吗"><span class="nav-number">3.1.</span> <span class="nav-text">1.Redis是单线程吗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Redis不是单线程为什么还能这么快"><span class="nav-number">3.2.</span> <span class="nav-text">2.Redis不是单线程为什么还能这么快</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Redis-单线程如何处理那么多的并发客户端连接"><span class="nav-number">3.3.</span> <span class="nav-text">3.Redis 单线程如何处理那么多的并发客户端连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存管理"><span class="nav-number">4.</span> <span class="nav-text">内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Redis-给缓存数据设置过期时间有啥用？"><span class="nav-number">4.1.</span> <span class="nav-text">1.Redis 给缓存数据设置过期时间有啥用？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-过期的数据的删除策略了解么？"><span class="nav-number">4.2.</span> <span class="nav-text">2.过期的数据的删除策略了解么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Redis-内存淘汰机制了解么？"><span class="nav-number">4.3.</span> <span class="nav-text">3.Redis 内存淘汰机制了解么？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#持久化机制"><span class="nav-number">5.</span> <span class="nav-text">持久化机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-怎么保证-Redis-挂掉之后再重启数据可以进行恢复"><span class="nav-number">5.1.</span> <span class="nav-text">1.怎么保证 Redis 挂掉之后再重启数据可以进行恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-什么是-RDB-持久化？"><span class="nav-number">5.2.</span> <span class="nav-text">2.什么是 RDB 持久化？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-RDB-创建快照时会阻塞主线程吗？"><span class="nav-number">5.3.</span> <span class="nav-text">3.RDB 创建快照时会阻塞主线程吗？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-什么是-AOF-持久化？"><span class="nav-number">5.4.</span> <span class="nav-text">4.什么是 AOF 持久化？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-AOF-日志是如何实现的？"><span class="nav-number">5.5.</span> <span class="nav-text">5.AOF 日志是如何实现的？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-如何选择-RDB-和-AOF？"><span class="nav-number">5.6.</span> <span class="nav-text">6.如何选择 RDB 和 AOF？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-AOF-重写了解吗？"><span class="nav-number">5.7.</span> <span class="nav-text">7.AOF 重写了解吗？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事务"><span class="nav-number">6.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性能优化"><span class="nav-number">7.</span> <span class="nav-text">性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-什么是-bigkey？有什么危害？怎么发现？如何解决？"><span class="nav-number">7.1.</span> <span class="nav-text">1.什么是 bigkey？有什么危害？怎么发现？如何解决？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-大量-key-集中过期问题"><span class="nav-number">7.2.</span> <span class="nav-text">2.大量 key 集中过期问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生产问题"><span class="nav-number">8.</span> <span class="nav-text">生产问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-什么是缓存穿透？解决方法？"><span class="nav-number">8.1.</span> <span class="nav-text">1.什么是缓存穿透？解决方法？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-什么是缓存击穿？怎么解决？"><span class="nav-number">8.2.</span> <span class="nav-text">2.什么是缓存击穿？怎么解决？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#有哪些解决办法？"><span class="nav-number">8.2.1.</span> <span class="nav-text">有哪些解决办法？</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-缓存穿透和缓存击穿有什么区别？"><span class="nav-number">8.3.</span> <span class="nav-text">3.缓存穿透和缓存击穿有什么区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-什么是缓存雪崩？解决方法？"><span class="nav-number">8.4.</span> <span class="nav-text">4.什么是缓存雪崩？解决方法？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#有哪些解决办法？-1"><span class="nav-number">8.4.1.</span> <span class="nav-text">有哪些解决办法？</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-缓存雪崩和缓存击穿有什么区别？"><span class="nav-number">8.5.</span> <span class="nav-text">5.缓存雪崩和缓存击穿有什么区别？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群"><span class="nav-number">9.</span> <span class="nav-text">集群</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-Sentinel"><span class="nav-number">9.1.</span> <span class="nav-text">Redis Sentinel</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#什么是-Sentinel？-有什么用？"><span class="nav-number">9.1.1.</span> <span class="nav-text">什么是 Sentinel？ 有什么用？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Sentinel-如何检测节点是否下线？主观下线与客观下线的区别"><span class="nav-number">9.1.2.</span> <span class="nav-text">Sentinel 如何检测节点是否下线？主观下线与客观下线的区别?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Sentinel-是如何实现故障转移的？"><span class="nav-number">9.1.3.</span> <span class="nav-text">Sentinel 是如何实现故障转移的？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么建议部署多个-sentinel-节点（哨兵集群）？"><span class="nav-number">9.1.4.</span> <span class="nav-text">为什么建议部署多个 sentinel 节点（哨兵集群）？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Sentinel-如何选择出新的-master（选举机制）"><span class="nav-number">9.1.5.</span> <span class="nav-text">Sentinel 如何选择出新的 master（选举机制）?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如何从-Sentinel-集群中选择出-Leader-？"><span class="nav-number">9.1.6.</span> <span class="nav-text">如何从 Sentinel 集群中选择出 Leader ？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Sentinel-可以防止脑裂吗？"><span class="nav-number">9.1.7.</span> <span class="nav-text">Sentinel 可以防止脑裂吗？</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-Cluster"><span class="nav-number">9.2.</span> <span class="nav-text">Redis Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么需要-Redis-Cluster？解决了什么问题？有什么优势？"><span class="nav-number">9.2.1.</span> <span class="nav-text">为什么需要 Redis Cluster？解决了什么问题？有什么优势？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Redis-Cluster-是如何分片的？"><span class="nav-number">9.2.2.</span> <span class="nav-text">Redis Cluster 是如何分片的？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么-Redis-Cluster-的哈希槽是-16384-个"><span class="nav-number">9.2.3.</span> <span class="nav-text">为什么 Redis Cluster 的哈希槽是 16384 个?</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如何确定给定-key-的应该分布到哪个哈希槽中？"><span class="nav-number">9.2.4.</span> <span class="nav-text">如何确定给定 key 的应该分布到哪个哈希槽中？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Redis-Cluster-支持重新分配哈希槽吗？"><span class="nav-number">9.2.5.</span> <span class="nav-text">Redis Cluster 支持重新分配哈希槽吗？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Redis-Cluster-扩容缩容期间可以提供服务吗？"><span class="nav-number">9.2.6.</span> <span class="nav-text">Redis Cluster 扩容缩容期间可以提供服务吗？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Redis-Cluster-中的节点是怎么进行通信的？"><span class="nav-number">9.2.7.</span> <span class="nav-text">Redis Cluster 中的节点是怎么进行通信的？</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/alex-next/images/avatar.jpg"
+      alt="alex">
+  <p class="site-author-name" itemprop="name">alex</p>
+  <div class="site-description" itemprop="description">时光静好,与君语;细水流年,与君同;繁华落尽,与君老.</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/alex-next/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/alex-next/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/alex-next/tags/">
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/alex-next/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">alex</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/alex-next/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/alex-next/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/pjax/pjax.min.js?v=0.2.8"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/alex-next/js/utils.js?v=7.4.0"></script><script src="/alex-next/js/motion.js?v=7.4.0"></script>
+<script src="/alex-next/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/alex-next/js/next-boot.js?v=7.4.0"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var id = element.id || '';
+    var src = element.src || '';
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (id !=='') {
+      script.id = element.id;
+    }
+    if (src !== '') {
+      script.src = src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/alex-next/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '84888b5ba3be0f56b2ed',
+      clientSecret: '1306406ecbdc02b679df3c95b94985753d302d6a',
+      repo: 'alex-next',
+      owner: 'alexander-wd',
+      admin: ['alexander-wd'],
+      id: 'e5b88418ed9e5894670996cfafc09a08',
+        language: 'zh-CN',
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/alex-next/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/alex-next/images/logo.svg?v=7.4.0" color="#222">
+  <link rel="alternate" href="/alex-next/atom.xml" title="alex的博客 - github.com" type="application/atom+xml">
+
+<link rel="stylesheet" href="/alex-next/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/alex-next/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/alex-next/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="循环依赖(bean的创建)getBean doGetBean  getSingleton(beanName)：出口 protected Object getSingleton(String beanName, boolean allowEarlyReference) {   /** * 第一步:我们尝试去一级缓存(单例缓存池中去获取对象,一般情况从该map中获取的对象是直接可以使用的) * IOC">
+<meta name="keywords" content="spring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring源码(三)--循环依赖(bean的创建)">
+<meta property="og:url" content="https://alexander-wd.github.io/2022/06/26/javaEE/spring源码/spring源码(三)--bean创建流程/index.html">
+<meta property="og:site_name" content="alex的博客 - github.com">
+<meta property="og:description" content="循环依赖(bean的创建)getBean doGetBean  getSingleton(beanName)：出口 protected Object getSingleton(String beanName, boolean allowEarlyReference) {   /** * 第一步:我们尝试去一级缓存(单例缓存池中去获取对象,一般情况从该map中获取的对象是直接可以使用的) * IOC">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2023-02-13T09:24:44.747Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="spring源码(三)--循环依赖(bean的创建)">
+<meta name="twitter:description" content="循环依赖(bean的创建)getBean doGetBean  getSingleton(beanName)：出口 protected Object getSingleton(String beanName, boolean allowEarlyReference) {   /** * 第一步:我们尝试去一级缓存(单例缓存池中去获取对象,一般情况从该map中获取的对象是直接可以使用的) * IOC">
+  <link rel="canonical" href="https://alexander-wd.github.io/2022/06/26/javaEE/spring源码/spring源码(三)--bean创建流程/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>spring源码(三)--循环依赖(bean的创建) | alex的博客 - github.com</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/alex-next/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">alex的博客 - github.com</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/alex-next/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/alex-next/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/alex-next/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/alex-next/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/alexander-wd" class="github-corner" title="alex GitHub" aria-label="alex GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/06/26/javaEE/spring源码/spring源码(三)--bean创建流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">spring源码(三)--循环依赖(bean的创建)
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-06-26 14:11:20" itemprop="dateCreated datePublished" datetime="2022-06-26T14:11:20+08:00">2022-06-26</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 17:24:44" itemprop="dateModified" datetime="2023-02-13T17:24:44+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/JavaEE/" itemprop="url" rel="index"><span itemprop="name">JavaEE</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="循环依赖-bean的创建"><a href="#循环依赖-bean的创建" class="headerlink" title="循环依赖(bean的创建)"></a>循环依赖(bean的创建)</h2><h3 id="getBean"><a href="#getBean" class="headerlink" title="getBean"></a>getBean</h3><ul>
+<li><p>doGetBean</p>
+<ul>
+<li><p>getSingleton(beanName)：出口</p>
+<p>protected Object getSingleton(String beanName, boolean allowEarlyReference) {<br>   /**</p>
+<pre><code>* 第一步:我们尝试去一级缓存(单例缓存池中去获取对象,一般情况从该map中获取的对象是直接可以使用的)
+* IOC容器初始化加载单实例bean的时候第一次进来的时候 该map中一般返回空
+*/
+</code></pre><p>   Object singletonObject = this.singletonObjects.get(beanName);<br>   /**</p>
+<pre><code>* 若在第一级缓存中没有获取到对象,并且singletonsCurrentlyInCreation这个list包含该beanName
+* IOC容器初始化加载单实例bean的时候第一次进来的时候 该list中一般返回空,但是循环依赖的时候可以满足该条件
+*/
+</code></pre><p>   if (singletonObject == null &amp;&amp; isSingletonCurrentlyInCreation(beanName)) {</p>
+<pre><code>  synchronized (this.singletonObjects) {
+     /**
+      * 尝试去二级缓存中获取对象(二级缓存中的对象是一个早期对象)
+      * 何为早期对象:就是bean刚刚调用了构造方法，还来不及给bean的属性进行赋值的对象(纯净态)
+      * 就是早期对象
+      */
+     singletonObject = this.earlySingletonObjects.get(beanName);
+     /**
+      * 二级缓存中也没有获取到对象,allowEarlyReference为true(参数是有上一个方法传递进来的true)
+      */
+     if (singletonObject == null &amp;&amp; allowEarlyReference) {
+        /**
+         * 直接从三级缓存中获取 ObjectFactory对象 这个对接就是用来解决循环依赖的关键所在
+         * 在ioc后期的过程中,当bean调用了构造方法的时候,把早期对象包裹成一个ObjectFactory
+         * 暴露到三级缓存中
+         */
+        ObjectFactory&lt;?&gt; singletonFactory = this.singletonFactories.get(beanName);
+        //从三级缓存中获取到对象不为空
+        if (singletonFactory != null) {
+           /**
+            * 在这里通过暴露的ObjectFactory 包装对象中,通过调用他的getObject()来获取我们的早期对象
+            * 在这个环节中会调用到 getEarlyBeanReference()来进行后置处理
+            */
+           singletonObject = singletonFactory.getObject();
+           //把早期对象放置在二级缓存,
+           this.earlySingletonObjects.put(beanName, singletonObject);
+           //ObjectFactory 包装对象从三级缓存中删除掉
+           this.singletonFactories.remove(beanName);
+        }
+     }
+  }
+</code></pre><p>   }<br>   return singletonObject;</p>
+<ul>
+<li>尝试从一级缓存中获取bean</li>
+<li><p>this.earlySingletonObjects.put(beanName, singletonObject);</p>
+<ul>
+<li>如果bean正在创建过程中且三级缓存中存在该bean，才会进入此方法，将纯静态的bean放入二级缓存中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>getSingleton(beanName, () -&gt; {}</p>
+<ul>
+<li><p>this.singletonObjects.get(beanName);</p>
+<ul>
+<li>尝试从一级缓存中获取bean，解决多线程下重复创建的问题，意义参考如何解决并发bean不完整的问题</li>
+</ul>
+</li>
+<li><p>beforeSingletonCreation(beanName);</p>
+<ul>
+<li>标记当前的bean马上就要被创建了</li>
+</ul>
+</li>
+<li><p>createBean(beanName, mbd, args);</p>
+<ul>
+<li><p>①resolveBeforeInstantiation</p>
+<ul>
+<li><p>postProcessBeforeInstantiation</p>
+<ul>
+<li>InstantiationAwareBeanPostProcessors后置处理器的postProcessBeforeInstantiation</li>
+<li>aop的才会被调用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>doCreateBean</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>真的创建bean的逻辑,该方法是最复杂的包含了调用构造函数,给bean的属性赋值</li>
+<li>调用bean的初始化操作以及 生成代理对象 都是在这里</li>
+<li><p>方法在AbstractAutowireCapableBeanFactory类中</p>
+<ul>
+<li>类继承图</li>
+<li>DefaultSingletonBeanRegistry类中声明了一二三级缓存</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>createBeanInstance</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>创建bean实例化</li>
+<li>使用合适的实例化策略来创建新的实例：工厂方法、构造函数自动注入、简单初始化 该方法很复杂也很重要</li>
+</ul>
+</li>
+<li><p>②determineConstructorsFromBeanPostProcessors</p>
+<ul>
+<li>determineCandidateConstructors</li>
+</ul>
+</li>
+<li><p>instantiateBean</p>
+<ul>
+<li>默认会调用无参构造函数</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>③applyMergedBeanDefinitionPostProcessors</p>
+<ul>
+<li>进行后置处理 @AutoWired @Value的注解的预解析</li>
+</ul>
+</li>
+<li><p>addSingletonFactory(beanName, () -&gt; getEarlyBeanReference(beanName, mbd, bean));</p>
+<ul>
+<li><p>缓存单例到三级缓存中</p>
+<ul>
+<li>普通对象(无循环依赖)直接忽略三级缓存？</li>
+</ul>
+</li>
+<li><p>④getEarlyBeanReference</p>
+<ul>
+<li>产生循环依赖会提前在属性赋值(populateBean里getBean回调getEarlyBeanReference)时，创建动态代理</li>
+<li>正常情况会在初始化时创建动态代理</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>populateBean</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>属性赋值 给我们的属性进行赋值(调用set方法进行赋值)</li>
+</ul>
+</li>
+<li><p>⑤postProcessAfterInstantiation</p>
+</li>
+<li><p>autowire注入属性</p>
+<ul>
+<li><p>autowireByName</p>
+<ul>
+<li>getBean(propertyName)：依赖循环</li>
+</ul>
+</li>
+<li><p>autowireByType</p>
+</li>
+</ul>
+</li>
+<li><p>⑥postProcessPropertyValues</p>
+</li>
+</ul>
+</li>
+<li><p>initializeBean</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>进行对象初始化操作(在这里可能生成代理对象)</li>
+</ul>
+</li>
+<li><p>invokeAwareMethods</p>
+<ul>
+<li>实现XXXAware接口进行方法的回调</li>
+</ul>
+</li>
+<li><p>⑦applyBeanPostProcessorsBeforeInitialization</p>
+<ul>
+<li>调用我们的bean的后置处理器的postProcessorsBeforeInitialization方法  @PostConstruct注解的方法</li>
+</ul>
+</li>
+<li><p>invokeInitMethods</p>
+<ul>
+<li>调用初始化方法</li>
+</ul>
+</li>
+<li><p>⑧applyBeanPostProcessorsAfterInitialization</p>
+<ul>
+<li>调用我们bean的后置处理器的PostProcessorsAfterInitialization方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>earlySingletonExposure？</p>
+<ul>
+<li><p>getSingleton(beanName, false);</p>
+<ul>
+<li>返回二级缓存中的早期对象</li>
+<li>为了返回回去清除二三级缓存？</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>afterSingletonCreation(beanName);</p>
+<ul>
+<li>后置处理</li>
+<li>主要做的事情就是把singletonsCurrentlyInCreation标记正在创建的bean从集合中移除</li>
+</ul>
+</li>
+<li><p>addSingleton(beanName, singletonObject);</p>
+<ul>
+<li>加入一级缓存中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ul>
+<li><p>为什么要三级缓存</p>
+<ul>
+<li><p>一级缓存</p>
+<ul>
+<li>单线程中能保证循环依赖</li>
+<li>存的是成熟态的bean</li>
+</ul>
+</li>
+<li><p>二级缓存</p>
+<ul>
+<li>多线程下，避免获取的Bean不完整，防止多线程中在Bean还未创建完成时读取到的Bean时不完整的</li>
+<li>存的是纯静态的bean</li>
+<li><p>tips</p>
+<ul>
+<li>正常普通的bean(不存在循环依赖的bean) 创建的过程中，压根不会把三级缓存提升到二级缓存中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>三级缓存</p>
+<ul>
+<li>单一职责原则，避免耦合，</li>
+<li>存的是函数接口（即不会立即缓存单例对象，而是等待调用时再返回）</li>
+<li><p>好处</p>
+<ul>
+<li>1：延迟获取，提高性能： 因为并不是所有的Bean都存在循环引用（不需要所有单例都缓存起来等待循环依赖调用），所以当真正调用时再缓存该单例到二级缓存。</li>
+<li>2：提高扩展性：这是spring一贯作风，采用bean的后置处理器方式可以提高扩展性（如代理操作等..）</li>
+<li>3：aop的考虑：如果依赖的bean是代理类，那么将代理创建的方法作为回调方法。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>循环依赖重点：缓存早期对象(实例化之后的对象)</p>
+</li>
+</ul>
+</li>
+<li><p>不能解决构造器的循环依赖</p>
+<ul>
+<li>在构造器实例化之前(构造器是实例化时调用)，一二三级缓存中没有bean的相关信息</li>
+<li><p>例</p>
+<ul>
+<li><p>比如A先调用B，造成循环依赖。A先使用构造器注入，构造器注入过程中发现此时B还没有创建，于是就去创建B了，但是此时A的构造器还没有走完，三级缓存中也没有A；</p>
+<ul>
+<li>下次创建B时，去调用getBean(A)，就会发现一二三级缓存中都没有A，于是去DefaultSingletonBeanRegistry#getSingleton(beanName, () -&gt; {}中加入singletonsCurrentlyInCreation(保存正在创建的bean)集合时会报错</li>
+</ul>
+</li>
+<li><p>如果使用的是setter注入，默认是使用的无参构造，之后就会将A放入三级缓存中，此时再调用getBean(A)，就能直接从三级缓存中获取到A了</p>
+</li>
+</ul>
+</li>
+<li><p>最主要的原因是构造器注入是在createBeanInstance中，而setter注入是在populateBean中，所以setter注入不会报错</p>
+</li>
+</ul>
+</li>
+<li><p>不能解决多例的循环依赖</p>
+<ul>
+<li>单例意味着只需要创建一次对象，后面就可以从缓存中取出来，字段注入，意味着我们无需调用构造方法进行注入。</li>
+<li>如果是原型bean，那么就意味着每次都要去创建对象，无法利用缓存；</li>
+<li>如果是构造方法注入，那么就意味着需要调用构造方法注入，也无法利用缓存</li>
+<li><p>doGetBean代码中有一句是多例直接报错</p>
+<p>if (isPrototypeCurrentlyInCreation(beanName)) {<br>   throw new BeanCurrentlyInCreationException(beanName);<br>}</p>
+</li>
+</ul>
+</li>
+<li><p>为什么循环依赖的AOP要在实例化之后就创建</p>
+<ul>
+<li><p>比如A先调用B，造成循环依赖。这时候会一路执行，直到调用B的属性赋值时，发现一级缓存中没有A，就调用getBean(A)，并执行三级缓存中的函数接口。</p>
+<ul>
+<li>正常流程的话调用这个接口就会创建AOP，正常执行下面的流程</li>
+<li>若在这个函数接口这不创建A的动态代理，那么最终创建出来给B赋值的A只是普通的Bean，而不是动态代理。而这是A的动态代理则会在最后A初始化完之后创建</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li>循环依赖</li>
+<li>图解</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/alex-next/tags/spring/" rel="tag"># spring</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/alex-next/2022/06/17/javaEE/spring源码/spring源码(二)--注册Bean定义详解/" rel="next" title="spring源码(二)--注册bean定义详解">
+                  <i class="fa fa-chevron-left"></i> spring源码(二)--注册bean定义详解
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/alex-next/2022/07/05/javaEE/spring源码/spring源码(四)--监听器/" rel="prev" title="spring源码(四)--监听器">
+                  spring源码(四)--监听器 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#循环依赖-bean的创建"><span class="nav-number">1.</span> <span class="nav-text">循环依赖(bean的创建)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#getBean"><span class="nav-number">1.1.</span> <span class="nav-text">getBean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题"><span class="nav-number">1.2.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/alex-next/images/avatar.jpg"
+      alt="alex">
+  <p class="site-author-name" itemprop="name">alex</p>
+  <div class="site-description" itemprop="description">时光静好,与君语;细水流年,与君同;繁华落尽,与君老.</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/alex-next/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/alex-next/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/alex-next/tags/">
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/alex-next/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">alex</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/alex-next/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/alex-next/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/pjax/pjax.min.js?v=0.2.8"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/alex-next/js/utils.js?v=7.4.0"></script><script src="/alex-next/js/motion.js?v=7.4.0"></script>
+<script src="/alex-next/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/alex-next/js/next-boot.js?v=7.4.0"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var id = element.id || '';
+    var src = element.src || '';
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (id !=='') {
+      script.id = element.id;
+    }
+    if (src !== '') {
+      script.src = src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/alex-next/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '84888b5ba3be0f56b2ed',
+      clientSecret: '1306406ecbdc02b679df3c95b94985753d302d6a',
+      repo: 'alex-next',
+      owner: 'alexander-wd',
+      admin: ['alexander-wd'],
+      id: 'a6148f3911acfdee7626f3904c1ee392',
+        language: 'zh-CN',
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+    </div>
+</body>
+</html>

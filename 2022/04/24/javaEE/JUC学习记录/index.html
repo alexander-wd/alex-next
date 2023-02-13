@@ -1,0 +1,2959 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/alex-next/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/alex-next/images/favicon.ico?v=7.4.0">
+  <link rel="mask-icon" href="/alex-next/images/logo.svg?v=7.4.0" color="#222">
+  <link rel="alternate" href="/alex-next/atom.xml" title="alex的博客 - github.com" type="application/atom+xml">
+
+<link rel="stylesheet" href="/alex-next/css/main.css?v=7.4.0">
+
+
+<link rel="stylesheet" href="/alex-next/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/alex-next/',
+    scheme: 'Pisces',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="JUC1.Java内存模型JMMJMM架构 八大原子操作  (1)lock:作用于主内存的变量，它把一个变量标识为一条线程独占的状态。 (2)unlock:作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其它线程锁定。 (3)read:作用于主内存的变量，它把一个变量的值从主内存传输到线程的工作内存中，以便随后的load动作使用。 (4)load:作用于工作内存的变量，">
+<meta name="keywords" content="JUC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC学习笔记">
+<meta property="og:url" content="https://alexander-wd.github.io/2022/04/24/javaEE/JUC学习记录/index.html">
+<meta property="og:site_name" content="alex的博客 - github.com">
+<meta property="og:description" content="JUC1.Java内存模型JMMJMM架构 八大原子操作  (1)lock:作用于主内存的变量，它把一个变量标识为一条线程独占的状态。 (2)unlock:作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其它线程锁定。 (3)read:作用于主内存的变量，它把一个变量的值从主内存传输到线程的工作内存中，以便随后的load动作使用。 (4)load:作用于工作内存的变量，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2023-02-13T09:53:17.618Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JUC学习笔记">
+<meta name="twitter:description" content="JUC1.Java内存模型JMMJMM架构 八大原子操作  (1)lock:作用于主内存的变量，它把一个变量标识为一条线程独占的状态。 (2)unlock:作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其它线程锁定。 (3)read:作用于主内存的变量，它把一个变量的值从主内存传输到线程的工作内存中，以便随后的load动作使用。 (4)load:作用于工作内存的变量，">
+  <link rel="canonical" href="https://alexander-wd.github.io/2022/04/24/javaEE/JUC学习记录/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>JUC学习笔记 | alex的博客 - github.com</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/alex-next/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">alex的博客 - github.com</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/alex-next/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/alex-next/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/alex-next/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/alex-next/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/alexander-wd" class="github-corner" title="alex GitHub" aria-label="alex GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/04/24/javaEE/JUC学习记录/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">JUC学习笔记
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-04-24 16:03:12" itemprop="dateCreated datePublished" datetime="2022-04-24T16:03:12+08:00">2022-04-24</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 17:53:17" itemprop="dateModified" datetime="2023-02-13T17:53:17+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/JavaEE/" itemprop="url" rel="index"><span itemprop="name">JavaEE</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="JUC"><a href="#JUC" class="headerlink" title="JUC"></a>JUC</h1><h2 id="1-Java内存模型JMM"><a href="#1-Java内存模型JMM" class="headerlink" title="1.Java内存模型JMM"></a>1.Java内存模型JMM</h2><h3 id="JMM架构"><a href="#JMM架构" class="headerlink" title="JMM架构"></a>JMM架构</h3><ul>
+<li><p>八大原子操作</p>
+<ul>
+<li>(1)lock:作用于主内存的变量，它把一个变量标识为一条线程独占的状态。</li>
+<li>(2)unlock:作用于主内存的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其它线程锁定。</li>
+<li>(3)read:作用于主内存的变量，它把一个变量的值从主内存传输到线程的工作内存中，以便随后的load动作使用。</li>
+<li>(4)load:作用于工作内存的变量，它把read操作从主内存中得到的变量值放入工作内存的变量副本中。</li>
+<li>(5)use:作用于工作内存的变量，它把工作内存中一个变量的值传递给执行引擎，每当虚拟机遇到一个需要使用到变量的值的字节码指令时都会执行这个操作。</li>
+<li>(6)assign:作用于工作内存的变量，它把一个从执行引擎接收到的值赋给工作内存的变量，每当虚拟机遇到一个给变量赋值的字节码指令时执行这个操作。</li>
+<li>(7)store:作用于工作内存的变量，它把工作内存中一个变量的值传送到主内存中，以便随后的write使用。</li>
+<li>(8)write:作用于主内存的变量，它把store操作从工作内存中得到的变量的值放入主内存的变量中。</li>
+</ul>
+</li>
+</ul>
+<h3 id="并发编程的三大问题"><a href="#并发编程的三大问题" class="headerlink" title="并发编程的三大问题"></a>并发编程的三大问题</h3><ul>
+<li><p>原子性</p>
+<p>  原子性指的是一个操作是不可中断的，即使是在多线程环境下，一个操作一旦开始就不会被其他线程影响。<br>  public class Jmm04_CodeAtomic {</p>
+<pre><code>private volatile static int counter = 0;
+static Object object = new Object();
+
+public static void main(String[] args) {
+
+  for (int i = 0; i &lt; 10; i++) {
+    Thread thread = new Thread(()-&gt;{
+      for (int j = 0; j &lt; 1000; j++) {
+        synchronized (object){
+          counter++;//分三步- 读，自加，写回
+        }
+      }
+    });
+    thread.start();
+  }
+
+  try {
+    Thread.sleep(3000);
+  } catch (InterruptedException e) {
+    e.printStackTrace();
+  }
+
+  System.out.println(counter);
+
+}
+</code></pre><p>  }</p>
+</li>
+<li><p>可见性</p>
+<p>  是当一个线程修改了某个共享变量的值，其他线程是否能够马上得知这个修改的值。<br>  public class Jmm03_CodeVisibility {</p>
+<pre><code>private static boolean initFlag = false;
+
+private volatile static int counter = 0;
+
+public static void refresh(){
+  log.info(&quot;refresh data.......&quot;);
+  initFlag = true;
+  log.info(&quot;refresh data success.......&quot;);
+}
+
+public static void main(String[] args){
+  Thread threadA = new Thread(()-&gt;{
+    while (!initFlag){
+      //System.out.println(&quot;runing&quot;);
+      counter++;
+    }
+    log.info(&quot;线程：&quot; + Thread.currentThread().getName()
+
+ + &quot;当前线程嗅探到initFlag的状态的改变&quot;);
+   eadA&quot;);
+       threadA.start();
+
+  try {
+    Thread.sleep(500);
+  } catch (InterruptedException e) {
+    e.printStackTrace();
+  }
+
+  Thread threadB = new Thread(()-&gt;{
+    refresh();
+  },&quot;threadB&quot;);
+  threadB.start();
+}
+</code></pre><p>  }</p>
+<ul>
+<li><p>问题：在代码中不加volatile关键字，使用Integer,System.out.println()，volatile counter等方法也能做到volatile的效果，为什么？</p>
+<ul>
+<li>上下文切换，即initFlag变量和volatile修饰的counter变量在底层有可能放到了一个缓存行里，而counter被volatile修饰，会每次刷新，这时，initFlag也会跟着一起刷新。其他情况同理。<br>  ps:为什么空while循环不会刷新initFlag，因为空while循环会一直占着CPU。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>有序性</p>
+<p>  public static void main(String[] args) throws InterruptedException {</p>
+<pre><code>  int i = 0;
+  for (;;){
+    i++;
+    x = 0; y = 0;
+    a = 0; b = 0;
+    Thread t1 = new Thread(new Runnable() {
+      public void run() {
+        shortWait(10000);
+        a = 1;
+        x = b;
+        UnsafeInstance.reflectGetUnsafe().fullFence();
+        ///
+        //
+        //
+      }
+    });
+
+    Thread t2 = new Thread(new Runnable() {
+      public void run() {
+        b = 1;
+        UnsafeInstance.reflectGetUnsafe().fullFence();
+        y = a;
+      }
+    });
+
+    t1.start();
+    t2.start();
+    t1.join();
+    t2.join();
+
+    String result = &quot;第&quot; + i + &quot;次 (&quot; + x + &quot;,&quot; + y + &quot;）&quot;;
+    if(x == 0 &amp;&amp; y == 0) {
+      System.out.println(result);
+      break;
+    } else {
+      log.info(result);
+    }
+  }
+
+}
+</code></pre><ul>
+<li><p>指令重排：java语言规范规定JVM线程内部维持顺序化语义。即只要程序的最终结果与它顺序化情况的结果相等，那么指令的执行顺序可以与代码顺序不一致。但是这只是针对单线程而言。</p>
+<ul>
+<li>指令重排序不会影响单个线程的执行，但是会影响到线程并发执行的正确性</li>
+</ul>
+</li>
+<li><p>指令重排≠有序性</p>
+</li>
+<li><p>指令重排的一个经典优化案例双重锁检查(DCL)</p>
+<p>  public class Singleton {</p>
+<pre><code>private static Singleton instance; // 不使用volatile关键字
+
+// 双重锁检验
+public static Singleton getInstance() {
+  if (instance == null) { // 第7行
+    synchronized (Singleton.class) {
+      if (instance == null) {
+        instance = new Singleton(); // 第10行
+      }
+    }
+  }
+  return instance;
+}
+</code></pre><p>  }</p>
+<ul>
+<li>对象的创建并不是一个原子操作，而是有分配空间，初始化和<init>，如果不禁止重排序，可能会初始化一个空对象</init></li>
+</ul>
+</li>
+<li><p>Java程序中天然的有序性可以总结为一句话：如果在本线程内观察，所有操作都是天然有序的。如果在一个线程中观察另一个线程，所有操作都是无序的。前半句是指“线程内似表现为串行的语义”，后半句是指“指令重排”现象和“工作内存与主内存同步延迟”现象。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h3><ul>
+<li><p>volatile</p>
+<ul>
+<li><p>能解决哪些并发编程的三大问题</p>
+<ul>
+<li><p>可见性</p>
+<ul>
+<li>硬件层面：底层汇编会生成lock前缀指令，从而触发MESI缓存一致性协议，通过总线嗅探机制监听每个线程(工作内存)的变量是否改变</li>
+<li><p>JAVA层面</p>
+<ul>
+<li>内存屏障</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>有序性(基于内存屏障)</p>
+</li>
+</ul>
+</li>
+<li><p>能禁止指令重排(基于内存屏障)</p>
+<ul>
+<li>Java是否能指令重排的规则(volatile读前写后不重排)</li>
+</ul>
+</li>
+<li><p>及时可见性，可能某些操作比如System.out.println()也能做到可见性，但这种方式不是及时的</p>
+</li>
+</ul>
+</li>
+<li><p>synchronized</p>
+<ul>
+<li><p>能解决哪些并发编程的三大问题</p>
+<ul>
+<li>原子性</li>
+<li><p>可见性</p>
+<ul>
+<li>通过monitorenter/monitorexit的jvm字节码指令，在底层调用lock前缀指令开启内存屏障</li>
+</ul>
+</li>
+<li><p>有序性</p>
+<ul>
+<li>依然会发生重排序，只不过我们有同步代码块，可以保证只有一个线程执行同步代码中的代码。保证有序性</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>能保证有序性，但是不能像volatile一样禁止指令重排序，所以会产生DCL的问题</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="MESI协议"><a href="#MESI协议" class="headerlink" title="MESI协议"></a>MESI协议</h3><ul>
+<li>MESI协议状态切换图</li>
+<li>java文件执行全流程</li>
+</ul>
+<h3 id="内存屏障-Java内部用于解决并发编程的三大问题"><a href="#内存屏障-Java内部用于解决并发编程的三大问题" class="headerlink" title="内存屏障(Java内部用于解决并发编程的三大问题)"></a>内存屏障(Java内部用于解决并发编程的三大问题)</h3><ul>
+<li><p>硬件层面(Intel提供)</p>
+<ul>
+<li>lfence，是一种Load Barrier 读屏障</li>
+<li>sfence, 是一种Store Barrier 写屏障</li>
+<li>mfence, 是一种全能型的屏障，具备ifence和sfence的能力</li>
+<li><p>Lock前缀，Lock不是一种内存屏障，但是它能完成类似内存屏障的功能。Lock会对 CPU总线和高速缓存加锁，可以理解为CPU指令级的一种锁。</p>
+<ul>
+<li>因为不同的内存屏障，需要不同的汇编指令，jvm内部对这些指令进行了简化，统一用lock前缀指令。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Java实现的内存屏障</p>
+<ul>
+<li>LoadLoad屏障： 对于这样的语句 Load1; LoadLoad; Load2，在Load2及后续读取操作要读取的数据被访问前，保证Load1要读取的数据被读取完毕。 </li>
+<li>StoreStore屏障：对于这样的语句 Store1; StoreStore; Store2，在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。 </li>
+<li>LoadStore屏障：对于这样的语句Load1; LoadStore; Store2，在Store2及后续写入操作被执行前，保证Load1要读取的数据被读取完毕。 </li>
+<li>StoreLoad屏障：对于这样的语句Store1; StoreLoad; Load2，在Load2及后续所有读取操作执行前，保证Store1的写入对所有处理器可见。</li>
+</ul>
+</li>
+</ul>
+<h3 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h3><ul>
+<li><p>happens-before原则</p>
+<ul>
+<li><ol>
+<li>程序顺序原则，即在一个线程内必须保证语义串行性，也就是说按照代码顺序执 行。</li>
+</ol>
+</li>
+<li><ol>
+<li>锁规则 解锁(unlock)操作必然发生在后续的同一个锁的加锁(lock)之前，也就是 说，如果对于一个锁解锁后，再加锁，那么加锁的动作必须在解锁动作之后(同一个 锁)。</li>
+</ol>
+</li>
+<li><ol>
+<li>volatile规则 volatile变量的写，先发生于读，这保证了volatile变量的可见性，简 单的理解就是，volatile变量在每次被线程访问时，都强迫从主内存中读该变量的 值，而当该变量发生变化时，又会强迫将最新的值刷新到主内存，任何时刻，不同的 线程总是能够看到该变量的最新值。</li>
+</ol>
+</li>
+<li><ol>
+<li>线程启动规则 线程的start()方法先于它的每一个动作，即如果线程A在执行线程B 的start方法之前修改了共享变量的值，那么当线程B执行start方法时，线程A对共享 变量的修改对线程B可见</li>
+</ol>
+</li>
+<li><ol>
+<li>传递性 A先于B ，B先于C 那么A必然先于C</li>
+</ol>
+</li>
+<li><ol>
+<li>线程终止规则 线程的所有操作先于线程的终结，Thread.join()方法的作用是等待 当前执行的线程终止。假设在线程B终止之前，修改了共享变量，线程A从线程B的 join方法成功返回后，线程B对共享变量的修改将对线程A可见。</li>
+</ol>
+</li>
+<li><ol>
+<li>线程中断规则 对线程 interrupt()方法的调用先行发生于被中断线程的代码检测到 中断事件的发生，可以通过Thread.interrupted()方法检测线程是否中断。</li>
+</ol>
+</li>
+<li><ol>
+<li>对象终结规则对象的构造函数执行，结束先于finalize()方法</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>as-if-serial：不管再怎么指令重排序，程序的执行结果被能被改变</p>
+</li>
+</ul>
+<h3 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h3><ul>
+<li>Java字节码指令是原子操作吗</li>
+</ul>
+<h3 id="如何查看字节码-第二节课-和汇编-第三节课52-54"><a href="#如何查看字节码-第二节课-和汇编-第三节课52-54" class="headerlink" title="如何查看字节码(第二节课)和汇编(第三节课52:54)"></a>如何查看字节码(第二节课)和汇编(第三节课52:54)</h3><h2 id="2-synchronized详解"><a href="#2-synchronized详解" class="headerlink" title="2.synchronized详解"></a>2.synchronized详解</h2><h3 id="解决线程并发安全问题，采用的是序列化访问临界资源"><a href="#解决线程并发安全问题，采用的是序列化访问临界资源" class="headerlink" title="解决线程并发安全问题，采用的是序列化访问临界资源"></a>解决线程并发安全问题，采用的是序列化访问临界资源</h3><ul>
+<li>1.synchronized</li>
+<li>2.lock</li>
+</ul>
+<h3 id="synchronized底层原理"><a href="#synchronized底层原理" class="headerlink" title="synchronized底层原理"></a>synchronized底层原理</h3><ul>
+<li>synchronized关键字会被编译成字节码后会被翻译成monitorenter 和 monitorexit 两条指令分别在同步块逻辑代码的起始位置 与结束位置。</li>
+<li><p>Monitor</p>
+<ul>
+<li><p>概念</p>
+<ul>
+<li>每一个Java对象自打娘胎里出来就带了一把 看不见的锁，它叫做内部锁或者Monitor锁。也就是通常说Synchronized的对象锁</li>
+</ul>
+</li>
+<li><p>存储位置</p>
+<ul>
+<li>Monitor对象存在于每个Java对象的对象头Mark Word中（存储的指针的指向），Synchronized锁便是通过这种方式 获取锁的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="不同粒度的锁在对象中的存储"><a href="#不同粒度的锁在对象中的存储" class="headerlink" title="不同粒度的锁在对象中的存储"></a>不同粒度的锁在对象中的存储</h3><ul>
+<li>对象内存布局</li>
+<li>在mark word中的存储</li>
+</ul>
+<h3 id="锁升级：不同线程竞争激烈的结果"><a href="#锁升级：不同线程竞争激烈的结果" class="headerlink" title="锁升级：不同线程竞争激烈的结果"></a>锁升级：不同线程竞争激烈的结果</h3><ul>
+<li>锁升级过程</li>
+</ul>
+<h3 id="锁粗化：JIT编译器如果发现有代码里连续多次加锁释放锁的代码，会给合并为一个锁"><a href="#锁粗化：JIT编译器如果发现有代码里连续多次加锁释放锁的代码，会给合并为一个锁" class="headerlink" title="锁粗化：JIT编译器如果发现有代码里连续多次加锁释放锁的代码，会给合并为一个锁"></a>锁粗化：JIT编译器如果发现有代码里连续多次加锁释放锁的代码，会给合并为一个锁</h3><ul>
+<li>synchronized(this) {}<br>  synchronized(this) {}synchronized(this) {}</li>
+</ul>
+<h3 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h3><ul>
+<li>依赖逃逸分析，如果一个锁对象在栈桢中为局部变量，不会被外部引用，会消除对应的锁</li>
+</ul>
+<h3 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h3><ul>
+<li><p>在main方法启动之后发现直接使用的轻量级锁，直接跳过了偏向锁，为什么？</p>
+<ul>
+<li>JVM会延迟启动偏向锁。JVM本身启动的时候，就会开启10多个线程，避免无谓的偏向锁-&gt;重量级锁的过程，会延迟启动偏向锁。</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-AQS-AbstractQueuedSynchronizer-详解"><a href="#3-AQS-AbstractQueuedSynchronizer-详解" class="headerlink" title="3.AQS(AbstractQueuedSynchronizer)详解"></a>3.AQS(AbstractQueuedSynchronizer)详解</h2><h3 id="第一节"><a href="#第一节" class="headerlink" title="第一节"></a>第一节</h3><ul>
+<li><p>大体框架</p>
+<ul>
+<li><p>queue队列(CLH同步队列)</p>
+<p>  一个有头尾结点的双向链式队列</p>
+</li>
+<li><p>CAS</p>
+<p>  protected final boolean tryAcquire(int acquires) {</p>
+<pre><code>  final Thread current = Thread.currentThread();
+  int c = getState();// 获取当前的信号量State
+  if (c == 0) {// 若现在没有线程占用，则进入
+      if (!hasQueuedPredecessors() &amp;&amp;  // 判断队列中是否有线程阻塞，这是公平锁和非公平锁的区别
+          compareAndSetState(0, acquires)) {// CAS+轮询操作
+          setExclusiveOwnerThread(current);
+          return true;
+      }
+  }
+  else if (current == getExclusiveOwnerThread()) {
+      int nextc = c + acquires;
+      if (nextc &lt; 0)
+          throw new Error(&quot;Maximum lock count exceeded&quot;);
+      setState(nextc);
+      return true;
+  }
+  return false;
+</code></pre><p>  }</p>
+</li>
+<li><p>LockSupport</p>
+</li>
+<li><p>自旋</p>
+</li>
+<li><p>伪代码</p>
+<p>  ReentrantLock lock = new ReentrantLock();<br>  lock.lock();//加锁<br>  (while(true){// 自旋</p>
+<pre><code>  if(CAS加锁成功){
+      break;
+  }
+  Queue.add(Thread);// 加入队列
+  LockSupport.park()// 阻塞
+</code></pre><p>  })// lock.lock()的具体实现</p>
+<p>  T0获取锁<br>  具体的业务逻辑</p>
+<p>  lock.unlock();// 释放锁<br>  (Thread t = Queue.get();// 取出一个线程<br>  LockSupport.unpark(t);// 唤醒<br>  )// lock.unlock();具体实现</p>
+</li>
+</ul>
+</li>
+<li><p>AQS特性</p>
+<ul>
+<li>阻塞等待队列</li>
+<li><p>共享/独占</p>
+<ul>
+<li>共享：多个线程可以同时执行，如Semaphore/CountDownLatch</li>
+<li>独占：只有一个线程能执行，如ReentrantLock</li>
+</ul>
+</li>
+<li><p>公平/非公平</p>
+<ul>
+<li>ReentrantLock类内部实现了Sync类，Sync类继承了AQS类；而FairSync和NonfairSync都继承Sync类</li>
+<li>FairSync实现公平锁</li>
+<li>NonfairSync实现非公平锁</li>
+</ul>
+</li>
+<li><p>可重入</p>
+<ul>
+<li>当一个线程获取对象锁之后，这个线程可以再次获取本对象上的锁，而其他的线程是不可以的</li>
+</ul>
+</li>
+<li><p>允许中断</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="第二节"><a href="#第二节" class="headerlink" title="第二节"></a>第二节</h3><ul>
+<li><p>AQS代码(独占方式)(ReentrantLock)详解</p>
+<ul>
+<li><p>可参考的md</p>
+<ul>
+<li>方法总结</li>
+</ul>
+</li>
+<li><p>lock()实现:acquire(1)</p>
+<p>  public final void acquire(int arg) {</p>
+<pre><code>  if (!tryAcquire(arg) &amp;&amp;
+      acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+      selfInterrupt();
+</code></pre><p>  }</p>
+<ul>
+<li><p>tryAcquire(arg):锁竞争具体逻辑</p>
+<p>  protected final boolean tryAcquire(int acquires) {</p>
+<pre><code>  final Thread current = Thread.currentThread();
+  int c = getState();
+  if (c == 0) {
+      if (!hasQueuedPredecessors() &amp;&amp; // 公平锁判断下队列有没有阻塞线程
+          compareAndSetState(0, acquires)) {
+          setExclusiveOwnerThread(current);
+          return true;
+      }
+  }
+  else if (current == getExclusiveOwnerThread()) {
+  // 可重入锁的体现，这里不存在并发安全问题
+      int nextc = c + acquires;
+      if (nextc &lt; 0)
+          throw new Error(&quot;Maximum lock count exceeded&quot;);
+      setState(nextc);
+      return true;
+  }
+  return false;
+</code></pre><p>  }</p>
+</li>
+<li><p>解释细节</p>
+<ul>
+<li>传1表示state锁的状态，后面上锁会给锁状态+1</li>
+</ul>
+</li>
+<li><p>addWaiter(Node.EXCLUSIVE):将Thread放到队列中</p>
+<p>  private Node addWaiter(Node mode) {</p>
+<pre><code>  Node node = new Node(Thread.currentThread(), mode);
+  // Try the fast path of enq; backup to full enq on failure
+  Node pred = tail;
+  if (pred != null) {
+      node.prev = pred;
+      if (compareAndSetTail(pred, node)) {
+          pred.next = node;
+          return node;
+      }
+  }
+  enq(node);
+  return node;
+</code></pre><p>  }</p>
+<ul>
+<li><p>enq(node):队列为空或竞争入队会进入此方法</p>
+<p>  private Node enq(final Node node) {</p>
+<pre><code>  for (;;) {
+      Node t = tail;
+      if (t == null) { // Must initialize
+          if (compareAndSetHead(new Node()))
+              tail = head;
+      } else {
+          node.prev = t;
+          if (compareAndSetTail(t, node)) {
+              t.next = node;
+              return t;
+          }
+      }
+  }
+</code></pre><p>  }</p>
+<ul>
+<li>入队要使用compareAndSetTail(t, node)，因为入队也可能存在并发问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>acquireQueued(addWaiter(Node.EXCLUSIVE),arg)</p>
+<p>  final boolean acquireQueued(final Node node, int arg) {</p>
+<pre><code>  boolean failed = true;
+  try {
+      boolean interrupted = false;
+      for (;;) {
+          final Node p = node.predecessor();
+          if (p == head &amp;&amp; tryAcquire(arg)) {
+              setHead(node);
+              p.next = null; // help GC
+              failed = false;
+              return interrupted;
+          }
+          if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+              parkAndCheckInterrupt())
+              interrupted = true;
+      }
+  } finally {
+      if (failed)
+          cancelAcquire(node);
+  }
+</code></pre><p>  }</p>
+<ul>
+<li><p>解释细节</p>
+<ul>
+<li>节点阻塞之前还得再尝试一次获取锁(因为线程阻塞唤醒比较耗费资源)</li>
+<li>1.若能够获取到，节点出队，并且把head往后挪一个节点，新的头结点就是当前节点；</li>
+<li><p>2.不能获取到，阻塞等待被唤醒</p>
+<ul>
+<li>1.首先第1轮循环、修改head的状态，修改成signal=-1标记处可以被唤醒.</li>
+<li>2.第2轮循环，阻塞线程，并且需要判断线程是否是有中断信号唤醒的！</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>shouldParkAfterFailedAcquire(p, node)</p>
+<p>  private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {</p>
+<pre><code>  int ws = pred.waitStatus;
+  if (ws == Node.SIGNAL)
+      /*
+       * This node has already set status asking a release
+       * to signal it, so it can safely park.
+       */
+      return true;
+  if (ws &gt; 0) {
+      /*
+       * Predecessor was cancelled. Skip over predecessors and
+       * indicate retry.
+       */
+      do {
+          node.prev = pred = pred.prev;
+      } while (pred.waitStatus &gt; 0);
+      pred.next = node;
+  } else {
+      /*
+       * waitStatus must be 0 or PROPAGATE.  Indicate that we
+       * need a signal, but don&#39;t park yet.  Caller will need to
+       * retry to make sure it cannot acquire before parking.
+       */
+      compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
+  }
+  return false;
+</code></pre><p>  }</p>
+<ul>
+<li><p>waitStatus节点的生命状态：信号量</p>
+<ul>
+<li>SIGNAL = -1 //可被唤醒</li>
+<li>CANCELLED = 1 //代表出现异常，中断引起的，需要废弃结束</li>
+<li>CONDITION = -2 // 等待condition唤醒</li>
+<li>PROPAGATE = -3 // 传播</li>
+<li>0 - 初始状态Init状态</li>
+</ul>
+</li>
+<li><p>执行到此方法说明该线程要被阻塞，那么就要把waitstate设置为signal，下次才能被唤醒</p>
+<p>  compareAndSetWaitStatus(pred, ws, Node.SIGNAL);</p>
+</li>
+</ul>
+</li>
+<li><p>parkAndCheckInterrupt()：阻塞该线程</p>
+<p>  private final boolean parkAndCheckInterrupt() {</p>
+<pre><code>  LockSupport.park(this);
+  return Thread.interrupted();
+</code></pre><p>  }</p>
+<ul>
+<li>LockSupport.park(this)</li>
+<li>Thread.interrupted()</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>unlock实现:release(1)</p>
+<p>  public void unlock() {</p>
+<pre><code>  sync.release(1);
+</code></pre><p>  }<br>  public final boolean release(int arg) {</p>
+<pre><code>  if (tryRelease(arg)) {
+      Node h = head;
+      if (h != null &amp;&amp; h.waitStatus != 0)
+          unparkSuccessor(h);
+      return true;
+  }
+  return false;
+</code></pre><p>  }</p>
+<ul>
+<li><p>解释细节</p>
+<ul>
+<li>传1表示state锁的状态，后面上锁会给锁状态-1</li>
+<li>与上锁时的shouldParkAfterFailedAcquire(p, node)方法对应，waitstate!=0才能执行unparkSuccessor(h)</li>
+</ul>
+</li>
+<li><p>tryRelease(arg)</p>
+<p>  protected final boolean tryRelease(int releases) {</p>
+<pre><code>  int c = getState() - releases;
+  if (Thread.currentThread() != getExclusiveOwnerThread())
+      throw new IllegalMonitorStateException();
+  boolean free = false;
+  if (c == 0) {
+      free = true;
+      setExclusiveOwnerThread(null);
+  }
+  setState(c);
+  return free;
+</code></pre><p>  }</p>
+<ul>
+<li>给锁状态-1，由于可重入性，-1之后state依然不为0，那么持有锁的线程依旧是当前线程，返回false；否则返回true</li>
+</ul>
+</li>
+<li><p>unparkSuccessor(h)</p>
+<p>  private void unparkSuccessor(Node node) {</p>
+<pre><code>  /*
+   * If status is negative (i.e., possibly needing signal) try
+   * to clear in anticipation of signalling.  It is OK if this
+   * fails or if status is changed by waiting thread.
+   */
+  int ws = node.waitStatus;
+  if (ws &lt; 0)
+      compareAndSetWaitStatus(node, ws, 0);
+
+  /*
+   * Thread to unpark is held in successor, which is normally
+   * just the next node.  But if cancelled or apparently null,
+   * traverse backwards from tail to find the actual
+   * non-cancelled successor.
+   */
+  Node s = node.next;
+  if (s == null || s.waitStatus &gt; 0) {
+      s = null;
+      for (Node t = tail; t != null &amp;&amp; t != node; t = t.prev)
+          if (t.waitStatus &lt;= 0)
+              s = t;
+  }
+  if (s != null)
+      LockSupport.unpark(s.thread);
+</code></pre><p>  }</p>
+<ul>
+<li><p>解释细节</p>
+<ul>
+<li>首先会用compareAndSetWaitStatus(node, ws, 0);将waitstate变为0，然后接着执行acquireQueued方法去抢锁(非公平锁)，如果失败，则将waitstate变为-1</li>
+</ul>
+</li>
+<li><p>移除当前线程结点，获取队列中的下一个节点</p>
+<p>  Node s = node.next;<br>  if (s == null || s.waitStatus &gt; 0) {</p>
+<pre><code>  s = null;
+  for (Node t = tail; t != null &amp;&amp; t != node; t = t.prev)
+      if (t.waitStatus &lt;= 0)
+          s = t;
+</code></pre><p>  }</p>
+</li>
+<li><p>LockSupport.unpark(s.thread)：释放锁，唤醒队列中的下一个进程</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="第三节：阻塞队列"><a href="#第三节：阻塞队列" class="headerlink" title="第三节：阻塞队列"></a>第三节：阻塞队列</h3><ul>
+<li><p>lockInterruptibly()</p>
+<ul>
+<li><p>中断的几个常用方法</p>
+<ul>
+<li><p>Thread.interrupted()：检测调用这个方法的线程是否已经中断，并将中断状态设置为false</p>
+<p>  public static boolean interrupted()</p>
+</li>
+<li><p>void interrupt()：用于设置一个线程的中断状态为 true</p>
+</li>
+<li><p>boolean isInterrupted()：持有线程实例引用即可检测线程中断状态</p>
+</li>
+</ul>
+</li>
+<li><p>当通过lockInterruptibly()方法获取某个锁时，如果不能获取到，只有进行等待(即阻塞)的情况下，是可以响应中断的。而用synchronized修饰的话，当一个线程处于等待某个锁的状态，是无法被中断的，只有一直等待下去。</p>
+</li>
+</ul>
+</li>
+<li><p>lockSupport</p>
+<ul>
+<li>使用void interrupt()方法会给线程打上一个标记，即设置中断状态为true，那么LockSupport.park()会判断状态，若为true，便不能阻塞该线程，要使用LockSupport.park(Object)才行</li>
+<li><p>LockSupport.unpark</p>
+<ul>
+<li>unpark只是给当前线程设置一个许可证。如果当前线程已经被阻塞了（即调用了park），则会转为不阻塞的状态。</li>
+<li>park和unpark的调用顺序无所谓，只要unpark设置了这个许可证，park方法就可以在任意时刻消费许可证，从而不会阻塞方法。</li>
+</ul>
+</li>
+<li><p>注意void interrupt()</p>
+<ul>
+<li>若线程处于活跃状态，该方法只能将线程中断状态变为true，并不能真正的中断线程，需要被调用的线程自己进行配合才行。</li>
+<li>若线程处于阻塞状态，在别的线程中调用当前线程对象的interrupt方法，那么线程将立即退出被阻塞状态，并抛出一个InterruptedException异常。</li>
+<li>会在Thread.cpp底层执行LockSupport.unpark(t)，唤醒当前线程</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>阻塞队列BlockingQueue</p>
+<ul>
+<li><p>分类</p>
+<ul>
+<li>ArrayBlockingQueue 由数组支持的有界队列</li>
+<li>LinkedBlockingQueue 由链接节点支持的可选有界队列</li>
+<li>PriorityBlockingQueue 由优先级堆支持的无界优先级队列</li>
+<li>DelayQueue 由优先级堆支持的、基于时间的调度队列</li>
+</ul>
+</li>
+<li><p>数据结构</p>
+<ul>
+<li><p>ArrayBlockingQueue</p>
+<ul>
+<li>其中Condition类是AQS类的内部类</li>
+</ul>
+</li>
+<li><p>实现实例</p>
+<p>  package CODE.多线程;</p>
+<p>  import java.util.concurrent.locks.Condition;<br>  import java.util.concurrent.locks.Lock;<br>  import java.util.concurrent.locks.ReentrantLock;</p>
+<p>  //Conditon实现有界队列<br>  class BoundQueue<t><br>  {</t></p>
+<pre><code>private Object[] items;
+private int counts=0; //intems中元素个数
+private Lock lock=new ReentrantLock();
+private Condition fullCondition=lock.newCondition();
+private Condition emptyCondition=lock.newCondition();
+public BoundQueue(int size)
+{
+  items=new Object[size];
+}
+
+//向数组里添加元素，如果数组满，进入等待状态
+public void add(T t,int addIndex) throws InterruptedException {
+  try
+  {
+    lock.lock();
+    //数组已满，添加线程需要进入等待状态
+    while(counts==items.length)
+    {
+      System.out.println(&quot;数组已满，需要等待&quot;);
+      fullCondition.await();
+    }
+    System.out.println(Thread.currentThread().getName()+&quot;在添加元素&quot;);
+    items[addIndex]=t;
+    counts++;
+    //元素添加完毕，需要唤醒清空队列
+    emptyCondition.signal();
+  }finally {
+    lock.unlock();
+  }
+
+}
+//删除元素方法，如果当前数组为空，移除线程进入等待状态直到数组不为空
+public T remove(int removeIndex) throws InterruptedException {
+  try
+  {
+    lock.lock();
+    while(counts==0)
+    {
+      System.out.println(&quot;数组已空，删除等待&quot;);
+      emptyCondition.await();
+    }
+    Object x=items[removeIndex];
+    System.out.println(Thread.currentThread().getName()+&quot;在删除元素&quot;);
+    counts--;
+    //唤醒添加线程
+    fullCondition.signal();
+    return (T)x; //从大类型到小类型需要强转
+  }finally {
+    lock.unlock();
+  }
+}
+</code></pre><p>  }<br>  class MyThread implements Runnable<br>  {</p>
+<pre><code>private BoundQueue boundQueue;
+private int flag;
+public MyThread(int flag,BoundQueue boundQueue)
+{
+  this.boundQueue=boundQueue;
+  this.flag=flag;
+}
+public void run()
+{
+  if(flag==1)
+  {
+    try {
+      boundQueue.add(&quot;asb&quot;,0);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+  else
+  {
+    try {
+      boundQueue.remove(1);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre><p>  }<br>  public class Bound {</p>
+<pre><code>public static void main(String[] args) {
+  BoundQueue&lt;String&gt; boundQueue=new BoundQueue&lt;&gt;(2);
+  MyThread addthread=new MyThread(1,boundQueue);
+  MyThread removethread=new MyThread(0,boundQueue);
+  new Thread(removethread,&quot;删除线程1&quot;).start();
+  new Thread(addthread,&quot;添加线程1&quot;).start();
+  new Thread(addthread,&quot;添加线程2&quot;).start();
+}
+</code></pre><p>  }</p>
+</li>
+<li><p>同步队列(CLH)和阻塞队列</p>
+<ul>
+<li><p>同步队列(CLH)</p>
+<ul>
+<li>是一个有头尾结点的双向链式队列。(AQS源码)</li>
+<li><p>个人理解</p>
+<ul>
+<li>同步队列可以类比Java线程的就绪态，满足执行条件(IO资源等)，但没拿到CPU时间片。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>等待队列</p>
+<ul>
+<li>是一个无头结点单向的链式队列；</li>
+<li><p>个人理解</p>
+<ul>
+<li>等待队列可以类比Java线程的阻塞态，不满足执行条件(生产者(队列满了)消费者(队列空了))</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>共同</p>
+<ul>
+<li>在ConditionObject 通过持有等待队列的头尾指针来管理等待队列。这个Node复用了AQS的Node类，也就是等待队列和同步队列的结点共用一个Node类。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>condition类</p>
+<ul>
+<li><p>结构</p>
+<ul>
+<li>public class ConditionObject implements Condition, java.io.Serializable {<br> private transient Node firstWaiter;<br> private transient Node lastWaiter;<br> }</li>
+<li>在ConditionObject 通过持有等待队列的头尾指针来管理等待队列。这个Node复用了AQS的Node类，也就是等待队列和同步队列的结点共用一个Node类。</li>
+</ul>
+</li>
+<li><p>wait/notify和await/signal</p>
+<ul>
+<li>从整体上看Object的wait与notify是与对象监视器（synchronized同步代码块或者同步方法中）配合完成线程间的等待通知机制</li>
+<li>而Condition的await和signal与Lock配合完成等待通知机制，前者是JVM底层级别（不可以看源码），后者是Java语言级别，具有更高的可控制性和扩展性（可以看源码）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>ArrayBlockingQueue源码分析</p>
+<ul>
+<li><p>生产者以put()为例</p>
+<p>  public void put(E e) throws InterruptedException {</p>
+<pre><code>  checkNotNull(e);
+  final ReentrantLock lock = this.lock;
+  lock.lockInterruptibly();
+  try {
+      while (count == items.length)
+          notFull.await();
+      enqueue(e);
+  } finally {
+      lock.unlock();
+  }
+</code></pre><p>  }</p>
+<ul>
+<li><p>解释细节</p>
+<ul>
+<li>如果数组已满，生产者进程进入等待队列；否则，生产元素，唤醒消费者</li>
+</ul>
+</li>
+<li><p>notFull.await();</p>
+<p>  public final void await() throws InterruptedException {</p>
+<pre><code>  if (Thread.interrupted())
+      throw new InterruptedException();
+  Node node = addConditionWaiter();
+  int savedState = fullyRelease(node);
+  int interruptMode = 0;
+  while (!isOnSyncQueue(node)) {
+      LockSupport.park(this);
+      if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
+          break;
+  }
+  if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)
+      interruptMode = REINTERRUPT;
+  if (node.nextWaiter != null) // clean up if cancelled
+      unlinkCancelledWaiters();
+  if (interruptMode != 0)
+      reportInterruptAfterWait(interruptMode);
+</code></pre><p>  }</p>
+<ul>
+<li><p>解释细节</p>
+<ul>
+<li>1.当前线程释放lock，进入等待队列，并且唤醒同步队列中下一个结点；</li>
+<li>2.当前线程被signal/signalAll后从等待队列移至同步队列，直到获取lock才从await方法返回或者在等待时被中断会做中断处理。</li>
+</ul>
+</li>
+<li><p>addConditionWaiter();</p>
+<p>  private Node addConditionWaiter() {</p>
+<pre><code>  Node t = lastWaiter;
+  // If lastWaiter is cancelled, clean out.
+  if (t != null &amp;&amp; t.waitStatus != Node.CONDITION) {
+      unlinkCancelledWaiters();
+      t = lastWaiter;
+  }
+  Node node = new Node(Thread.currentThread(), Node.CONDITION);
+  if (t == null)
+      firstWaiter = node;
+  else
+      t.nextWaiter = node;
+  lastWaiter = node;
+  return node;
+</code></pre><p>  }</p>
+<ul>
+<li><p>过程</p>
+<ul>
+<li>1.如果等待队列最后一个结点是取消状态，将这个线程移除；</li>
+<li>2.将当前线程包装成Node结点，如果等待队列为空（firstWaiter为null），将firstWaiter指向新包装的Node结点，否则，将当前线程尾插到等待队列，更新lastWaiter（尾节点）。</li>
+</ul>
+</li>
+<li><p>细节</p>
+<ul>
+<li>等待队列是一个无头结点单向的链式队列；</li>
+<li>同步队列(CLH)是一个有头尾结点的双向链式队列。</li>
+</ul>
+</li>
+<li><p>将当前线程添加到等待队列中</p>
+</li>
+</ul>
+</li>
+<li><p>fullyRelease(node)</p>
+<p>  final int fullyRelease(Node node) {</p>
+<pre><code>  boolean failed = true;
+  try {
+      int savedState = getState();
+      if (release(savedState)) {
+          failed = false;
+          return savedState;
+      } else {
+          throw new IllegalMonitorStateException();
+      }
+  } finally {
+      if (failed)
+          node.waitStatus = Node.CANCELLED;
+  }
+</code></pre><p>  }</p>
+<ul>
+<li>当前线程结点尾插到等待队列后，会调用release()方法释放lock锁，唤醒同步队列(CLH)中下一个结点</li>
+<li><p>tryRelease</p>
+<ul>
+<li>给锁状态-1，由于可重入性，-1之后state依然不为0，那么持有锁的线程依旧是当前线程，返回false；否则返回true</li>
+</ul>
+</li>
+<li><p>unparkSuccessor</p>
+<ul>
+<li>唤醒一个CLH结点</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>isOnSyncQueue(node)</p>
+<p>  final boolean isOnSyncQueue(Node node) {</p>
+<pre><code>  if (node.waitStatus == Node.CONDITION || node.prev == null)
+      return false;
+  if (node.next != null) // If has successor, it must be on queue
+      return true;
+</code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>                    return findNodeFromTail(node);
+
+                }
+
+                - 如果在等待队列中，则阻塞该进程；后续有线程调用codition的signal或者signalAll方法该线程会进入到同步队列
+
+        - enqueue(e);
+
+            private void enqueue(E x) {
+                // assert lock.getHoldCount() == 1;
+                // assert items[putIndex] == null;
+                final Object[] items = this.items;
+                items[putIndex] = x;
+                if (++putIndex == items.length)
+                    putIndex = 0;
+                count++;
+                notEmpty.signal();
+            }
+
+            - notEmpty.signal();
+
+                public final void signal() {
+                //当前线程是否持有lock
+                    if (!isHeldExclusively())
+                        throw new IllegalMonitorStateException();
+                //获取等待队列中第一个结点，第一个结点不为空，doSignal()
+                    Node first = firstWaiter;
+                    if (first != null)
+                        doSignal(first);
+                }
+
+                - 当调用condition.signal()会使等待队列等待时间最長的线程结点也就是头结点移动到同步队列；当调用condition.signalAll()会使等待队列中所有结点移动到同步队列中。
+
+                - doSignal(first);
+
+                    private void doSignal(Node first) {
+                        do {
+                    //先将等待队列第一个结点指向下一个结点，如果为空，证明等待队列只有当前线程，那么将lastWaiter指向null
+                            if ( (firstWaiter = first.nextWaiter) == null)
+                                lastWaiter = null;
+                            first.nextWaiter = null;
+                        } 
+                    //transferForSignal方法对该线程节点做真正的处理
+                    while (!transferForSignal(first) &amp;&amp;
+                                 (first = firstWaiter) != null);
+                    }
+
+                    - transferForSignal(first)
+
+                        final boolean transferForSignal(Node node) {
+                            /*
+                             * If cannot change waitStatus, the node has been cancelled.
+                             */
+                        //首先将结点状态设置为0
+                            if (!compareAndSetWaitStatus(node, Node.CONDITION, 0))
+                                return false;
+
+                            /*
+                             * Splice onto queue and try to set waitStatus of predecessor to
+                             * indicate that thread is (probably) waiting. If cancelled or
+                             * attempt to set waitStatus fails, wake up to resync (in which
+                             * case the waitStatus can be transiently and harmlessly wrong).
+                             */
+
+                        //将结点使用enq尾插到同步队列中
+                            Node p = enq(node);
+                            int ws = p.waitStatus;
+                            if (ws &gt; 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))
+                                LockSupport.unpark(node.thread);
+                            return true;
+                        }
+
+    - 消费者以take()为例
+
+        public E take() throws InterruptedException {
+            final ReentrantLock lock = this.lock;
+            lock.lockInterruptibly();
+            try {
+                while (count == 0)
+                    notEmpty.await();
+                return dequeue();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        - notEmpty.await();
+        - dequeue();
+
+- put()整体流程
+
+    - 1.lock.lock
+
+        - 一开始会AQS竞争锁
+        - 没有争取到的先进入CLH队列，后续等待唤醒
+
+    - 2.若不满足入队条件(如数组满了)(await)
+
+        - 将执行权让出，进入等待队列
+
+    - 3.后续singal方法唤醒该线程(数组不是满的了,符合执行条件,但可能多个线程都符合执行条件)
+
+        - 将当前线程移入CLH队列，竞争锁
+
+    - 4.执行业务逻辑
+</code></pre><h3 id="第四节：Semaphore-共享模式-及相关AQS应用详解"><a href="#第四节：Semaphore-共享模式-及相关AQS应用详解" class="headerlink" title="第四节：Semaphore(共享模式)及相关AQS应用详解"></a>第四节：Semaphore(共享模式)及相关AQS应用详解</h3><ul>
+<li><p>Semaphore</p>
+<ul>
+<li><p>使用场景：限流，如Hytrix</p>
+</li>
+<li><p>案例</p>
+<p>  public static void main(String[] args) {</p>
+<pre><code>  Semaphore semaphore = new Semaphore(3);
+
+  for (int i = 0; i &lt; 10; i++) {
+     new Thread(() -&gt;{
+       try {
+         semaphore.acquire();
+         System.out.println(Thread.currentThread().getName() + &quot;\t 进入抢购秒杀页面，准备抢小米9&quot;);
+         //停3秒后离开
+         try {
+           TimeUnit.SECONDS.sleep(3);
+         } catch (InterruptedException e) {
+           e.printStackTrace();
+         }
+         System.out.println(Thread.currentThread().getName() + &quot;\t 离开抢购秒杀页面，成功抢到小米9&quot;);
+       } catch (InterruptedException e) {
+         e.printStackTrace();
+       }finally {
+         semaphore.release();
+       }
+     },&quot;用户&quot; + String.valueOf(i)).start();
+  }
+}
+</code></pre></li>
+</ul>
+</li>
+<li><p>CountDownLatch</p>
+<ul>
+<li><p>使用场景</p>
+<ul>
+<li><p>多个线程需要等待其他线程的工作之后，再进行其后续工作。即让多个线程在同一个起跑线进行</p>
+<ul>
+<li><p>案例</p>
+<p>  public static void main(String[] args) throws InterruptedException {</p>
+<pre><code>  final CountDownLatch latch = new CountDownLatch(1);
+  new Thread(() -&gt; {
+    System.out.println(Thread.currentThread().getName() + &quot; Do some initial working.&quot;);
+    try {
+      Thread.sleep(1000);
+      latch.await();
+      System.out.println(Thread.currentThread().getName() + &quot; Do other working.&quot;);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }).start();
+
+  new Thread(() -&gt; {
+    System.out.println(Thread.currentThread().getName() + &quot; Do some initial working.&quot;);
+    try {
+      Thread.sleep(1000);
+      latch.await();
+      System.out.println(Thread.currentThread().getName() + &quot; Do other working.&quot;);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }).start();
+
+  new Thread(() -&gt; {
+    System.out.println(&quot;asyn prepare for some data.&quot;);
+    try {
+      Thread.sleep(2000);
+      System.out.println(&quot;Data prepare for done.&quot;);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }finally {
+      latch.countDown();
+    }
+  }).start();
+
+}
+</code></pre></li>
+</ul>
+</li>
+<li><p>当线程池中指定的线程数执行完，再去执行后面的操作</p>
+<ul>
+<li><p>案例</p>
+<p>  public static void main(String[] args) throws InterruptedException {</p>
+<pre><code>  CountDownLatch countDownLatch = new CountDownLatch(6);
+
+  for (int i = 0; i &lt; 6; i++) {
+     new Thread(() -&gt;{
+      System.out.println(&quot;\t\t&quot; + Thread.currentThread().getName() + &quot;处理完毕~~~&quot;);
+      countDownLatch.countDown();
+      System.out.println(&quot;非调用者线程-&quot; + Thread.currentThread().getName() + &quot;-还可以干点其他事&quot;);
+     }, Country.forEach_Country(i + 1).getCountryName()).start();
+  }
+
+  countDownLatch.await();
+  System.out.println(&quot;-----------------------------&quot;);
+  System.out.println(&quot;\t 所有任务都已经处理完毕，可以往后执行了！&quot;);
+}
+</code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>CyclicBarrier</p>
+<ul>
+<li><p>和CountDownLatch类似，区别在于CyclicBarrier可以重复使用</p>
+<ul>
+<li><p>案例</p>
+<p>  public static void main(String[] args) {</p>
+<pre><code>  CyclicBarrier cyclicBarrier = new CyclicBarrier(7,() -&gt; System.out.println(&quot;收集到7颗龙珠,召唤神龙&quot;));
+
+  for (int i = 0; i &lt; 7; i++) {
+     final int temp = i + 1;
+     new Thread(() -&gt;{
+      System.out.println(Thread.currentThread().getName() + &quot;\t收集到第&quot; + temp + &quot;颗龙珠&quot;);
+       try {
+         int await = cyclicBarrier.await();
+         System.out.println(&quot;还剩几个:&quot; + await);
+       } catch (InterruptedException e) {
+         e.printStackTrace();
+       } catch (BrokenBarrierException e) {
+         e.printStackTrace();
+       }
+     },&quot;线程&quot; + String.valueOf(i)).start();
+  }
+}
+</code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Exchanger(不常用)</p>
+</li>
+</ul>
+<h2 id="4-Atomic类-amp-Unsafe类"><a href="#4-Atomic类-amp-Unsafe类" class="headerlink" title="4.Atomic类&amp;Unsafe类"></a>4.Atomic类&amp;Unsafe类</h2><h3 id="CAS-CompareAndSet"><a href="#CAS-CompareAndSet" class="headerlink" title="CAS(CompareAndSet)"></a>CAS(CompareAndSet)</h3><ul>
+<li><p>相关Atomic类</p>
+<ul>
+<li><p>数组类型</p>
+<ul>
+<li>AtomicIntegerArray、AtomicLongArray、AtomicReferenceArray</li>
+</ul>
+</li>
+<li><p>属性原子修改器（Updater）</p>
+<ul>
+<li>AtomicIntegerFieldUpdater、 AtomicLongFieldUpdater、AtomicReferenceFieldUpdater</li>
+<li>此类方法封装了Unsafe类获取偏移量的操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>三大基本CAS</p>
+<ul>
+<li>compareAndSwapObject<br>  compareAndSwapInt<br>  compareAndSwapLong</li>
+<li>基于硬件原语-CMPXCHG实现原子操作cas</li>
+</ul>
+</li>
+<li><p>问题</p>
+<ul>
+<li><p>ABA问题</p>
+<ul>
+<li><p>描述：B从A那偷偷取钱，之后投资赚了钱，把钱又偷偷还给了A</p>
+</li>
+<li><p>解决</p>
+<ul>
+<li><p>每次修改的时候加个版本</p>
+</li>
+<li><p>使用AtomicStampedReference类</p>
+<p>  static AtomicStampedReference<integer> num = new AtomicStampedReference&lt;&gt;(100,1);</integer></p>
+<pre><code>public static void main(String[] args) {
+  int stamp = num.getStamp();//初始版本号
+
+  new Thread(() -&gt;{
+    num.compareAndSet(100,101,num.getStamp(),num.getStamp() + 1);
+    System.out.println(Thread.currentThread().getName() + &quot;\t 版本号&quot; + num.getStamp());
+    num.compareAndSet(101,100,num.getStamp(),num.getStamp() + 1);
+    System.out.println(Thread.currentThread().getName() + &quot;\t 版本号&quot; + num.getStamp());
+  },&quot;线程A&quot;).start();
+</code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>                new Thread(() -&gt;{
+                  try {
+                    TimeUnit.SECONDS.sleep(3);
+                  } catch (InterruptedException e) {
+                    e.printStackTrace();
+                  }
+                  boolean b = num.compareAndSet(100, 209, stamp, num.getStamp() + 1);
+                  System.out.println(b + &quot;\t 当前版本号: \t&quot; + num.getStamp());
+                  System.out.println(&quot;当前最新值 \t&quot; + num.getReference().toString());
+                },&quot;线程B&quot;).start();
+              }
+
+- CAS 长时间一直不成功，会给 CPU 带来很大的开销
+
+    - 解决
+
+        - LongAdder：分段CAS操作
+
+            - 默认一开始使用CAS单个cell作为base，当线程多了之后，开启多个cell单元，用于分担base的压力，之后需要值的时候返回base+所有cell的值
+
+        - 示意图
+</code></pre><h3 id="Unsafe"><a href="#Unsafe" class="headerlink" title="Unsafe"></a>Unsafe</h3><ul>
+<li><p>为我们提供了类似C、C++手动管理内存的能力，可能会造成内存泄漏</p>
+</li>
+<li><p>应用</p>
+<ul>
+<li>文件上传，并发量也比较高；可以用unsafe申请堆外内存</li>
+</ul>
+</li>
+<li><p>案例</p>
+<ul>
+<li><p>//在AtomicInteger类中获取到value的偏移量，从而操作value<br>private static final Unsafe unsafe = Unsafe.getUnsafe();<br>private static final long valueOffset;</p>
+<p>static {</p>
+<pre><code>try {
+    valueOffset = unsafe.objectFieldOffset
+        (AtomicInteger.class.getDeclaredField(&quot;value&quot;));
+} catch (Exception ex) { throw new Error(ex); }
+</code></pre><p>}</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-HashMap-amp-ConcurrentHashMap"><a href="#5-HashMap-amp-ConcurrentHashMap" class="headerlink" title="5.HashMap&amp;ConcurrentHashMap"></a>5.HashMap&amp;ConcurrentHashMap</h2><h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><ul>
+<li><p>为什么初始容量必须是2的整数次幂</p>
+<ul>
+<li>1.计算hashcode时，return h &amp; (length-1);因为要获取数组下标使用位运算，如果不是2的整数次幂，会出错</li>
+<li>2.使用位运算，而不是用mod运算，是因为位运算效率比mod运算高得多，后续扩容效率更高。</li>
+</ul>
+</li>
+<li><p>加载因子为什么是0.75</p>
+<ul>
+<li>时间和空间上比较均衡</li>
+<li>目的:为了减少hash碰撞table长度会扩容一倍</li>
+</ul>
+</li>
+<li><p>1.7:数组+链表</p>
+<ul>
+<li><p>示意图</p>
+</li>
+<li><p>put()</p>
+<p>  public V put(K key, V value) {</p>
+<pre><code>   // 1.第一次put元素
+  // 数组为空进行参数初始化-表示第一次put元素
+  if (table == EMPTY_TABLE) {
+    // 数组初始化/参数初始化
+    // 第一次put时，threshold经过构造方法赋值为16
+    inflateTable(threshold);
+  }
+  // 2.添加key为null的元素
+  if (key == null)
+    return putForNullKey(value);
+    // 3.添加key非null的元素
+  // 计算hash值
+  int hash = hash(key);
+  // 计算数组对应下标值
+  int i = indexFor(hash, table.length);
+  // 遍历数组下标为i的链表
+  for (Entry&lt;K,V&gt; e = table[i]; e != null; e = e.next) {
+    Object k;
+    // hash冲突 &amp;&amp; key相同
+    if (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k))) {
+      // 获取遍历节点元素值
+      V oldValue = e.value;
+      // 对value进行覆盖
+      e.value = value;
+      // value被覆盖时调用
+      e.recordAccess(this);
+      // 返回旧元素值
+      return oldValue;
+    }
+  }
+  // 操作次数++
+  modCount++;
+  // 添加Entry节点
+  addEntry(hash, key, value, i);
+  return null;
+}
+</code></pre><ul>
+<li><p>indexFor():根据hashCode计算数组下标</p>
+<p>  static int indexFor(int h, int length) {</p>
+<pre><code>return h &amp; (length-1);
+</code></pre><p>  }</p>
+</li>
+<li><p>addEntry():添加链表节点</p>
+<p>  // 添加Entry节点</p>
+<pre><code>void addEntry(int hash, K key, V value, int bucketIndex) {
+  // map元素个数 &gt; 扩容阈值 &amp;&amp; 当前数组位置对应链表不为空
+  if ((size &gt;= threshold) &amp;&amp; (null != table[bucketIndex])) {
+    // 将源数组中的元素值散列至新数组
+    resize(2 * table.length);
+    // 计算hash值 - 重新计算
+    hash = (null != key) ? hash(key) : 0;
+    // 计算对应新数组下标位置
+    bucketIndex = indexFor(hash, table.length);
+  }
+  // 添加Eentry节点
+  createEntry(hash, key, value, bucketIndex);
+}
+</code></pre><ul>
+<li><p>resize():扩容</p>
+<p>  // 将源数组中的元素值散列至新数组</p>
+<pre><code>void resize(int newCapacity) {
+  // 获取源数组
+  Entry[] oldTable = table;
+  // 获取源数组长度
+  int oldCapacity = oldTable.length;
+  // 数组长度最大值设置
+  if (oldCapacity == MAXIMUM_CAPACITY) {
+    threshold = Integer.MAX_VALUE;
+    return;
+  }
+  // 创建长度为源数组长度2倍的新数组
+  Entry[] newTable = new Entry[newCapacity];
+  // 将源数组中的元素值散列至新数组
+  transfer(newTable, initHashSeedAsNeeded(newCapacity));
+  // 将新数组赋值至源数组
+  table = newTable;
+  // 重新计算扩容阈值
+  threshold = (int)Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1);
+}
+</code></pre><ul>
+<li><p>transfer():挨个将链表节点复制到新数组链表上，同时重新计算hash值</p>
+<p>  void transfer(Entry[] newTable, boolean rehash) {</p>
+<pre><code>  // 获取新数组长度
+  int newCapacity = newTable.length;
+  // 遍历源数组，将元素按照一定规则散列至新数组
+  // 外循环：遍历数组
+  for (Entry&lt;K,V&gt; e : table) {
+    // 内循环：遍历数组位置对应链表
+    while(null != e) {
+      // 获取当前节点下一个节点
+      Entry&lt;K,V&gt; next = e.next;
+      if (rehash) {
+        // true：重新计算hash值
+        e.hash = null == e.key ? 0 : hash(e.key);
+      }
+      // 获取对应新数组的下标值
+      int i = indexFor(e.hash, newCapacity);
+      // 下面三步一定要连起来去思考：
+      // **前提条件，2次循环都作用于新数组同一下标位置的情况：
+      // 第一次循环时，newTable[i]为空，先赋值给当前遍历节点的下个节点，再将当前遍历节点赋值给对应新下标的新数组，最后继续循环
+      // 第二次循环时，newTable[i]为上次(存入同一下标位置对应新数组的链表)，然后赋值给当前遍历节点的下个节点(此节点实则为上一次遍历节点的下一个节点，
+      //   从这里可以看出，HashMap1.7这里用的是头插法)，再将此链表赋值给同一下标位置的新数组中，最后不为空继续循环；
+      e.next = newTable[i];
+      newTable[i] = e;
+      e = next;
+    }
+  }
+}
+</code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>1.8:数组+链表+红黑树</p>
+<ul>
+<li><p>红黑树</p>
+<ul>
+<li><p>为什么不用二叉平衡树</p>
+<ul>
+<li>在频繁需要写的场景中AVL效率不高</li>
+<li>红黑树牺牲严格的平衡性，换来了写操作时少量的旋转操作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>重要参数</p>
+<ul>
+<li>DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4; Hash表默认初始容量</li>
+<li>MAXIMUM_CAPACITY = 1 &lt;&lt; 30; 最大Hash表容量</li>
+<li>DEFAULT_LOAD_FACTOR = 0.75f；默认加载因子</li>
+<li>TREEIFY_THRESHOLD = 8；链表转红黑树阈值</li>
+<li>UNTREEIFY_THRESHOLD = 6；红黑树转链表阈值</li>
+<li>MIN_TREEIFY_CAPACITY = 64；链表转红黑树时hash表最小容量阈值，达不到优先扩容。</li>
+</ul>
+</li>
+<li><p>putVal()</p>
+<p>  final V putVal(int hash, K key, V value, boolean onlyIfAbsent,</p>
+<pre><code>             boolean evict) {
+  Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
+  if ((tab = table) == null || (n = tab.length) == 0)
+      n = (tab = resize()).length;
+  if ((p = tab[i = (n - 1) &amp; hash]) == null)
+      tab[i] = newNode(hash, key, value, null);
+  else {
+      Node&lt;K,V&gt; e; K k;
+      if (p.hash == hash &amp;&amp;
+          ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+          e = p;
+      else if (p instanceof TreeNode)
+          e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+      else {
+          for (int binCount = 0; ; ++binCount) {
+              if ((e = p.next) == null) {
+                  p.next = newNode(hash, key, value, null);
+                  if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                      treeifyBin(tab, hash);
+                  break;
+              }
+              if (e.hash == hash &amp;&amp;
+                  ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                  break;
+              p = e;
+          }
+      }
+      if (e != null) { // existing mapping for key
+          V oldValue = e.value;
+          if (!onlyIfAbsent || oldValue == null)
+              e.value = value;
+          afterNodeAccess(e);
+          return oldValue;
+      }
+  }
+  ++modCount;
+  if (++size &gt; threshold)
+      resize();
+  afterNodeInsertion(evict);
+  return null;
+</code></pre><p>  }</p>
+<ul>
+<li><p>treeifyBin()</p>
+<p>  final void treeifyBin(Node<k,v>[] tab, int hash) {</k,v></p>
+<pre><code>  int n, index; Node&lt;K,V&gt; e;
+  if (tab == null || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)
+      resize();
+  else if ((e = tab[index = (n - 1) &amp; hash]) != null) {
+      TreeNode&lt;K,V&gt; hd = null, tl = null;
+      do {
+          TreeNode&lt;K,V&gt; p = replacementTreeNode(e, null);
+          if (tl == null)
+              hd = p;
+          else {
+              p.prev = tl;
+              tl.next = p;
+          }
+          tl = p;
+      } while ((e = e.next) != null);
+      if ((tab[index] = hd) != null)
+          hd.treeify(tab);
+  }
+</code></pre><p>  }</p>
+<ul>
+<li>若链表节点数目超过TREEIFY_THRESHOLD(默认为8)，转换为红黑树</li>
+<li><p>resize();</p>
+<ul>
+<li>Node<k,v>[] table这个数组大小 小于MIN_TREEIFY_CAPACITY时选择扩容，反之，树形化</k,v></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>流程图</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="ConcurrentHashMap-替代了HashTable-因为它的方法基本用Synchronized修饰"><a href="#ConcurrentHashMap-替代了HashTable-因为它的方法基本用Synchronized修饰" class="headerlink" title="ConcurrentHashMap(替代了HashTable,因为它的方法基本用Synchronized修饰)"></a>ConcurrentHashMap(替代了HashTable,因为它的方法基本用Synchronized修饰)</h3><ul>
+<li><p>1.7基于ReentrantLock(Segment)实现分段锁</p>
+<ul>
+<li><p>put()</p>
+<ul>
+<li>第一次计算key的hash，找到Segment元素的位置；</li>
+<li>判断当前Segment元素是否初始化，若没有初始化，则通过CAS进行初始化；</li>
+<li>第二次计算key的hash，找到HashEntry数组的位置；</li>
+<li>由于Segment继承了ReentrantLock锁，所以TryLock() 尝试获取锁，如果锁获取成功，将数据插入到HashEntry位置，如果遇到Hash冲突，则插入到链表的末端；如果锁被其他线程获取，那么就会以自旋的方式重新获取锁，超过指定的次数之后还获取不到的话，就会挂起，等待唤醒；</li>
+</ul>
+</li>
+<li><p>锁粒度为Segment</p>
+</li>
+</ul>
+</li>
+<li><p>1.8CAS+基于synchronized实现分段锁</p>
+<ul>
+<li><p>put()</p>
+<p>  final V putVal(K key, V value, boolean onlyIfAbsent) {</p>
+<pre><code>  if (key == null || value == null) throw new NullPointerException();
+  int hash = spread(key.hashCode());
+  int binCount = 0;
+  for (Node&lt;K,V&gt;[] tab = table;;) {
+      Node&lt;K,V&gt; f; int n, i, fh;
+      if (tab == null || (n = tab.length) == 0)
+          tab = initTable();
+      else if ((f = tabAt(tab, i = (n - 1) &amp; hash)) == null) {
+          if (casTabAt(tab, i, null,
+                       new Node&lt;K,V&gt;(hash, key, value, null)))
+              break;                   // no lock when adding to empty bin
+      }
+      else if ((fh = f.hash) == MOVED)
+          tab = helpTransfer(tab, f);
+      else {
+          V oldVal = null;
+          synchronized (f) {
+              if (tabAt(tab, i) == f) {
+                  if (fh &gt;= 0) {
+                      binCount = 1;
+                      for (Node&lt;K,V&gt; e = f;; ++binCount) {
+                          K ek;
+                          if (e.hash == hash &amp;&amp;
+                              ((ek = e.key) == key ||
+                               (ek != null &amp;&amp; key.equals(ek)))) {
+                              oldVal = e.val;
+                              if (!onlyIfAbsent)
+                                  e.val = value;
+                              break;
+                          }
+                          Node&lt;K,V&gt; pred = e;
+                          if ((e = e.next) == null) {
+                              pred.next = new Node&lt;K,V&gt;(hash, key,
+                                                        value, null);
+                              break;
+                          }
+                      }
+                  }
+                  else if (f instanceof TreeBin) {
+                      Node&lt;K,V&gt; p;
+                      binCount = 2;
+                      if ((p = ((TreeBin&lt;K,V&gt;)f).putTreeVal(hash, key,
+                                                     value)) != null) {
+                          oldVal = p.val;
+                          if (!onlyIfAbsent)
+                              p.val = value;
+                      }
+                  }
+              }
+          }
+          if (binCount != 0) {
+              if (binCount &gt;= TREEIFY_THRESHOLD)
+                  treeifyBin(tab, i);
+              if (oldVal != null)
+                  return oldVal;
+              break;
+          }
+      }
+  }
+  addCount(1L, binCount);
+  return null;
+</code></pre><p>  }</p>
+<ul>
+<li><p>如果没有初始化就先调用initTable（）方法来进行初始化过程；</p>
+<p>  if (tab == null || (n = tab.length) == 0)</p>
+<pre><code>  tab = initTable();
+</code></pre></li>
+<li><p>如果没有hash冲突就直接CAS插入；</p>
+<p>  else if ((f = tabAt(tab, i = (n - 1) &amp; hash)) == null) {</p>
+<pre><code>  if (casTabAt(tab, i, null,
+               new Node&lt;K,V&gt;(hash, key, value, null)))
+      break;                   // no lock when adding to empty bin
+</code></pre><p>  }</p>
+</li>
+<li><p>如果还在进行扩容操作就先进行扩容；</p>
+<p>  else if ((fh = f.hash) == MOVED)</p>
+<pre><code>  tab = helpTransfer(tab, f);
+</code></pre><ul>
+<li>如果HashTable触发了扩容，就会把当前Node设置为ForwardingNode</li>
+</ul>
+</li>
+<li><p>如果存在hash冲突，就加锁来保证线程安全，这里有两种情况，一种是链表形式就直接遍历到尾端插入，一种是红黑树就按照红黑树结构插入；</p>
+<p>  if (fh &gt;= 0) {</p>
+<pre><code>  binCount = 1;
+  for (Node&lt;K,V&gt; e = f;; ++binCount) {
+      K ek;
+      if (e.hash == hash &amp;&amp;
+          ((ek = e.key) == key ||
+           (ek != null &amp;&amp; key.equals(ek)))) {
+          oldVal = e.val;
+          if (!onlyIfAbsent)
+              e.val = value;
+          break;
+      }
+      Node&lt;K,V&gt; pred = e;
+      if ((e = e.next) == null) {
+          pred.next = new Node&lt;K,V&gt;(hash, key,
+                                    value, null);
+          break;
+      }
+  }
+</code></pre><p>  }</p>
+</li>
+<li><p>最后一个如果该链表的数量大于阈值8，就要先转换成黑红树的结构，break再一次进入循环；</p>
+<p>  else if (f instanceof TreeBin) {</p>
+<pre><code>  Node&lt;K,V&gt; p;
+  binCount = 2;
+  if ((p = ((TreeBin&lt;K,V&gt;)f).putTreeVal(hash, key,
+                                 value)) != null) {
+      oldVal = p.val;
+      if (!onlyIfAbsent)
+          p.val = value;
+  }
+</code></pre><p>  }</p>
+</li>
+<li><p>如果添加成功就调用addCount（）方法统计size，并且检查是否需要扩容；</p>
+<p>  if (binCount != 0) {</p>
+<pre><code>  if (binCount &gt;= TREEIFY_THRESHOLD)
+      treeifyBin(tab, i);
+  if (oldVal != null)
+      return oldVal;
+  break;
+</code></pre><p>  }</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>参考</p>
+</li>
+</ul>
+<h3 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h3><ul>
+<li><p>特性</p>
+<ul>
+<li>适用场景为读多写少</li>
+<li>不能读取实时性的数据，但能保证最终数据一致性</li>
+<li>空间换时间</li>
+</ul>
+</li>
+<li><p>add()</p>
+<ul>
+<li>public boolean add(E e) {<br>  final ReentrantLock lock = this.lock;<br>  lock.lock();<br>  try {<pre><code>  Object[] elements = getArray();
+  int len = elements.length;
+  Object[] newElements = Arrays.copyOf(elements, len + 1);
+  newElements[len] = e;
+  setArray(newElements);
+  return true;
+</code></pre>  } finally {<pre><code>  lock.unlock();
+</code></pre>  }<br>  }</li>
+<li>写操作在一个复制的数组上进行，读操作还是在原始数组中进行，读写分离，互不影响。</li>
+<li>写操作需要加锁，防止并发写入时导致写入数据丢失。</li>
+<li>写操作结束之后需要把原始数组指向新的复制数组。</li>
+</ul>
+</li>
+</ul>
+<h3 id="需要key有序"><a href="#需要key有序" class="headerlink" title="需要key有序"></a>需要key有序</h3><ul>
+<li>TreeMap：线程不安全</li>
+<li><p>ConcurrentSkipListMap:和索引结构类似</p>
+<ul>
+<li>时间复杂度O(logn)，和索引类似</li>
+<li>参考</li>
+</ul>
+</li>
+</ul>
+<h3 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h3><ul>
+<li><p>1.ThreadLocal 是什么？有哪些使用场景</p>
+<ul>
+<li>ThreadLocal 是一个本地线程副本变量工具类，在每个线程中都创建了一个 ThreadLocalMap 对象</li>
+<li><p>使用场景</p>
+<ul>
+<li>为每个线程分配一个 JDBC 连接 Connection。这样就可以保证每个线程的都在各自的 Connection 上进行数据库的操作，不会出现 A 线程关了 B线程正在使用的 Connection</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>2.什么是线程局部变量</p>
+<ul>
+<li>线程局部变量是局限于线程内部的变量，属于线程自身所有，不在多个线程间共享。</li>
+</ul>
+</li>
+<li><p>3.ThreadLocal造成内存泄漏的原因</p>
+<ul>
+<li>ThreadLocalMap 中使用的 key 为 ThreadLocal 的弱引用,而 value 是强引用。</li>
+<li>所以，如果 ThreadLocal 没有被外部强引用的情况下，在垃圾回收的时候，key 会被清理掉，而 value 不会被清理掉。</li>
+<li>这样一来，ThreadLocalMap 中就会出现key为null的Entry。假如我们不做任何措施的话，value 永远无法被GC 回收，这个时候就可能会产生内存泄露</li>
+</ul>
+</li>
+<li><p>4.ThreadLocal内存泄漏解决方案</p>
+<ul>
+<li>每次使用完ThreadLocal，都调用它的remove()方法，清除数据</li>
+</ul>
+</li>
+<li><p>拓展</p>
+<ul>
+<li>ThreadLocal的 key 是弱引用，那么在 ThreadLocal.get()的时候，发生GC之后，key 是否为null？</li>
+<li><p>ThreadLocal中ThreadLocalMap的数据结构？</p>
+<ul>
+<li>set时候会获取到每个Thread.ThreadLocalMap，往这个map中放值</li>
+</ul>
+</li>
+<li><p>ThreadLocalMap的Hash 算法？</p>
+</li>
+<li>ThreadLocalMap中Hash 冲突如何解决？</li>
+<li>ThreadLocalMap的扩容机制？</li>
+<li>ThreadLocalMap中过期 key 的清理机制？探测式清理和启发式清理流程？</li>
+<li>ThreadLocalMap.set()方法实现原理？</li>
+<li>ThreadLocalMap.get()方法实现原理？</li>
+<li>项目中ThreadLocal使用情况？遇到的坑？</li>
+</ul>
+</li>
+</ul>
+<h2 id="6-ThreadPoolExecutor线程池"><a href="#6-ThreadPoolExecutor线程池" class="headerlink" title="6.ThreadPoolExecutor线程池"></a>6.ThreadPoolExecutor线程池</h2><h3 id="工人-猪的例子很好-1-20左右"><a href="#工人-猪的例子很好-1-20左右" class="headerlink" title="工人-猪的例子很好(1:20左右)"></a>工人-猪的例子很好(1:20左右)</h3><h3 id="线程状态图"><a href="#线程状态图" class="headerlink" title="线程状态图"></a>线程状态图</h3><h3 id="线程池的目的和优势"><a href="#线程池的目的和优势" class="headerlink" title="线程池的目的和优势"></a>线程池的目的和优势</h3><ul>
+<li>重用存在的线程，减少线程创建，消亡的开销，提高性能</li>
+<li>提高响应速度。当任务到达时，任务可以不需要的等到线程创建就能立即执行。</li>
+<li>提高线程的可管理性。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。</li>
+</ul>
+<h3 id="ThreadPoolExecutor构造函数的重要参数"><a href="#ThreadPoolExecutor构造函数的重要参数" class="headerlink" title="ThreadPoolExecutor构造函数的重要参数"></a>ThreadPoolExecutor构造函数的重要参数</h3><p>public ThreadPoolExecutor(int corePoolSize,<br>               int maximumPoolSize,<br>               long keepAliveTime,<br>               TimeUnit unit,<br>               BlockingQueue<runnable> workQueue,<br>               ThreadFactory threadFactory,<br>               RejectedExecutionHandler handler)</runnable></p>
+<ul>
+<li>corePoolSize：核心线程数</li>
+<li>maximumPoolSize：线程池最大线程数</li>
+<li>keepAliveTime：允许线程最大闲置时间</li>
+<li>unit：闲置时间单位</li>
+<li>workQueue：一个阻塞队列，用于保存等待被执行的任务</li>
+<li>threadFactory：线程工厂，用于创建新线程</li>
+<li><p>handler：拒绝策略</p>
+<ul>
+<li>AbortPolicy：直接抛出异常，默认策略</li>
+<li>CallerRunsPolicy：用调用者所在的线程来执行任务</li>
+<li>DiscardOldestPolicy：丢弃阻塞队列中靠最前的任务，并执行当前任务</li>
+<li>DiscardPolicy：直接丢弃任务</li>
+</ul>
+</li>
+</ul>
+<h3 id="线程池重要属性"><a href="#线程池重要属性" class="headerlink" title="线程池重要属性"></a>线程池重要属性</h3><ul>
+<li><p>ctl 是对线程池的运行状态和线程池中有效线程的数量进行控制的一个字段</p>
+<p>  private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));<br>   private static final int COUNT_BITS = Integer.SIZE - 3;<br>   private static final int CAPACITY  = (1 &lt;&lt; COUNT_BITS) - 1;</p>
+</li>
+</ul>
+<h3 id="线程池架构"><a href="#线程池架构" class="headerlink" title="线程池架构"></a>线程池架构</h3><ul>
+<li>并没有标注哪些是核心线程，移除线程时，是随机移除，最后只要保证线程数等于传入的核心线程数即可</li>
+</ul>
+<h3 id="execute"><a href="#execute" class="headerlink" title="execute()"></a>execute()</h3><p>public void execute(Runnable command) {<br>  if (command == null)<br>    throw new NullPointerException();<br>  /*</p>
+<pre><code> * clt记录着runState和workerCount
+ */
+</code></pre><p>  int c = ctl.get();<br>  /*</p>
+<pre><code> * workerCountOf方法取出低29位的值，表示当前活动的线程数；
+ * 如果当前活动线程数小于corePoolSize，则新建一个线程放入线程池中；
+ * 并把任务添加到该线程中。
+ */
+</code></pre><p>  if (workerCountOf(c) &lt; corePoolSize) {<br>      /*</p>
+<pre><code>     * addWorker中的第二个参数表示限制添加线程的数量是根据corePoolSize来判断还是maximumPoolSize来判断；
+     * 如果为true，根据corePoolSize来判断；
+     * 如果为false，则根据maximumPoolSize来判断
+     */
+if (addWorker(command, true))
+  return;
+/*
+     * 如果添加失败，则重新获取ctl值
+     */
+c = ctl.get();
+</code></pre><p>  }<br>  /*</p>
+<pre><code> * 如果当前线程池是运行状态并且任务添加到队列成功
+ */
+</code></pre><p>  if (isRunning(c) &amp;&amp; workQueue.offer(command)) {<br>      // 重新获取ctl值<br>    int recheck = ctl.get();<br>    // 再次判断线程池的运行状态，如果不是运行状态，由于之前已经把command添加到workQueue中了，<br>        // 这时需要移除该command<br>        // 执行过后通过handler使用拒绝策略对该任务进行处理，整个方法返回<br>    if (! isRunning(recheck) &amp;&amp; remove(command))<br>      reject(command);<br>    /*</p>
+<pre><code>     * 获取线程池中的有效线程数，如果数量是0，则执行addWorker方法
+     * 这里传入的参数表示：
+     * 1. 第一个参数为null，表示在线程池中创建一个线程，但不去启动；
+     * 2. 第二个参数为false，将线程池的有限线程数量的上限设置为maximumPoolSize，添加线程时根据maximumPoolSize来判断；
+     * 如果判断workerCount大于0，则直接返回，在workQueue中新增的command会在将来的某个时刻被执行。
+     */
+else if (workerCountOf(recheck) == 0)
+  addWorker(null, false);
+</code></pre><p>  }<br>  /*</p>
+<pre><code> * 如果执行到这里，有两种情况：
+ * 1. 线程池已经不是RUNNING状态；
+ * 2. 线程池是RUNNING状态，但workerCount &gt;= corePoolSize并且workQueue已满。
+ * 这时，再次调用addWorker方法，但第二个参数传入为false，将线程池的有限线程数量的上限设置为maximumPoolSize；
+ * 如果失败则拒绝该任务
+ */
+</code></pre><p>  else if (!addWorker(command, false))<br>    reject(command);<br>}</p>
+<ul>
+<li><p>方法解释</p>
+<ul>
+<li>如果workerCount &lt; corePoolSize，则创建并启动一个线程来执行新提交的任务；</li>
+<li>如果workerCount &gt;= corePoolSize，且线程池内的阻塞队列未满，则将任务添加到该阻塞队列中；</li>
+<li>如果workerCount &gt;= corePoolSize &amp;&amp; workerCount &lt; maximumPoolSize，且线程池内的阻塞队列已满，则创建并启动一个线程来执行新提交的任务；</li>
+<li>如果workerCount &gt;= maximumPoolSize，并且线程池内的阻塞队列已满, 则根据拒绝策略来处理该任务, 默认的处理方式是直接抛异常。</li>
+<li><p>整体流程图</p>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>addWorker(Runnable firstTask, boolean core)：添加线程</p>
+<p>  private boolean addWorker(Runnable firstTask, boolean core) {</p>
+<pre><code>  boolean workerStarted = false;
+  boolean workerAdded = false;
+  Worker w = null;
+  try {
+      w = new Worker(firstTask);
+      final Thread t = w.thread;
+      if (t != null) {
+          final ReentrantLock mainLock = this.mainLock;
+          mainLock.lock();
+          try {
+              // Recheck while holding lock.
+              // Back out on ThreadFactory failure or if
+              // shut down before lock acquired.
+              int rs = runStateOf(ctl.get());
+
+              if (rs &lt; SHUTDOWN ||
+                  (rs == SHUTDOWN &amp;&amp; firstTask == null)) {
+                  if (t.isAlive()) // precheck that t is startable
+                      throw new IllegalThreadStateException();
+                  workers.add(w);
+                  int s = workers.size();
+                  if (s &gt; largestPoolSize)
+                      largestPoolSize = s;
+                  workerAdded = true;
+              }
+          } finally {
+              mainLock.unlock();
+          }
+          if (workerAdded) {
+              t.start();
+              workerStarted = true;
+          }
+      }
+  } finally {
+      if (! workerStarted)
+          addWorkerFailed(w);
+  }
+  return workerStarted;
+</code></pre><p>  }</p>
+<ul>
+<li><p>细节</p>
+<ul>
+<li><p>Worker类：封装了Thread，继承了AQS类，即“工人”</p>
+<p>  private final class Worker</p>
+<pre><code>  extends AbstractQueuedSynchronizer
+  implements Runnable
+</code></pre><p>  {</p>
+<pre><code>  /**
+   * This class will never be serialized, but we provide a
+   * serialVersionUID to suppress a javac warning.
+   */
+  private static final long serialVersionUID = 6138294804551838833L;
+
+  /** Thread this worker is running in.  Null if factory fails. */
+  final Thread thread;
+  /** Initial task to run.  Possibly null. */
+  Runnable firstTask;
+  /** Per-thread task counter */
+  volatile long completedTasks;
+</code></pre></li>
+</ul>
+</li>
+<li><p>t.start()会执行runWorker(Worker w)：执行当前任务</p>
+<p>  Thread wt = Thread.currentThread();<br>  Runnable task = w.firstTask;<br>  w.firstTask = null;<br>  w.unlock(); // allow interrupts<br>  boolean completedAbruptly = true;<br>  try {</p>
+<pre><code>  while (task != null || (task = getTask()) != null) {
+      w.lock();
+      // If pool is stopping, ensure thread is interrupted;
+      // if not, ensure thread is not interrupted.  This
+      // requires a recheck in second case to deal with
+      // shutdownNow race while clearing interrupt
+      if ((runStateAtLeast(ctl.get(), STOP) ||
+           (Thread.interrupted() &amp;&amp;
+            runStateAtLeast(ctl.get(), STOP))) &amp;&amp;
+          !wt.isInterrupted())
+          wt.interrupt();
+      try {
+          beforeExecute(wt, task);
+          Throwable thrown = null;
+          try {
+              task.run();
+          } catch (RuntimeException x) {
+              thrown = x; throw x;
+          } catch (Error x) {
+              thrown = x; throw x;
+          } catch (Throwable x) {
+              thrown = x; throw new Error(x);
+          } finally {
+              afterExecute(task, thrown);
+          }
+      } finally {
+          task = null;
+          w.completedTasks++;
+          w.unlock();
+      }
+  }
+  completedAbruptly = false;
+</code></pre><p>  } finally {</p>
+<pre><code>  processWorkerExit(w, completedAbruptly);
+</code></pre><p>  }</p>
+<ul>
+<li><p>getTask():从阻塞队列中获取任务</p>
+<p>  boolean timedOut = false; // Did the last poll() time out?</p>
+<p>  for (;;) {</p>
+<pre><code>  // Are workers subject to culling?
+  boolean timed = allowCoreThreadTimeOut || wc &gt; corePoolSize;
+
+  try {
+      Runnable r = timed ?
+          workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
+          workQueue.take();
+      if (r != null)
+          return r;
+      timedOut = true;
+  } catch (InterruptedException retry) {
+      timedOut = false;
+  }
+</code></pre><p>  }</p>
+<ul>
+<li><p>细节</p>
+<ul>
+<li>getTask()返回null的话，在runWorker()中会跳出while循环，执行processWorkerExit()，从而执行workers.remove()移除该工作线程</li>
+</ul>
+</li>
+<li><p>workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) ，如果在keepAliveTime内未获取到任务，返回null</p>
+</li>
+<li>workQueue.take();如果队列为空，会阻塞直到队列不为空</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h3><ul>
+<li><p>美团线程池骚操作</p>
+</li>
+<li><p>线程池源码详解</p>
+</li>
+</ul>
+<h3 id="疑惑"><a href="#疑惑" class="headerlink" title="疑惑"></a>疑惑</h3><ul>
+<li>tomcat的线程池用于处理请求，springboot自建的线程池用于处理业务</li>
+</ul>
+<h2 id="7-ScheduledThreadPoolExecutor"><a href="#7-ScheduledThreadPoolExecutor" class="headerlink" title="7.ScheduledThreadPoolExecutor"></a>7.ScheduledThreadPoolExecutor</h2><h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><ul>
+<li><p>执行流程图</p>
+</li>
+<li><p>构造方法</p>
+<ul>
+<li><p>ScheduledThreadPoolExecutor(int corePoolSize)</p>
+<p>  public ScheduledThreadPoolExecutor(int corePoolSize) {</p>
+<pre><code>  super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+        new DelayedWorkQueue());
+</code></pre><p>  }</p>
+<ul>
+<li>继承了父类的构造方法</li>
+<li>想实现定时任务，所以要依靠DelayedWorkQueue</li>
+</ul>
+</li>
+<li><p>ScheduledFutureTask：调用定时任务方法时，传入Runnable类后会封装成ScheduledFutureTask</p>
+<p>  ScheduledFutureTask(Runnable r, V result, long ns, long period) {</p>
+<pre><code>  super(r, result);
+  this.time = ns;
+  this.period = period;
+  this.sequenceNumber = sequencer.getAndIncrement();
+</code></pre><p>  }</p>
+<ul>
+<li>ScheduledFutureTask类继承图</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>两种延迟(定时)任务方法</p>
+<ul>
+<li><p>scheduleAtFixedRate</p>
+<p>  public ScheduledFuture&lt;?&gt; scheduleAtFixedRate(Runnable command,</p>
+<pre><code>                                            long initialDelay,
+                                            long period,
+                                            TimeUnit unit) {
+  if (command == null || unit == null)
+      throw new NullPointerException();
+  if (period &lt;= 0)
+      throw new IllegalArgumentException();
+  ScheduledFutureTask&lt;Void&gt; sft =
+      new ScheduledFutureTask&lt;Void&gt;(command,
+                                    null,
+                                    triggerTime(initialDelay, unit),
+                                    unit.toNanos(period));
+  RunnableScheduledFuture&lt;Void&gt; t = decorateTask(command, sft);
+  sft.outerTask = t;
+  delayedExecute(t);
+  return t;
+</code></pre><p>  }</p>
+<ul>
+<li><p>decorateTask(command, sft)</p>
+<p>  protected <v> RunnableScheduledFuture<v> decorateTask(</v></v></p>
+<pre><code>  Runnable runnable, RunnableScheduledFuture&lt;V&gt; task) {
+  return task;
+</code></pre><p>  }</p>
+<ul>
+<li>默认返回传入的task，可以重载自定义</li>
+</ul>
+</li>
+<li><p>sft.outerTask = t;</p>
+<ul>
+<li>将任务赋值给outerTask，方便后面定时执行</li>
+</ul>
+</li>
+<li><p>delayedExecute(t);</p>
+<ul>
+<li><p>super.getQueue().add(task);</p>
+<ul>
+<li>与ThreadPoolExecutor不同的是，这里直接把任务加入延迟队列</li>
+</ul>
+</li>
+<li><p>ensurePrestart();该方法会走ThreadPoolExecutor，从队列中取任务执行，并且构造函数传入的是DelayedWorkQueue，详细流程参考ThreadPoolExecutor</p>
+<ul>
+<li><p>DelayedWorkQueue.take()取任务执行</p>
+<p>  public RunnableScheduledFuture&lt;?&gt; take() throws InterruptedException {</p>
+<pre><code>  final ReentrantLock lock = this.lock;
+  lock.lockInterruptibly();
+  try {
+      for (;;) {
+          RunnableScheduledFuture&lt;?&gt; first = queue[0];
+          if (first == null)
+              available.await();
+          else {
+              long delay = first.getDelay(NANOSECONDS);
+              if (delay &lt;= 0)
+                  return finishPoll(first);
+              first = null; // don&#39;t retain ref while waiting
+              if (leader != null)
+                  available.await();
+              else {
+                  Thread thisThread = Thread.currentThread();
+                  leader = thisThread;
+                  try {
+                      available.awaitNanos(delay);
+                  } finally {
+                      if (leader == thisThread)
+                          leader = null;
+                  }
+              }
+          }
+      }
+  } finally {
+      if (leader == null &amp;&amp; queue[0] != null)
+          available.signal();
+      lock.unlock();
+  }
+</code></pre><p>  }</p>
+<ul>
+<li>available.awaitNanos(delay);阻塞到执行时间</li>
+</ul>
+</li>
+<li><p>ScheduledFutureTask.run()</p>
+<p>  public void run() {</p>
+<pre><code>  boolean periodic = isPeriodic();
+  if (!canRunInCurrentRunState(periodic))
+      cancel(false);
+  else if (!periodic)
+      ScheduledFutureTask.super.run();
+  else if (ScheduledFutureTask.super.runAndReset()) {
+      setNextRunTime();
+      reExecutePeriodic(outerTask);
+  }
+</code></pre><p>  }</p>
+<ul>
+<li><p>setNextRunTime();</p>
+<p>  private void setNextRunTime() {</p>
+<pre><code>  long p = period;
+  if (p &gt; 0)
+      time += p;
+  else
+      time = triggerTime(-p);
+</code></pre><p>  }</p>
+<ul>
+<li>计算下次任务执行时间</li>
+</ul>
+</li>
+<li><p>reExecutePeriodic(outerTask);</p>
+<p>  void reExecutePeriodic(RunnableScheduledFuture&lt;?&gt; task) {</p>
+<pre><code>  if (canRunInCurrentRunState(true)) {
+      super.getQueue().add(task);
+      if (!canRunInCurrentRunState(true) &amp;&amp; remove(task))
+          task.cancel(false);
+      else
+          ensurePrestart();
+  }
+</code></pre><p>  }</p>
+<ul>
+<li>与ensurePrestart类似：把任务放到队列中，重新创建线程执行</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>scheduleWithFixedDelay</p>
+<p>  public ScheduledFuture&lt;?&gt; scheduleWithFixedDelay(Runnable command,</p>
+<pre><code>                                               long initialDelay,
+                                               long delay,
+                                               TimeUnit unit) {
+  if (command == null || unit == null)
+      throw new NullPointerException();
+  if (delay &lt;= 0)
+      throw new IllegalArgumentException();
+  ScheduledFutureTask&lt;Void&gt; sft =
+      new ScheduledFutureTask&lt;Void&gt;(command,
+                                    null,
+                                    triggerTime(initialDelay, unit),
+                                    unit.toNanos(-delay));
+  RunnableScheduledFuture&lt;Void&gt; t = decorateTask(command, sft);
+  sft.outerTask = t;
+  delayedExecute(t);
+  return t;
+</code></pre><p>  }</p>
+<ul>
+<li>与scheduleAtFixedRate不同的是delay会变成-delay，然后在setNextRunTime();设置执行时间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>使用实例</p>
+<p>  @Slf4j<br>  public class ScheduleThreadPoolRunner {</p>
+<pre><code>public static void main(String[] args) {
+  ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+
+  //发心跳，service1-&gt;service2,每次过5s，发送一个心跳，证明s2可用
+  scheduledThreadPoolExecutor.scheduleWithFixedDelay(() -&gt; {
+    log.info(&quot;send heart beat&quot;);
+    long starttime = System.currentTimeMillis(), nowtime = starttime;
+    while ((nowtime - starttime) &lt; 5000) {
+      nowtime = System.currentTimeMillis();
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+    log.info(&quot;task over....&quot;);
+  }, 1000, 2000, TimeUnit.MILLISECONDS);
+}
+</code></pre><p>  }</p>
+</li>
+</ul>
+<h3 id="DelayedWorkQueue"><a href="#DelayedWorkQueue" class="headerlink" title="DelayedWorkQueue"></a>DelayedWorkQueue</h3><ul>
+<li><p>按照执行时间的升序来排列</p>
+</li>
+<li><p>依赖的数据结构是堆</p>
+</li>
+<li><p>offer()</p>
+<p>  public boolean offer(Runnable x) {</p>
+<pre><code>  if (x == null)
+      throw new NullPointerException();
+  RunnableScheduledFuture&lt;?&gt; e = (RunnableScheduledFuture&lt;?&gt;)x;
+  final ReentrantLock lock = this.lock;
+  lock.lock();
+  try {
+      int i = size;
+      if (i &gt;= queue.length)
+          grow();
+      size = i + 1;
+      if (i == 0) {
+          queue[0] = e;
+          setIndex(e, 0);
+      } else {
+          siftUp(i, e);
+      }
+      if (queue[0] == e) {
+          leader = null;
+          available.signal();
+      }
+  } finally {
+      lock.unlock();
+  }
+  return true;
+</code></pre><p>  }</p>
+</li>
+</ul>
+<h2 id="8-Future-amp-ForkJoin"><a href="#8-Future-amp-ForkJoin" class="headerlink" title="8.Future&amp;ForkJoin"></a>8.Future&amp;ForkJoin</h2><h3 id="FutureTask"><a href="#FutureTask" class="headerlink" title="FutureTask"></a>FutureTask</h3><ul>
+<li><p>异步执行任务</p>
+</li>
+<li><p>使用get()阻塞直到任务完成</p>
+</li>
+<li><p>get()</p>
+<p>  public V get() throws InterruptedException, ExecutionException {</p>
+<pre><code>  int s = state;
+  if (s &lt;= COMPLETING)
+      s = awaitDone(false, 0L);
+  return report(s);
+</code></pre><p>  }</p>
+</li>
+</ul>
+<h3 id="ForkJoin-不常用"><a href="#ForkJoin-不常用" class="headerlink" title="ForkJoin(不常用)"></a>ForkJoin(不常用)</h3><ul>
+<li><p>分而治之，充分利用CPU</p>
+<ul>
+<li>每个线程都有一个工作队列Deque</li>
+</ul>
+</li>
+<li><p>工作窃取算法</p>
+<ul>
+<li>scan()方法扫描到就会窃取其他线程的任务</li>
+</ul>
+</li>
+<li><p>流程图</p>
+</li>
+<li><p>工作场景</p>
+<ul>
+<li>数据清洗</li>
+<li>排序</li>
+<li>查找</li>
+<li>数据量特别大</li>
+</ul>
+</li>
+</ul>
+<h3 id="CompletableFuture"><a href="#CompletableFuture" class="headerlink" title="CompletableFuture"></a>CompletableFuture</h3><ul>
+<li>美团</li>
+</ul>
+<h2 id="9-disruptor-思想先进，用得不多"><a href="#9-disruptor-思想先进，用得不多" class="headerlink" title="9.disruptor(思想先进，用得不多)"></a>9.disruptor(思想先进，用得不多)</h2><h3 id="工作原理图"><a href="#工作原理图" class="headerlink" title="工作原理图"></a>工作原理图</h3><h3 id="对阻塞队列的一种改进"><a href="#对阻塞队列的一种改进" class="headerlink" title="对阻塞队列的一种改进"></a>对阻塞队列的一种改进</h3><ul>
+<li>阻塞队列同时只能有一个线程在工作</li>
+<li>disruptor支持多生产-消费</li>
+<li>基本无锁</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/alex-next/tags/JUC/" rel="tag"># JUC</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/alex-next/2022/03/22/javaEE/JVM学习笔记/" rel="next" title="JVM学习笔记">
+                  <i class="fa fa-chevron-left"></i> JVM学习笔记
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/alex-next/2022/05/28/javaEE/mysql深入/" rel="prev" title="mysql深入学习笔记">
+                  mysql深入学习笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JUC"><span class="nav-number">1.</span> <span class="nav-text">JUC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Java内存模型JMM"><span class="nav-number">1.1.</span> <span class="nav-text">1.Java内存模型JMM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM架构"><span class="nav-number">1.1.1.</span> <span class="nav-text">JMM架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发编程的三大问题"><span class="nav-number">1.1.2.</span> <span class="nav-text">并发编程的三大问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键字"><span class="nav-number">1.1.3.</span> <span class="nav-text">关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MESI协议"><span class="nav-number">1.1.4.</span> <span class="nav-text">MESI协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存屏障-Java内部用于解决并发编程的三大问题"><span class="nav-number">1.1.5.</span> <span class="nav-text">内存屏障(Java内部用于解决并发编程的三大问题)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#规则"><span class="nav-number">1.1.6.</span> <span class="nav-text">规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遗留问题"><span class="nav-number">1.1.7.</span> <span class="nav-text">遗留问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何查看字节码-第二节课-和汇编-第三节课52-54"><span class="nav-number">1.1.8.</span> <span class="nav-text">如何查看字节码(第二节课)和汇编(第三节课52:54)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-synchronized详解"><span class="nav-number">1.2.</span> <span class="nav-text">2.synchronized详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决线程并发安全问题，采用的是序列化访问临界资源"><span class="nav-number">1.2.1.</span> <span class="nav-text">解决线程并发安全问题，采用的是序列化访问临界资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized底层原理"><span class="nav-number">1.2.2.</span> <span class="nav-text">synchronized底层原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不同粒度的锁在对象中的存储"><span class="nav-number">1.2.3.</span> <span class="nav-text">不同粒度的锁在对象中的存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁升级：不同线程竞争激烈的结果"><span class="nav-number">1.2.4.</span> <span class="nav-text">锁升级：不同线程竞争激烈的结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁粗化：JIT编译器如果发现有代码里连续多次加锁释放锁的代码，会给合并为一个锁"><span class="nav-number">1.2.5.</span> <span class="nav-text">锁粗化：JIT编译器如果发现有代码里连续多次加锁释放锁的代码，会给合并为一个锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁消除"><span class="nav-number">1.2.6.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#疑问"><span class="nav-number">1.2.7.</span> <span class="nav-text">疑问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-AQS-AbstractQueuedSynchronizer-详解"><span class="nav-number">1.3.</span> <span class="nav-text">3.AQS(AbstractQueuedSynchronizer)详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一节"><span class="nav-number">1.3.1.</span> <span class="nav-text">第一节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二节"><span class="nav-number">1.3.2.</span> <span class="nav-text">第二节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三节：阻塞队列"><span class="nav-number">1.3.3.</span> <span class="nav-text">第三节：阻塞队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四节：Semaphore-共享模式-及相关AQS应用详解"><span class="nav-number">1.3.4.</span> <span class="nav-text">第四节：Semaphore(共享模式)及相关AQS应用详解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Atomic类-amp-Unsafe类"><span class="nav-number">1.4.</span> <span class="nav-text">4.Atomic类&amp;Unsafe类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CAS-CompareAndSet"><span class="nav-number">1.4.1.</span> <span class="nav-text">CAS(CompareAndSet)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsafe"><span class="nav-number">1.4.2.</span> <span class="nav-text">Unsafe</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-HashMap-amp-ConcurrentHashMap"><span class="nav-number">1.5.</span> <span class="nav-text">5.HashMap&amp;ConcurrentHashMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap"><span class="nav-number">1.5.1.</span> <span class="nav-text">HashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentHashMap-替代了HashTable-因为它的方法基本用Synchronized修饰"><span class="nav-number">1.5.2.</span> <span class="nav-text">ConcurrentHashMap(替代了HashTable,因为它的方法基本用Synchronized修饰)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWriteArrayList"><span class="nav-number">1.5.3.</span> <span class="nav-text">CopyOnWriteArrayList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需要key有序"><span class="nav-number">1.5.4.</span> <span class="nav-text">需要key有序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ThreadLocal"><span class="nav-number">1.5.5.</span> <span class="nav-text">ThreadLocal</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-ThreadPoolExecutor线程池"><span class="nav-number">1.6.</span> <span class="nav-text">6.ThreadPoolExecutor线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#工人-猪的例子很好-1-20左右"><span class="nav-number">1.6.1.</span> <span class="nav-text">工人-猪的例子很好(1:20左右)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程状态图"><span class="nav-number">1.6.2.</span> <span class="nav-text">线程状态图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程池的目的和优势"><span class="nav-number">1.6.3.</span> <span class="nav-text">线程池的目的和优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ThreadPoolExecutor构造函数的重要参数"><span class="nav-number">1.6.4.</span> <span class="nav-text">ThreadPoolExecutor构造函数的重要参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程池重要属性"><span class="nav-number">1.6.5.</span> <span class="nav-text">线程池重要属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程池架构"><span class="nav-number">1.6.6.</span> <span class="nav-text">线程池架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#execute"><span class="nav-number">1.6.7.</span> <span class="nav-text">execute()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拓展"><span class="nav-number">1.6.8.</span> <span class="nav-text">拓展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#疑惑"><span class="nav-number">1.6.9.</span> <span class="nav-text">疑惑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-ScheduledThreadPoolExecutor"><span class="nav-number">1.7.</span> <span class="nav-text">7.ScheduledThreadPoolExecutor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#执行流程"><span class="nav-number">1.7.1.</span> <span class="nav-text">执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DelayedWorkQueue"><span class="nav-number">1.7.2.</span> <span class="nav-text">DelayedWorkQueue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-Future-amp-ForkJoin"><span class="nav-number">1.8.</span> <span class="nav-text">8.Future&amp;ForkJoin</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FutureTask"><span class="nav-number">1.8.1.</span> <span class="nav-text">FutureTask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForkJoin-不常用"><span class="nav-number">1.8.2.</span> <span class="nav-text">ForkJoin(不常用)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CompletableFuture"><span class="nav-number">1.8.3.</span> <span class="nav-text">CompletableFuture</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-disruptor-思想先进，用得不多"><span class="nav-number">1.9.</span> <span class="nav-text">9.disruptor(思想先进，用得不多)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#工作原理图"><span class="nav-number">1.9.1.</span> <span class="nav-text">工作原理图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对阻塞队列的一种改进"><span class="nav-number">1.9.2.</span> <span class="nav-text">对阻塞队列的一种改进</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/alex-next/images/avatar.jpg"
+      alt="alex">
+  <p class="site-author-name" itemprop="name">alex</p>
+  <div class="site-description" itemprop="description">时光静好,与君语;细水流年,与君同;繁华落尽,与君老.</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/alex-next/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/alex-next/categories/">
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/alex-next/tags/">
+          
+        
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/alex-next/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">alex</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/alex-next/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/alex-next/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="/alex-next/lib/pjax/pjax.min.js?v=0.2.8"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/alex-next/js/utils.js?v=7.4.0"></script><script src="/alex-next/js/motion.js?v=7.4.0"></script>
+<script src="/alex-next/js/schemes/pisces.js?v=7.4.0"></script>
+<script src="/alex-next/js/next-boot.js?v=7.4.0"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var id = element.id || '';
+    var src = element.src || '';
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (id !=='') {
+      script.id = element.id;
+    }
+    if (src !== '') {
+      script.src = src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/alex-next/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '84888b5ba3be0f56b2ed',
+      clientSecret: '1306406ecbdc02b679df3c95b94985753d302d6a',
+      repo: 'alex-next',
+      owner: 'alexander-wd',
+      admin: ['alexander-wd'],
+      id: 'e2303a41b981ec60018d96c7f5ca70b5',
+        language: 'zh-CN',
+      
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+    </div>
+</body>
+</html>
