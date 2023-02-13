@@ -4584,7 +4584,7 @@
   </entry>
   <entry>
     <title>SpringBoot面试题</title>
-    <url>/alex-next/2022/01/04/%E9%9D%A2%E8%AF%95%E9%A2%98/Springboot%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
+    <url>/alex-next/2023/01/04/%E9%9D%A2%E8%AF%95%E9%A2%98/Springboot%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
     <content><![CDATA[<h3 id="76-谈谈你对SpringBoot的理解，它有哪些特性"><a href="#76-谈谈你对SpringBoot的理解，它有哪些特性" class="headerlink" title="76.谈谈你对SpringBoot的理解，它有哪些特性"></a>76.谈谈你对SpringBoot的理解，它有哪些特性</h3><p>​    快速开发Spring应用的脚手架，简化Spring的初始搭建及配置<br>​    1.无配置集成，开箱即用<br>​    2.基于JavaConfig<br>​    3.内置Web容器，无需web.xml，jar文件就能启动web应用<br>​    4.管理了第三方依赖版本，减少版本冲突<br>​    5.自带监控功能<br>​    参考</p>
 <p><img alt="55" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125205315.png"></p>
 <h3 id="77-Spring和SpringBoot的关系和区别"><a href="#77-Spring和SpringBoot的关系和区别" class="headerlink" title="77.Spring和SpringBoot的关系和区别"></a>77.Spring和SpringBoot的关系和区别</h3><p>​    关系<br>​        Springboot是Spring生态的产品<br>​    Spring Framework<br>​        是一个容器框架<br>​    Springboot是一个快速开发Spring的脚手架</p>

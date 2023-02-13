@@ -521,6 +521,119 @@
   
   
   <div class="post-block home">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2023/01/04/面试题/Springboot面试题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+            
+            <a href="/alex-next/2023/01/04/面试题/Springboot面试题/" class="post-title-link" itemprop="url">SpringBoot面试题</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2023-01-04 16:10:20" itemprop="dateCreated datePublished" datetime="2023-01-04T16:10:20+08:00">2023-01-04</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 18:46:04" itemprop="dateModified" datetime="2023-02-13T18:46:04+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/面试题/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="76-谈谈你对SpringBoot的理解，它有哪些特性"><a href="#76-谈谈你对SpringBoot的理解，它有哪些特性" class="headerlink" title="76.谈谈你对SpringBoot的理解，它有哪些特性"></a>76.谈谈你对SpringBoot的理解，它有哪些特性</h3><p>​    快速开发Spring应用的脚手架，简化Spring的初始搭建及配置<br>​    1.无配置集成，开箱即用<br>​    2.基于JavaConfig<br>​    3.内置Web容器，无需web.xml，jar文件就能启动web应用<br>​    4.管理了第三方依赖版本，减少版本冲突<br>​    5.自带监控功能<br>​    参考</p>
+<p><img alt="55" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125205315.png"></p>
+<h3 id="77-Spring和SpringBoot的关系和区别"><a href="#77-Spring和SpringBoot的关系和区别" class="headerlink" title="77.Spring和SpringBoot的关系和区别"></a>77.Spring和SpringBoot的关系和区别</h3><p>​    关系<br>​        Springboot是Spring生态的产品<br>​    Spring Framework<br>​        是一个容器框架<br>​    Springboot是一个快速开发Spring的脚手架</p>
+<h3 id="78-Springboot的核心注解"><a href="#78-Springboot的核心注解" class="headerlink" title="78.Springboot的核心注解"></a>78.Springboot的核心注解</h3><p>​    @SpringBootApplication<br>​        @SpringBootConfiguration<br>​        @EnableAutoConfiguration<br>​    @Conditional<br>​        @ConditionalOnBean<br>​        @ConditionalOnClass<br>​        @ConditionalExpression<br>​        @ConditionalOnMissingBean<br>​    参考</p>
+<p><img alt="56" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125205344.png"></p>
+<h3 id="79-Springboot的自动配置原理"><a href="#79-Springboot的自动配置原理" class="headerlink" title="==79.Springboot的自动配置原理=="></a>==79.Springboot的自动配置原理==</h3><p>​    1.@SpringBootApplication<br>​        导入@SpringBootConfiguration标注当前类是配置类<br>​        导入@EnableAutoConfiguration，自动配置<br>​    2.@EnableAutoConfiguation引入了@Import<br>​    3.Spring容器启动(SpringBoot.run)加载IOC容器会解析@Import注解<br>​    4.@Import导入了一个DeferredImportSelector<br>​        会使Springboot的自动配置类顺序在最后，方便我们扩展和覆盖<br>​            @ConditionalOnBean<br>​                配置了某个Bean，就帮我们把剩下的组件配置好<br>​            @ConditionalOnMissingBean<br>​                如果我们没有配置，就自动帮我们配置，如DispatcherServlet<br>​    5.读取所有/META-INF/spring.factories文件(类似API)<br>​    6.过滤出所有AutoConfigurationClass(初筛)<br>​    7.通过@Conditional排除无效的自动配置类</p>
+<h3 id="80-为什么SpringBoot的jar可以直接运行"><a href="#80-为什么SpringBoot的jar可以直接运行" class="headerlink" title="==80.为什么SpringBoot的jar可以直接运行=="></a>==80.为什么SpringBoot的jar可以直接运行==</h3><p>​    1.spring-boot-maven-plugin可以把程序打包成一个可执行的jar包<br>​    2.打包后，生成了一个Fat jar，包含了应用以来的jar包和Springboot loader相关的类<br>​    3.java -jar会去jar中(jvm规范)找MANIFEST.MF，找真正的启动类(Main-Class)<br>​    4.Fat jar的启动函数是JarLauncher，它负责创建一个LaunchedURLClassLoader来加载lib下面的jar，并以一个新线程去启动应用启动类的Main函数(MANIFEST.MF中的Start-Class)</p>
+<h3 id="81-SpringBoot的启动原理"><a href="#81-SpringBoot的启动原理" class="headerlink" title="==81.SpringBoot的启动原理=="></a>==81.SpringBoot的启动原理==</h3><p>​    1.运行main方法，构造函数初始化信息，从spring.factories读取监听器，初始化器<br>​    2.运行run方法，读取环境变量、配置信息<br>​    3.创建springApplication上下文：ServletWebServerApplicationContext<br>​    4,预初始化上下文<br>​        将启动类作为配置类进行读取，将配置注册为BeanDefinition<br>​    5.调用refresh加载ioc容器<br>​        invokeBeanFactoryBeanProcessor<br>​            @Import加载所有自动配置类<br>​        onRefresh：常见内置servlet容器<br>​    6.在这个过程中springboot会调用很多监听器对外进行扩展</p>
+<h3 id="82-SpringBoot内置Tomcat原理"><a href="#82-SpringBoot内置Tomcat原理" class="headerlink" title="==82.SpringBoot内置Tomcat原理=="></a>==82.SpringBoot内置Tomcat原理==</h3><p>​    1.依赖spring-boot-starter-web依赖会在Springboot中添加ServletWebServerFactoryAutoConfiguration   servlet自动配置类<br>​    2.该自动配置类通过@Import导入了一个Web容器工厂(默认tomcat)<br>​    3.在加载IOC容器时，解析@Import，onRefresh(会拿到tomcat容器工厂)创建内置tomcat并启动<br>​        new tomcat()<br>​        启动tomcat<br>​        挂起线程<br>​    SpringMVC中的DispatcherServlet也是自动配置类导入进来的</p>
+<h3 id="83-SpringBoot外部tomcat启动原理"><a href="#83-SpringBoot外部tomcat启动原理" class="headerlink" title="==83.SpringBoot外部tomcat启动原理=="></a>==83.SpringBoot外部tomcat启动原理==</h3><p>​    SPI<br>​        当servlet容器启动时候，就会去META-INF/services 文件夹中找到javax.servlet.ServletContainerInitializer<br>​        执行官方的SpringServletContainerInitializer(继承了ServletContainerInitializer)<br>​        执行自己的SpringBootServletInitializer#onStartup(继承了WebApplicationInitializer)<br>​            启动SpringBoot</p>
+<h3 id="84-自定义Starter的过程"><a href="#84-自定义Starter的过程" class="headerlink" title="==84.自定义Starter的过程=="></a>==84.自定义Starter的过程==</h3><p>​    导入spring-boot-configuration-processor，配置文件绑定就会有提示<br>​        可以自定义XXXProperties文件，外部使用就能直接配置在.properties，.yml文件中<br>​    自定义XXXAutoCOnfiguration自动导入(开启)配置类<br>​    一定要在resources文件夹下创建META/spring.factories指定自动配置类<br>​    maven install</p>
+<h3 id="85-SpringBoot读取配置文件原理是什么，加载顺序是怎样的"><a href="#85-SpringBoot读取配置文件原理是什么，加载顺序是怎样的" class="headerlink" title="85.SpringBoot读取配置文件原理是什么，加载顺序是怎样的"></a>85.SpringBoot读取配置文件原理是什么，加载顺序是怎样的</h3><p>​    通过事件监听的方式读取配置文件<br>​        ConfigFIleApplicationListener监听器<br>​    读取顺序<br>​        file:./config<br>​            file:路径就是项目的target文件夹:../target/<br>​        file:./config/{@literal *}<br>​            /target/config/xxx/        任意文件夹<br>​        file:./<br>​        classpath:config/<br>​        classpath:<br>​        细节<br>​            优先级从高到低，高优先级没有可以从低优先级互补</p>
+<h3 id="86-SpringBoot默认日志实现框架是什么，怎么切换成别的"><a href="#86-SpringBoot默认日志实现框架是什么，怎么切换成别的" class="headerlink" title="86.SpringBoot默认日志实现框架是什么，怎么切换成别的"></a>86.SpringBoot默认日志实现框架是什么，怎么切换成别的</h3><p>​    ==默认实现框架==<br>​        logback<br>​        参考</p>
+<p><img alt="57" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125210316.png"></p>
+<p>​            log4j到logback原理<br>​                1.log4j-api通过log4j-to-slf4j适配器转换为slf4j<br>​                2.slf4j通过logback-classic桥接器最终使用logback输出<br>​        springboot默认提供了jul和log4j到slf4j的适配器<br>​    ==怎么切换==<br>​        切换为log4j2<br>​            添加slf4j对应的桥接器<br>​                排除logback桥接器<br>​                加入log4j2桥接器<br>​                参考</p>
+<p><img alt="58" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125210416.png"></p>
+<p>​        切换为log4j<br>​            排除logback桥接器<br>​            加入log4j的桥接器<br>​            参考</p>
+<p><img alt="59" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125210421.png"></p>
+<h3 id="87-平时开发的时候怎么在SpringBoot的基础上做扩展"><a href="#87-平时开发的时候怎么在SpringBoot的基础上做扩展" class="headerlink" title="87.平时开发的时候怎么在SpringBoot的基础上做扩展"></a>87.平时开发的时候怎么在SpringBoot的基础上做扩展</h3><p>​    查看XXXAutoConfiguration<br>​        重点关注@ConditionalOnXXX<br>​    深入看源码</p>
+<h3 id="88-微服务架构的优缺点"><a href="#88-微服务架构的优缺点" class="headerlink" title="88.微服务架构的优缺点"></a>88.微服务架构的优缺点</h3><p>​    优点<br>​        分工协作<br>​            提高开发效率和敏捷性<br>​            单个服务启动快<br>​            专人处理专事，专注自己的服务<br>​        并发能力<br>​            充分利用服务器资源(并发量高的模块多部署几台服务器)<br>​        维护能力<br>​            根据功能垂直拆分，责任更加分明，维护更加精准<br>​        容错<br>​            弱依赖的服务出现故障，可以进行熔断(隔离)依然不影响主业务正常使用<br>​        扩展<br>​            新服务可以采用任意新技术<br>​    缺点<br>​        ==分布式==<br>​            分布式系统较难编程(远程调用速度很慢，并且总是面临失败的风险)，对开发人员技术要求高<br>​        ==最终一致性==<br>​            对于分布式系统，保持强一致性非常困难，所以每个人都必须管理最终一致性<br>​        ==运维复杂度==<br>​        隐式接口<br>​            服务和服务通过接口来联系，当一个服务更改接口格式时，所有涉及此接口的服务都要做调整<br>​        重复劳动<br>​            很多服务用到同一功能，但这一功能并没有大到提供一个服务的程度，不同服务团队都会单独开发这一功能</p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+          <div class="post-eof"></div>
+        
+      </footer>
+  </div>
+  
+  
+  
+  </article>
+
+    
+        <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block home">
     <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/12/24/面试题/计算机基础面试题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2534,293 +2647,6 @@
 <h3 id="3、简述-MyBatis-的插件运行原理，以及如何编写一个插件。"><a href="#3、简述-MyBatis-的插件运行原理，以及如何编写一个插件。" class="headerlink" title="3、简述 MyBatis 的插件运行原理，以及如何编写一个插件。"></a>3、简述 MyBatis 的插件运行原理，以及如何编写一个插件。</h3><p>MyBatis 仅可以编写针对 <code>ParameterHandler</code> 、 <code>ResultSetHandler</code> 、 <code>StatementHandler</code> 、 <code>Executor</code> 这 4 种接口的插件，MyBatis 使用 JDK 的动态代理，为需要拦截的接口生成代理对象以实现接口方法拦截功能，每当执行这 4 种接口对象的方法时，就会进入拦截方法，具体就是 <code>InvocationHandler</code> 的 <code>invoke()</code> 方法，当然，只会拦截那些你指定需要拦截的方法。</p>
 <p>实现 MyBatis 的 <code>Interceptor</code> 接口并复写 <code>intercept()</code> 方法，然后在给插件编写注解，指定要拦截哪一个接口的哪些方法即可，记住，别忘了在配置文件中配置你编写的插件。</p>
 <p><img alt="MyBatis插件过程" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Mybatis/20230131112919.png"></p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/10/15/面试题/Mysql面试题/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="alex">
-      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
-      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="alex的博客 - github.com">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/alex-next/2022/10/15/面试题/Mysql面试题/" class="post-title-link" itemprop="url">mysql面试题</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2022-10-15 09:40:20" itemprop="dateCreated datePublished" datetime="2022-10-15T09:40:20+08:00">2022-10-15</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-02-13 18:12:42" itemprop="dateModified" datetime="2023-02-13T18:12:42+08:00">2023-02-13</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/面试题/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><h4 id="说一下-MySQL-执行一条查询语句的内部执行过程？"><a href="#说一下-MySQL-执行一条查询语句的内部执行过程？" class="headerlink" title="说一下 MySQL 执行一条查询语句的内部执行过程？"></a>说一下 MySQL 执行一条查询语句的内部执行过程？</h4><ul>
-<li>客户端先通过连接器连接到 MySQL 服务器。</li>
-<li>连接器权限验证通过之后，先查询是否有查询缓存，如果有缓存（之前执行过此语句）则直接返回缓存数据，如果没有缓存则进入分析器。</li>
-<li>分析器会对查询语句进行语法分析和词法分析，判断 SQL 语法是否正确，如果查询语法错误会直接返回给客户端错误信息，如果语法正确则进入优化器。</li>
-<li>优化器是对查询语句进行优化处理，例如一个表里面有多个索引，优化器会判别哪个索引性能更好。</li>
-<li>优化器执行完就进入执行器，执行器就开始执行语句进行查询比对了，直到查询到满足条件的所有数据，然后进行返回。</li>
-</ul>
-<p><img alt="1" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Mysql/20230130185311.png"></p>
-<h4 id="常用的存储引擎-InnoDB-和-MyISAM-有什么区别？"><a href="#常用的存储引擎-InnoDB-和-MyISAM-有什么区别？" class="headerlink" title="常用的存储引擎 InnoDB 和 MyISAM 有什么区别？"></a>常用的存储引擎 InnoDB 和 MyISAM 有什么区别？</h4><p>InnoDB 和 MyISAM 最大的区别是 InnoDB 支持事务，而 MyISAM 不支持事务，它们主要区别如下：、</p>
-<ul>
-<li>InnoDB 支持崩溃后安全恢复，MyISAM 不支持崩溃后安全恢复；</li>
-<li>InnoDB 支持行级锁，MyISAM 不支持行级锁，只支持到表锁；</li>
-<li>InnoDB 支持外键，MyISAM 不支持外键；</li>
-<li>MyISAM 性能比 InnoDB 高；</li>
-<li>MyISAM 支持 FULLTEXT 类型的全文索引，InnoDB 不支持 FULLTEXT 类型的全文索引，但是 InnoDB 可以使用 sphinx 插件支持全文索引，并且效果更好；</li>
-<li>InnoDB 主键查询性能高于 MyISAM。</li>
-<li>InnoDB使用的是聚集索引，MyISAM使用的是非聚集索引</li>
-</ul>
-<h4 id="一张自增表中有三条数据，删除了两条数据之后重启数据库，再新增一条数据，此时这条数据的-ID-是几？"><a href="#一张自增表中有三条数据，删除了两条数据之后重启数据库，再新增一条数据，此时这条数据的-ID-是几？" class="headerlink" title="一张自增表中有三条数据，删除了两条数据之后重启数据库，再新增一条数据，此时这条数据的 ID 是几？"></a>一张自增表中有三条数据，删除了两条数据之后重启数据库，再新增一条数据，此时这条数据的 ID 是几？</h4><p>如果这张表的引擎是 MyISAM，那么 ID=4，如果是 InnoDB 那么 ID=2（MySQL 8 之前的版本）。</p>
-<h4 id="limit-3-2-的含义是什么？"><a href="#limit-3-2-的含义是什么？" class="headerlink" title="limit 3,2 的含义是什么？"></a>limit 3,2 的含义是什么？</h4><p>去除前三条数据之后查询两条信息。</p>
-<h4 id="count-column-和-count-有什么区别？"><a href="#count-column-和-count-有什么区别？" class="headerlink" title="count(column) 和 count(*) 有什么区别？"></a>count(column) 和 count(*) 有什么区别？</h4><p>count(column) 和 count() 最大区别是统计结果可能不一致，count(column) 统计不会统计列值为 null 的数据，而 count() 则会统计所有信息，所以最终的统计结果可能会不同。</p>
-<h4 id="在-InnoDB-引擎中-count-、count-1-、count-主键-、count-字段-哪个性能最高？"><a href="#在-InnoDB-引擎中-count-、count-1-、count-主键-、count-字段-哪个性能最高？" class="headerlink" title="在 InnoDB 引擎中 count(*)、count(1)、count(主键)、count(字段) 哪个性能最高？"></a>在 InnoDB 引擎中 count(*)、count(1)、count(主键)、count(字段) 哪个性能最高？</h4><p>count(字段)&lt;count(主键 id)&lt;count(1)≈count(*) 题目解析：</p>
-<ul>
-<li><p>对于 count(主键 id) 来说，InnoDB 引擎会遍历整张表，把每一行的 id 值都取出来，返回给 server 层。server 层拿到 id 后，判断是不可能为空的，就按行累加。</p>
-</li>
-<li><p>对于 count(1) 来说，InnoDB 引擎遍历整张表，但不取值。server 层对于返回的每一行，放一个数字“1”进去，判断是不可能为空的，按行累加。</p>
-</li>
-<li><p>对于 count(字段) 来说，如果这个“字段”是定义为 not null 的话，一行行地从记录里面读出这个字段，判断不能为 null，按行累加；如果这个“字段”定义允许为 null，那么执行的时候，判断到有可能是 null，还要把值取出来再判断一下，不是 null 才累加。</p>
-</li>
-<li><p>对于 count(*) 来说，并不会把全部字段取出来，而是专门做了优化，不取值，直接按行累加。</p>
-</li>
-</ul>
-<p>所以最后得出的结果是：count(字段)&lt;count(主键 id)&lt;count(1)≈count(*)。</p>
-<h3 id="索引底层原理"><a href="#索引底层原理" class="headerlink" title="索引底层原理"></a>索引底层原理</h3><h4 id="何为索引？有什么作用"><a href="#何为索引？有什么作用" class="headerlink" title="何为索引？有什么作用"></a>何为索引？有什么作用</h4><p>​    索引是一种能帮助 MySQL 提高查询效率的排好序的数据结构<br>​    索引的作用就相当于书的目录</p>
-<h4 id="索引的优缺点"><a href="#索引的优缺点" class="headerlink" title="索引的优缺点"></a>索引的优缺点</h4><p>​    优点<br>​        ==快速访问数据表中的特定信息，提高检索速度。<br>​        创建唯一性索引，保证数据表中每一行数据的唯一性。==<br>​        加速表与表之间的连接。<br>​        使用分组和排序进行数据检索时，可以显著减少查询中分组和排序的时间<br>​    缺点<br>​        创建索引和维护索引需要耗费许多时间。当对表中的数据进行增删改的时候，如果数据有索引，那么索引也需要动态的修改，会降低 SQL 执行效率。<br>​        索引需要使用物理文件存储，也会耗费一定空间<br>​    ==追问==<br>​        <strong>==使用索引一定能提高查询性能吗==</strong><br>​            大多数情况下，索引查询都是比全表扫描要快的。<br>​            但是如果数据库的数据量不大，那么使用索引也不一定能够带来很大提升</p>
-<h4 id="为什么建议InnoDB表必须建主键，并且推荐使用整型的自增主键？"><a href="#为什么建议InnoDB表必须建主键，并且推荐使用整型的自增主键？" class="headerlink" title="为什么建议InnoDB表必须建主键，并且推荐使用整型的自增主键？"></a>为什么建议InnoDB表必须建主键，并且推荐使用整型的自增主键？</h4><p>​    为什么必须要有主键<br>​        如果设置了主键，就会使用主键作为聚集索引。<br>​        如果你没有创建主键，他会寻找一个不为null的字段作为主键索引。<br>​        如果还是没有则会隐式的创建一个字段作为主键。<br>​    为什么使用整型<br>​        1.整型比较比字符串要快，因为字符串要逐个比较ASCII值，节省硬盘空间；整型容易比较大小进行排序<br>​    为什么要求自增<br>​        mysql为了维护索引的有序性，使得新增的主键会在B+tree叶子节点中最后末尾添加，使得树分叉概率变小<br>​        换句话说，如果不是自增的，B+树会自己做调整，分裂出新节点，效率不如自增</p>
-<h4 id="为什么非主键索引结构叶子节点存储的是主键值？"><a href="#为什么非主键索引结构叶子节点存储的是主键值？" class="headerlink" title="为什么非主键索引结构叶子节点存储的是主键值？"></a>为什么非主键索引结构叶子节点存储的是主键值？</h4><p>​    1.节省存储空间<br>​    2.一致性：若非主键索引也存了完整的数据记录，那么非主键索引和主键索引的索引文件要保证数据一致性的问题</p>
-<h4 id="B树和B-树区别"><a href="#B树和B-树区别" class="headerlink" title="==B树和B+树区别=="></a>==B树和B+树区别==</h4><p>​    共同点<br>​        节点中的数据索引从左到右递增排列<br>​    B树所有节点都存索引和数据，B+树只有叶子结点存数据<br>​    B+树叶子结点用指针连接<br>​        与范围查找相关如rol&gt;20:B+树可以顺着找到的结点找下去，而B树只能从根节点重新找<br>​    按照B树，一个结点1KB的数据，一页能放16个结点，树的高度要远远大于3</p>
-<h4 id="为什么用B-树不用B树"><a href="#为什么用B-树不用B树" class="headerlink" title="==为什么用B+树不用B树=="></a>==为什么用B+树不用B树==</h4><p>​    按照B树，一个结点1KB的数据，一页能放16个结点，树的高度要远远大于3<br>​    与范围查找相关，如rol&gt;20:B+树可以顺着找到的结点找下去，而B树只能从根节点重新找</p>
-<h3 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h3><h4 id="什么是前缀索引？"><a href="#什么是前缀索引？" class="headerlink" title="什么是前缀索引？"></a>什么是前缀索引？</h4><p>前缀索引也叫局部索引，比如给身份证的前 10 位添加索引，类似这种给某列部分信息添加索引的方式叫做前缀索引。</p>
-<h4 id="为什么要用前缀索引？"><a href="#为什么要用前缀索引？" class="headerlink" title="为什么要用前缀索引？"></a>为什么要用前缀索引？</h4><p>前缀索引能有效减小索引文件的大小，让每个索引页可以保存更多的索引值，从而提高了索引查询的速度。但前缀索引也有它的缺点，不能在 order by 或者 group by 中触发前缀索引，也不能把它们用于覆盖索引。</p>
-<h4 id="什么情况下适合使用前缀索引？"><a href="#什么情况下适合使用前缀索引？" class="headerlink" title="什么情况下适合使用前缀索引？"></a>什么情况下适合使用前缀索引？</h4><p>当字符串本身可能比较长，而且前几个字符就开始不相同，适合使用前缀索引；相反情况下不适合使用前缀索引，比如，整个字段的长度为 20，索引选择性为 0.9，而我们对前 10 个字符建立前缀索引其选择性也只有 0.5，那么我们需要继续加大前缀字符的长度，但是这个时候前缀索引的优势已经不明显，就没有创建前缀索引的必要了。</p>
-<h4 id="以下-or-查询有什么问题吗？该如何优化？"><a href="#以下-or-查询有什么问题吗？该如何优化？" class="headerlink" title="以下 or 查询有什么问题吗？该如何优化？"></a>以下 or 查询有什么问题吗？该如何优化？</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where num=10 or num=20;</span><br></pre></td></tr></table></figure>
-<p>答：如果使用 or 查询会使 MySQL 放弃索引而全表扫描，可以改为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from t where num=10 union select * from t where num=20;</span><br></pre></td></tr></table></figure>
-<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><h4 id="事务是什么？"><a href="#事务是什么？" class="headerlink" title="事务是什么？"></a>事务是什么？</h4><p>事务是一系列的数据库操作，是数据库应用的基本单位。MySQL 事务主要用于处理操作量大，复杂度高的数据。</p>
-<h4 id="事务有哪些特性？"><a href="#事务有哪些特性？" class="headerlink" title="事务有哪些特性？"></a>事务有哪些特性？</h4><p>在 MySQL 中只有 InnDB 引擎支持事务，它的四个特性如下：</p>
-<ul>
-<li>原子性（Atomic）：要么全部执行，要么全部不执行；</li>
-<li>一致性（Consistency）：事务的执行使得数据库从一种正确状态转化为另一种正确状态；</li>
-<li>隔离性（Isolation）：在事务正确提交之前，不允许把该事务对数据的任何改变提供给其他事务；</li>
-<li>持久性（Durability）：事务提交后，其结果永久保存在数据库中。</li>
-</ul>
-<p>==原子性，持久性侧重于研究事务本身不同，隔离性研究的是不同事务之间的相互影响。==</p>
-<p>ACID四大特性之中，C(一致性)是目的，A(原子性)、I(隔离性)、D(持久性)是手段，是为了保证一致性，数据库提供的手段。</p>
-<h4 id="并发事务一般有哪些问题？"><a href="#并发事务一般有哪些问题？" class="headerlink" title="并发事务一般有哪些问题？"></a>并发事务一般有哪些问题？</h4><ul>
-<li><p>更新丢失（Lost Update）：当两个或多个事务选择同一行，然后基于最初选定的值更新该行时，由于每个事务都不知道其他事务的存在，就会发生丢失更新问题，最后的更新覆盖了由其他事务所做的更新。例如，两个编辑人员制作了同一文档的电子副本，每个编辑人员独立地更改其副本，然后保存更改后的副本，这样就覆盖了原始文档。 最后保存其更改副本的编辑人员覆盖另一个编辑人员所做的更改，如果在前一个编辑人员完成并提交事务之前，另一个编辑人员不能访问同一文件，则可避免此问题。</p>
-</li>
-<li><p>脏读（Dirty Reads）：一个事务正在对一条记录做修改，在这个事务完成并提交前， 这条记录的数据就处于不一致状态； 这时， 另一个事务也来读取同一条记录，如果不加控制，第二个事务读取了这些脏数据，并据此做进一步的处理，就会产生未提交的数据依赖关系，这种现象被形象地叫做脏读。</p>
-</li>
-<li><p>不可重复读（Non-Repeatable Reads）：一个事务在读取某些数据后的某个时间，再次读取以前读过的数据，却发现其读出的数据已经发生了改变、或某些记录已经被删除了！这种现象就叫做“不可重复读” 。</p>
-</li>
-<li><p>幻读（Phantom Reads）： 一个事务按相同的查询条件重新读取以前检索过的数据，却发现其他事务插入了满足其查询条件的新数据，这种现象就称为“幻读” 。</p>
-</li>
-</ul>
-<h4 id="MySQL-中有几种事务隔离级别？分别是什么？"><a href="#MySQL-中有几种事务隔离级别？分别是什么？" class="headerlink" title="MySQL 中有几种事务隔离级别？分别是什么？"></a>MySQL 中有几种事务隔离级别？分别是什么？</h4><p>MySQL 中有四种事务隔离级别，它们分别是：</p>
-<ul>
-<li><p>read uncommited：未提交读，读到未提交数据；</p>
-</li>
-<li><p>read committed：读已提交，也叫不可重复读，两次读取到的数据不一致；</p>
-</li>
-<li><p>repetable read：可重复读；</p>
-</li>
-<li><p>serializable：串行化，读写数据都会锁住整张表，数据操作不会出错，但并发性能极低，开发中很少用到。</p>
-</li>
-</ul>
-<p>==MySQL 默认使用 REPEATABLE-READ 的事务隔离级别。==</p>
-<h4 id="幻读和不可重复读的区别？"><a href="#幻读和不可重复读的区别？" class="headerlink" title="幻读和不可重复读的区别？"></a>幻读和不可重复读的区别？</h4><ul>
-<li>不可重复读的重点是修改：在同一事务中，同样的条件，第一次读的数据和第二次读的数据不一样。（因为中间有其他事务提交了修改）。</li>
-<li>幻读的重点在于新增或者删除：在同一事务中，同样的条件,，第一次和第二次读出来的记录数不一样。（因为中间有其他事务提交了插入/删除）。</li>
-</ul>
-<h4 id="并发事务有什么问题-隔离性-？应该如何解决？"><a href="#并发事务有什么问题-隔离性-？应该如何解决？" class="headerlink" title="==并发事务有什么问题(隔离性)？应该如何解决？=="></a>==并发事务有什么问题(隔离性)？应该如何解决？==</h4><p>并发事务可能造成：脏读、不可重复读和幻读等问题 ，这些问题其实都是数据库读一致性问题，==必须由数据库提供一定的事务隔离机制来解决==，解决方案如下：</p>
-<ul>
-<li>加锁：在读取数据前，对其加锁，阻止其他事务对数据进行修改。</li>
-<li>提供数据多版本并发控制（MultiVersion Concurrency Control，简称 MVCC 或 MCC），也称为多版本数据库：不用加任何锁， 通过一定机制生成一个数据请求时间点的一致性数据快照（Snapshot)， 并用这个快照来提供一定级别 （语句级或事务级） 的一致性读取，从用户的角度来看，好象是数据库可以提供同一数据的多个版本。</li>
-</ul>
-<h4 id="什么是-MVCC？"><a href="#什么是-MVCC？" class="headerlink" title="什么是 MVCC？"></a>什么是 MVCC？</h4><p>MVCC 全称是多版本并发控制系统，InnoDB 和 Falcon 存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决幻读问题。</p>
-<h4 id="MVCC-是怎么工作的？-事务隔离性的实现原理"><a href="#MVCC-是怎么工作的？-事务隔离性的实现原理" class="headerlink" title="MVCC 是怎么工作的？(事务隔离性的实现原理)"></a>MVCC 是怎么工作的？(事务隔离性的实现原理)</h4><blockquote>
-<p>==在读已提交和可重复读隔离级别下实现==</p>
-<p>自己的总结：MVCC机制的实现就是通过read-view机制与undo版本链比对机制，使得不同的事务会根据数据版本链对比规则读取 同一条数据在版本链上的不同版本数据。</p>
-<p>read view机制：这个视图由执行查询时所有未提交事务id数组（数组里最小的id为min_id）和已创建的最大事务id（max_id）组成，事务里的任何sql查询结果需要从对应 版本链里的最新数据开始逐条跟read-view做比对从而得到最终的快照结果。</p>
-</blockquote>
-<p>InnoDB 的 MVCC 是通过在每行记录后面保存两个隐藏的列来实现，这两个列一个保存了行的创建时间，一个保存行的过期时间（删除时间）。当然存储的并不是真实的时间而是系统版本号（system version number）。每开始一个新的事务，系统版本号都会自动新增，事务开始时刻的系统版本号会作为事务的版本号，用来查询到每行记录的版本号进行比较。</p>
-<h4 id="MySQL-事务实现原理是什么？"><a href="#MySQL-事务实现原理是什么？" class="headerlink" title="MySQL 事务实现原理是什么？"></a>MySQL 事务实现原理是什么？</h4><p><a href="https://blog.csdn.net/weixin_43337246/article/details/117968344" target="_blank" rel="noopener">事务的ACID实现原理</a></p>
-<p>事务的实现是基于数据库的存储引擎，不同的存储引擎对事务的支持程度不一样。MySQL 中支持事务的存储引擎有InnoDB 和 NDB。 InnoDB 是高版本 MySQL 的默认的存储引擎，因此就以 InnoDB 的事务实现为例，InnoDB 是通过多版本并发控制（MVCC，Multiversion Concurrency Control ）解决不可重复读问题，加上间隙锁（也就是并发控制）解决幻读问题。因此 InnoDB 的 RR 隔离级别其实实现了串行化级别的效果，而且保留了比较好的并发性能。事务的隔离性是通过锁实现，==而事务的原子性、一致性和持久性则是通过事务日志实现==。</p>
-<p>原子性：InnoDB能够实现回滚的主要原因就是靠undo log： 当事务对数据库进行修改的时候，InnoDB会生成对应的undo log ；如果此时事务执行失败或者调动了 rollback，导致事务出现回滚情况，可以利用undo log中的信息将数据回滚到修改前的样子。</p>
-<p>持久性：BufferPool缓存机制+redo log + binlog</p>
-<p>一致性：一致性是事物追求的最终目标，前面提到的原子性，隔离性，持久性都是为了保证数据库的一致性。此外除了数据库底层的保障，一致性的实现也需要应用层的保障。数据库通过原子性、隔离性、持久性来保证一致性。</p>
-<p>隔离性：MVCC解决写+读；解锁解决写+写</p>
-<h4 id="REPEATABLE-READ（可重读）隔离级别下-MVCC-如何工作？"><a href="#REPEATABLE-READ（可重读）隔离级别下-MVCC-如何工作？" class="headerlink" title="REPEATABLE READ（可重读）隔离级别下 MVCC 如何工作？"></a>REPEATABLE READ（可重读）隔离级别下 MVCC 如何工作？</h4><ul>
-<li>SELECT：InnoDB 会根据以下条件检查每一行记录：第一，InnoDB 只查找版本早于当前事务版本的数据行，这样可以确保事务读取的行要么是在开始事务之前已经存在要么是事务自身插入或者修改过的。第二，行的删除版本号要么未定义，要么大于当前事务版本号，这样可以确保事务读取到的行在事务开始之前未被删除。</li>
-<li>INSERT：InnoDB 为新插入的每一行保存当前系统版本号作为行版本号。</li>
-<li>DELETE：InnoDB 为删除的每一行保存当前系统版本号作为行删除标识。</li>
-<li>UPDATE：InnoDB 为插入的一行新纪录保存当前系统版本号作为行版本号，同时保存当前系统版本号到原来的行作为删除标识保存这两个版本号，使大多数操作都不用加锁。它不足之处是每行记录都需要额外的存储空间，需要做更多的行检查工作和一些额外的维护工作。</li>
-</ul>
-<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><h4 id="redo-log-和-binlog-有什么区别？"><a href="#redo-log-和-binlog-有什么区别？" class="headerlink" title="redo log 和 binlog 有什么区别？"></a>redo log 和 binlog 有什么区别？</h4><p>redo log（重做日志）和 binlog（归档日志）都是 MySQL 的重要的日志，它们的区别如下：</p>
-<ul>
-<li><p>redo log 是物理日志，记录的是“在某个数据页上做了什么修改”。</p>
-</li>
-<li><p>binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如“给 ID=2 这一行的 c 字段加 1 ”。</p>
-</li>
-<li><p>redo log 是 InnoDB 引擎特有的；binlog 是 MySQL 的 Server 层实现的，所有引擎都可以使用。</p>
-</li>
-<li><p>redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。</p>
-</li>
-</ul>
-<p>最开始 MySQL 里并没有 InnoDB 引擎，MySQL 自带的引擎是 MyISAM，但是 MyISAM 没有 crash-safe 的能力，binlog 日志只能用于归档。而 InnoDB 是另一个公司以插件形式引入 MySQL 的，既然只依靠 binlog 是没有 crash-safe 能力的，所以 InnoDB 使用另外一套日志系统，也就是 redo log 来实现 crash-safe 能力。</p>
-<h4 id="如何解决-bin-log-与-redo-log-的一致性问题？"><a href="#如何解决-bin-log-与-redo-log-的一致性问题？" class="headerlink" title="==如何解决 bin log 与 redo log 的一致性问题？=="></a>==如何解决 bin log 与 redo log 的一致性问题？==</h4><p>其实就是BufferBool那一块的内容</p>
-<p>所谓两阶段提交，其实就是把 redo log 的写入拆分成了两个步骤：prepare 和 commit。<br>首先，存储引擎将执行更新好的新数据存到内存中，同时将这个更新操作记录到 redo log 里面，此时 redo log 处于 <code>prepare</code> 状态。然后告知执行器执行完成了，随时可以提交事务<br>然后执行器生成这个操作的 bin log，并把 bin log 写入磁盘<br>最后执行器调用存储引擎的提交事务接口，存储引擎把刚刚写入的 redo log 状态改成提交（<code>commit</code>）状态，更新完成</p>
-<p>如果数据库在写入 redo log(prepare) 阶段之后、写入 binlog 之前，发生了崩溃：<br>此时 redo log 里面的事务处于 prepare 状态，binlog 还没写，之后从库进行同步的时候，无法执行这个操作，但是实际上主库已经完成了这个操作，所以为了主备一致，MySQL 崩溃时会在主库上回滚这个事务<br>而如果数据库在写入 binlog 之后，redo log 状态修改为 commit 前发生崩溃，此时 redo log 里面的事务仍然是 prepare 状态，binlog 存在并完整，这样之后就会被从库同步过去，但是实际上主库并没有完成这个操作，所以为了主备一致，即使在这个时刻数据库崩溃了，主库上事务仍然会被正常提交。</p>
-<p><img alt="img" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Mysql/20230130202826.png"></p>
-<h4 id="一条-SQL-更新语句是如何执行的？"><a href="#一条-SQL-更新语句是如何执行的？" class="headerlink" title="一条 SQL 更新语句是如何执行的？"></a>一条 SQL 更新语句是如何执行的？</h4><p>同上</p>
-<h4 id="讲一下-redo-log-redo-log-两阶段提交原理"><a href="#讲一下-redo-log-redo-log-两阶段提交原理" class="headerlink" title="讲一下 redo log / redo log 两阶段提交原理"></a>讲一下 redo log / redo log 两阶段提交原理</h4><p>同上</p>
-<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><h4 id="MySQL-的优化手段都有哪些？"><a href="#MySQL-的优化手段都有哪些？" class="headerlink" title="MySQL 的优化手段都有哪些？"></a>MySQL 的优化手段都有哪些？</h4><p>MySQL 的常见的优化手段有以下五种：</p>
-<h5 id="①-查询优化"><a href="#①-查询优化" class="headerlink" title="① 查询优化"></a>① 查询优化</h5><ul>
-<li><p>避免 SELECT *，只查询需要的字段。</p>
-</li>
-<li><p>小表驱动大表，即小的数据集驱动大的数据集，比如，当 B 表的数据集小于 A 表时，用 in 优化 exist，两表执行顺序是先查 B 表，再查 A 表，查询语句：select * from A where id in (select id from B) 。</p>
-</li>
-<li><p>一些情况下，可以使用连接代替子查询，因为使用 join 时，MySQL 不会在内存中创建临时表。</p>
-</li>
-</ul>
-<h5 id="②-优化索引的使用"><a href="#②-优化索引的使用" class="headerlink" title="② 优化索引的使用"></a>② 优化索引的使用</h5><ul>
-<li><p>尽量使用主键查询，而非其他索引，因为主键查询不会触发回表查询。</p>
-</li>
-<li><p>不做列运算，把计算都放入各个业务系统实现</p>
-</li>
-<li><p>查询语句尽可能简单，大语句拆小语句，减少锁时间</p>
-</li>
-<li><p>不使用 select * 查询</p>
-</li>
-<li><p>or 查询改写成 in 查询</p>
-</li>
-<li><p>不用函数和触发器</p>
-</li>
-<li><p>避免 %xx 查询</p>
-</li>
-<li><p>少用 join 查询</p>
-</li>
-<li><p>使用同类型比较，比如 ‘123’ 和 ‘123’、123 和 123</p>
-</li>
-<li><p>尽量避免在 where 子句中使用 != 或者 &lt;&gt; 操作符，查询引用会放弃索引而进行全表扫描</p>
-</li>
-<li><p>列表数据使用分页查询，每页数据量不要太大</p>
-</li>
-<li><p>用 exists 替代 in 查询</p>
-</li>
-<li><p>避免在索引列上使用 is null 和 is not null</p>
-</li>
-<li><p>尽量使用主键查询</p>
-</li>
-<li><p>避免在 where 子句中对字段进行表达式操作</p>
-</li>
-<li><p>尽量使用数字型字段，若只含数值信息的字段尽量不要设计为字符型</p>
-</li>
-</ul>
-<h5 id="③-表结构设计优化"><a href="#③-表结构设计优化" class="headerlink" title="③ 表结构设计优化"></a>③ 表结构设计优化</h5><ul>
-<li><p>使用可以存下数据最小的数据类型。</p>
-</li>
-<li><p>使用简单的数据类型，int 要比 varchar 类型在 MySQL 处理简单。</p>
-</li>
-<li><p>尽量使用 tinyint、smallint、mediumint 作为整数类型而非 int。</p>
-</li>
-<li><p>尽可能使用 not null 定义字段，因为 null 占用 4 字节空间。</p>
-</li>
-<li><p>尽量少用 text 类型，非用不可时最好考虑分表。</p>
-</li>
-<li><p>尽量使用 timestamp，而非 datetime。</p>
-</li>
-<li><p>单表不要有太多字段，建议在 20 个字段以内。</p>
-</li>
-</ul>
-<h5 id="④-表拆分"><a href="#④-表拆分" class="headerlink" title="④ 表拆分"></a>④ 表拆分</h5><p>当数据库中的数据非常大时，查询优化方案也不能解决查询速度慢的问题时，我们可以考虑拆分表，让每张表的数据量变小，从而提高查询效率。 <strong>a）垂直拆分</strong>：是指数据表列的拆分，把一张列比较多的表拆分为多张表，比如，用户表中一些字段经常被访问，将这些字段放在一张表中，另外一些不常用的字段放在另一张表中，插入数据时，使用事务确保两张表的数据一致性。 垂直拆分的原则：</p>
-<ul>
-<li><p>把不常用的字段单独放在一张表；</p>
-</li>
-<li><p>把 text，blob 等大字段拆分出来放在附表中；</p>
-</li>
-<li><p>经常组合查询的列放在一张表中。</p>
-</li>
-</ul>
-<p><strong>b）水平拆分</strong>：指数据表行的拆分，表的行数超过200万行时，就会变慢，这时可以把一张的表的数据拆成多张表来存放。</p>
-<p>通常情况下，我们使用取模的方式来进行表的拆分，比如，一张有 400W 的用户表 users，为提高其查询效率我们把其分成 4 张表 users1，users2，users3，users4，然后通过用户 ID 取模的方法，同时查询、更新、删除也是通过取模的方法来操作。</p>
-<h5 id="⑤-读写分离"><a href="#⑤-读写分离" class="headerlink" title="⑤ 读写分离"></a>⑤ 读写分离</h5><p>一般情况下对数据库而言都是“读多写少”，换言之，数据库的压力多数是因为大量的读取数据的操作造成的，我们可以采用数据库集群的方案，使用一个库作为主库，负责写入数据；其他库为从库，负责读取数据。这样可以缓解对数据库的访问压力。</p>
 
         
       
