@@ -247,6 +247,334 @@
   
   
   <div class="post-block home">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/06/17/javaEE/spring源码/spring源码(二)--注册Bean定义详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+            
+            <a href="/alex-next/2022/06/17/javaEE/spring源码/spring源码(二)--注册Bean定义详解/" class="post-title-link" itemprop="url">spring源码(二)--注册bean定义详解</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-06-17 15:11:20" itemprop="dateCreated datePublished" datetime="2022-06-17T15:11:20+08:00">2022-06-17</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 17:22:28" itemprop="dateModified" datetime="2023-02-13T17:22:28+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/JavaEE/" itemprop="url" rel="index"><span itemprop="name">JavaEE</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="invokeBeanFactoryPostProcessors注册bean定义详解"><a href="#invokeBeanFactoryPostProcessors注册bean定义详解" class="headerlink" title="invokeBeanFactoryPostProcessors注册bean定义详解"></a>invokeBeanFactoryPostProcessors注册bean定义详解</h2><h3 id="invokeBeanFactoryPostProcessors"><a href="#invokeBeanFactoryPostProcessors" class="headerlink" title="invokeBeanFactoryPostProcessors"></a>invokeBeanFactoryPostProcessors</h3><ul>
+<li><p>ConfigurationClassPostProcessor类继承图</p>
+</li>
+<li><p>实现了PriorityOrdered接口(ConfigurationClassPostProcessor)的invokeBeanDefinitionRegistryPostProcessors</p>
+<ul>
+<li><p>currentRegistryProcessors.add(beanFactory.getBean()</p>
+<p>  if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {</p>
+<pre><code> //显示的调用getBean()的方式获取出该对象然后加入到currentRegistryProcessors集合中去
+ currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+ //同时也加入到processedBeans集合中去
+ processedBeans.add(ppName);
+</code></pre><p>  }</p>
+<ul>
+<li>从IOC中实例化并取出ConfigurationClassPostProcessor</li>
+</ul>
+</li>
+<li><p>postProcessBeanDefinitionRegistry</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>解析@Configuration的配置类</li>
+<li>解析@ComponentScan注解扫描的包</li>
+<li>解析@Import，@Component，@Bean等注解</li>
+</ul>
+</li>
+<li><p>for循环configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li><p>ConfigurationClassUtils.checkConfigurationClassCandidate</p>
+<ul>
+<li>检查是不是full的配置类@Configuration</li>
+<li>lite的配置类Component，ComponentScan，Import，ImportResource</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>ConfigurationClassParser.parse(candidates);递归</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>解析配置类</li>
+</ul>
+</li>
+<li><p>processConfigurationClass(new ConfigurationClass(metadata, beanName));</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>真的解析我们的配置类</li>
+<li>把我们的配置类源信息和beanName包装成一个ConfigurationClass 对象</li>
+</ul>
+</li>
+<li><p>this.conditionEvaluator.shouldSkip</p>
+<ul>
+<li>解析判断@Conditional是否满足条件</li>
+</ul>
+</li>
+<li><p>doProcessConfigurationClass(configClass, sourceClass);</p>
+<ul>
+<li>processPropertySource(propertySource);</li>
+<li><p>this.componentScanParser.parse</p>
+<ul>
+<li><p>this.componentScanParser.parse</p>
+<ul>
+<li><p>解释</p>
+<ul>
+<li>解析@Scope的ProxyMode属性</li>
+<li>设置CompentScan对象的includeFilters 包含的属性</li>
+<li>设置CompentScan对象的excludeFilters 包含的属性</li>
+<li>是否懒加载</li>
+<li><p>扫描时会判断</p>
+<ul>
+<li>1.类上是否有@Component</li>
+<li>2.类是否为接口、抽象类</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>scanner(ClassPathBeanDefinitionScanner).doScan</p>
+<ul>
+<li>将bean定义注册到BeanDefinitionMap中</li>
+<li><p>findCandidateComponents(basePackage);</p>
+<ul>
+<li><p>scanCandidateComponents(basePackage);</p>
+<ul>
+<li>获得包下所有的.class文件</li>
+<li><p>isCandidateComponent</p>
+<ul>
+<li>1.类上是否有@Component</li>
+<li>2.类是否为接口、抽象类</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>registerBeanDefinition(definitionHolder, this.registry);</p>
+<ul>
+<li>将bean定义注册到BeanDefinitionMap中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>processImports</p>
+</li>
+<li>configClass.addImportedResource</li>
+<li><p>retrieveBeanMethodMetadata(sourceClass);</p>
+<ul>
+<li>获取到我们配置类中所有标注了@Bean的方法</li>
+<li>放到Set中，并未解析成Bean定义放到BeanDefinitionMap中</li>
+</ul>
+</li>
+<li><p>processInterfaces(configClass, sourceClass);</p>
+<ul>
+<li>处理配置类接口 默认方法的@Bean</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>this.configurationClasses.put(configClass, configClass);</p>
+<ul>
+<li>放入缓存</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>processDeferredImportSelectors();</p>
+<ul>
+<li>处理我们延时的DeferredImportSelectors</li>
+<li>springboot就是通过这步进行记载spring.factories文件中的自定装配的对象</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>this.reader.loadBeanDefinitions(configClasses);</p>
+<ul>
+<li>此处才把@Bean的方法和@Import 注册到BeanDefinitionMap中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>实现了Ordered接口(包含自定义的)的invokeBeanDefinitionRegistryPostProcessors</p>
+<ul>
+<li>实现了PriorityOrdered接口的BeanDefinitionRegistryPostProcessor也在这里，推测是因为在上一步ConfigurationClassPostProcessor把注解标注的Definition注册进来，而ConfigurationClassPostProcessor在上下文的构造函数就注册进来了，而自定义的PriorityOrdered接口的BeanDefinitionRegistryPostProcessor却还没注册BeanDefinition，所以这在上一步获取不到</li>
+</ul>
+</li>
+<li><p>没实现任何优先级接口(包含自定义的)的invokeBeanDefinitionRegistryPostProcessors</p>
+</li>
+<li><p>BeanDefinitionRegistryPostProcessor(包含自定义的)#invokeBeanFactoryPostProcessors(registryProcessors</p>
+<ul>
+<li><p>ConfigurationClassPostProcessor的invokeBeanFactoryPostProcessors</p>
+<p>  //调用 BeanDefinitionRegistryPostProcessor.postProcessBeanFactory方法<br>  invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);</p>
+<ul>
+<li><p>enhanceConfigurationClasses</p>
+<ul>
+<li>使用cglib对配置类进行代理，调用@Bean方法就不会重复创建实例</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>执行BeanDefinitionRegistryPostProcessor#postProcessBeanFactory</p>
+</li>
+</ul>
+</li>
+<li><p>通过getBeanFactoryPostProcessors添加进来的BeanFactoryPostProcessor#invokeBeanFactoryPostProcessors(regularPostProcessors</p>
+<ul>
+<li>getBeanFactoryPostProcessors添加进来的BeanPostProcessor，如springboot添加进来的ConfigFileApplicationListener$PropertySourceOrderingPostProcessor</li>
+</ul>
+</li>
+<li><p>细节</p>
+<ul>
+<li>processedBeans会保存处理过的BeanDefinitionRegistryPostProcessor，执行只继承了BeanFactoryPostProcessor的类时，便不再执行带注册bean功能的工厂后置处理器</li>
+</ul>
+</li>
+<li><p>实现了PriorityOrdered接口(包含自定义的)的BeanFactoryProcessor</p>
+</li>
+<li><p>实现了Ordered接口(包含自定义的)的BeanFactoryProcessor</p>
+</li>
+<li><p>没有实现任何优先级接口(包含自定义的)的BeanFactoryProcessor</p>
+</li>
+</ul>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ul>
+<li><p>@Configuration加与不加的区别</p>
+<ul>
+<li><p>ConfigurationClassPostProceessor执行postProcessBeanFactory方法时会给配置类做cjlib动态代理，让@Bean的实例不会被重复new</p>
+<ul>
+<li>会判断实例是否是第一次创建（是否已经存在于IOC容器），如果说已经存在，那么spring应该直接去容器中拿这个beaninstance</li>
+</ul>
+</li>
+<li><p>答案图片</p>
+</li>
+</ul>
+</li>
+<li><p>invokeBeanDefinitionRegistryPostProcessors(PriorityOrdered)</p>
+<ul>
+<li><p>解析配置类的时候会重新new 一个scanner(ClassPathBeanDefinitionScanner)和AnnotationConfigApplicationContext中的不是一个</p>
+<ul>
+<li>AnnotationConfigApplicationContext中的只是为了自己调用scan方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>创始类什么时候实例化</p>
+<ul>
+<li>getBean会实例化创始类</li>
+</ul>
+</li>
+<li><p>@Component、@Import和@Bean区别</p>
+<ul>
+<li>@Component无法注入接口，只能注入类，@Bean可以自定义实现，可以控制bean的实例化过程，可以注入接口的实现类</li>
+<li><p>@Import可以批量注入，可以导入不在扫描范围里的Bean，所以集成第三方框架一般都用@Import</p>
+<ul>
+<li><p>ImportSelector无法改变Bean的使用顺序，如Springboot中想要自定义某个默认的Bean(SqlSessionFactory)，就不能实现</p>
+<ul>
+<li>@ConditionalOnBean(SqlSessionFactory.class)配置了该bean，才注册</li>
+<li>可以使用DeffredImportSelector，最后导入</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li>invokeBeanFactoryPostProcessors</li>
+<li>注册bean定义流程图</li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+          <div class="post-eof"></div>
+        
+      </footer>
+  </div>
+  
+  
+  
+  </article>
+
+    
+        <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block home">
     <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/06/01/javaEE/spring源码/spring源码(一)--IOC容器整体/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -7669,130 +7997,6 @@ else if (workerCountOf(recheck) == 0)
   </article>
 
     
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2021/05/29/算法/数据结构/数组模拟/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="alex">
-      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
-      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="alex的博客 - github.com">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/alex-next/2021/05/29/算法/数据结构/数组模拟/" class="post-title-link" itemprop="url">数组模拟</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-05-29 10:53:20" itemprop="dateCreated datePublished" datetime="2021-05-29T10:53:20+08:00">2021-05-29</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-09 19:42:32" itemprop="dateModified" datetime="2021-06-09T19:42:32+08:00">2021-06-09</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>为什么使用数组模拟单链表、双链表、栈、队列？</p>
-<p>如果数据规模很大，一个一个new 速度太慢了，使用数组会大大加快速度。</p>
-<h2 id="1-数组模拟单链表"><a href="#1-数组模拟单链表" class="headerlink" title="1.数组模拟单链表"></a>1.数组模拟单链表</h2><p><img alt="10048_8b47069add-数组表示单链表" data-src="https://gitee.com/alexander1/pic/raw/master/acwing/20210609111200.png"></p>
-<p>在头部插入一个元素<code>x</code>：</p>
-<p>先把值放到数据域中，让当前结点<code>next</code>指针指向<code>head</code>所指向的元素，让<code>head</code>指向当前元素，<code>idx</code>下移一位。<code>(idx</code>相当于元素的地址，<code>head</code>的值为第一个元素的地址<code>)</code></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add_head</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    e[idx] = x;</span><br><span class="line">    ne[idx] = head;</span><br><span class="line">    head = idx++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在第<code>k</code>个输入的数后面插入一个元素<code>x</code>：</p>
-<p>先把值放到数据域中，让当前结点<code>next</code>指针指向<code>k</code>的<code>next</code>域所指向的元素，让<code>k</code>的<code>next</code>指向当前元素，<code>idx</code>下移一位。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> k,<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    e[idx] = x;</span><br><span class="line">    ne[idx] = ne[k];</span><br><span class="line">    ne[k] = idx++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>删除第k个输入的数后面的数：</p>
-<p>让<code>k</code>的<code>next</code>指向<code>k</code>的<code>next</code>的<code>next</code></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">    ne[k] = ne[ne[k]];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>C++代码</strong></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">100010</span>;</span><br><span class="line"><span class="keyword">int</span> idx,head = <span class="number">-1</span>,e[N],ne[N];</span><br><span class="line"></span><br><span class="line"><span class="comment">//表示向链表头插入一个数x</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add_head</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    e[idx] = x;</span><br><span class="line">    ne[idx] = head;</span><br><span class="line">    head = idx++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//表示在第k个输入的数后面插入一个数x</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> k,<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    e[idx] = x;</span><br><span class="line">    ne[idx] = ne[k];</span><br><span class="line">    ne[k] = idx++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//表示删除第k个输入的数后面的数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">    ne[k] = ne[ne[k]];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;m;</span><br><span class="line">    <span class="keyword">while</span>(m--)&#123;</span><br><span class="line">        <span class="keyword">char</span> op;</span><br><span class="line">        <span class="keyword">int</span> k,x;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;op;</span><br><span class="line">        <span class="keyword">if</span>(op==<span class="string">'D'</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;k;</span><br><span class="line">            <span class="keyword">if</span>(!k)head = ne[head];</span><br><span class="line">            remove(k<span class="number">-1</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(op==<span class="string">'H'</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;x;</span><br><span class="line">            add_head(x);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(op==<span class="string">'I'</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;k&gt;&gt;x;</span><br><span class="line">            add(k<span class="number">-1</span>,x);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = head;i!=<span class="number">-1</span>;i=ne[i])<span class="built_in">printf</span>(<span class="string">"%d "</span>,e[i]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="2-数组模拟双链表"><a href="#2-数组模拟双链表" class="headerlink" title="2.数组模拟双链表"></a>2.数组模拟双链表</h2><p>初始化左指针域和右指针域</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">    r[<span class="number">0</span>] = <span class="number">1</span>,l[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">    idx = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在第<code>k</code>个结点右边插入一个元素：</p>
-<p>与单链表类似，但要注意先让<code>k</code>的右节点的左指针指向<code>idx</code>，在让<code>k</code>的右指针指向<code>idx</code>。否则，<code>l[r[k]]</code>中的<code>r[k]</code>已经不是原来的值</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> k,<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    e[idx] = x;</span><br><span class="line">    r[idx] = r[k];</span><br><span class="line">    l[idx] = k;</span><br><span class="line">    l[r[k]] = idx;</span><br><span class="line">    r[k] = idx++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>将第<code>k</code> 个插入的数删除<code>(</code>序号<code>1,2,...n)</code>：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">    r[l[k]] = r[k];</span><br><span class="line">    l[r[k]] = l[k];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>C++代码</strong></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">100010</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> m;</span><br><span class="line"><span class="keyword">int</span> e[N],l[N],r[N],idx;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">    r[<span class="number">0</span>] = <span class="number">1</span>,l[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">    idx = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//在第k个结点右边插入一个元素</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> k,<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">    e[idx] = x;</span><br><span class="line">    r[idx] = r[k];</span><br><span class="line">    l[idx] = k;</span><br><span class="line">    l[r[k]] = idx;</span><br><span class="line">    r[k] = idx++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//表示将第 k 个插入的数删除(序号1,2,...n)</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">    r[l[k]] = r[k];</span><br><span class="line">    l[r[k]] = l[k];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;m;</span><br><span class="line">    init();</span><br><span class="line">    <span class="keyword">while</span>(m--)&#123;</span><br><span class="line">        <span class="built_in">string</span> op;</span><br><span class="line">        <span class="keyword">int</span> k,x;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;op;</span><br><span class="line">        <span class="keyword">if</span>(op==<span class="string">"L"</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;x;</span><br><span class="line">            add(<span class="number">0</span>,x);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(op==<span class="string">"R"</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;x;</span><br><span class="line">            add(l[<span class="number">1</span>],x);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(op==<span class="string">"D"</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;k;</span><br><span class="line">            remove(k+<span class="number">1</span>);    </span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(op==<span class="string">"IL"</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;k&gt;&gt;x;</span><br><span class="line">            add(l[k+<span class="number">1</span>],x);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;k&gt;&gt;x;</span><br><span class="line">            add(k+<span class="number">1</span>,x);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = r[<span class="number">0</span>];i!=<span class="number">1</span>;i=r[i])<span class="built_in">printf</span>(<span class="string">"%d "</span>,e[i]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="3-数组模拟队列"><a href="#3-数组模拟队列" class="headerlink" title="3.数组模拟队列"></a>3.数组模拟队列</h2><p>当<code>tt&lt;hh</code>时，队列为空</p>
-<p>队头为<code>q[hh]</code>，出队列<code>hh++</code></p>
-<p><strong>c++代码</strong></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">100010</span>;</span><br><span class="line"><span class="keyword">int</span> q[N],hh,tt = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">    <span class="keyword">while</span>(n--)&#123;</span><br><span class="line">        <span class="built_in">string</span> op;</span><br><span class="line">        <span class="keyword">int</span> x;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;op;</span><br><span class="line">        <span class="keyword">if</span>(op==<span class="string">"push"</span>)&#123;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;x;</span><br><span class="line">            q[++tt] = x;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(op==<span class="string">"pop"</span>)&#123;</span><br><span class="line">            hh++;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(op==<span class="string">"empty"</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>(hh&lt;=tt)<span class="built_in">puts</span>(<span class="string">"NO"</span>);</span><br><span class="line">            <span class="keyword">else</span> <span class="built_in">puts</span>(<span class="string">"YES"</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">cout</span>&lt;&lt;q[hh]&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="4-数组模拟栈"><a href="#4-数组模拟栈" class="headerlink" title="4.数组模拟栈"></a>4.数组模拟栈</h2><p>当<code>tt=-1</code>时，栈为空</p>
-<p>出栈<code>tt--</code></p>
-<p><strong>c++代码</strong></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">100010</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> stk[N],tt = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;m;</span><br><span class="line">    <span class="keyword">while</span>(m--)&#123;</span><br><span class="line">        <span class="built_in">string</span> s;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;s;</span><br><span class="line">        <span class="keyword">if</span>(s==<span class="string">"push"</span>)&#123;</span><br><span class="line">            <span class="keyword">int</span> a;</span><br><span class="line">            <span class="built_in">cin</span>&gt;&gt;a;</span><br><span class="line">            stk[++tt] = a;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(s==<span class="string">"pop"</span>)&#123;</span><br><span class="line">            tt--;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(s==<span class="string">"query"</span>)&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,stk[tt]);</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(s==<span class="string">"empty"</span>)&#123;</span><br><span class="line">            <span class="built_in">cout</span>&lt;&lt;(tt==<span class="number">-1</span>?<span class="string">"YES"</span>:<span class="string">"NO"</span>)&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
   </div>
 
   
@@ -7845,7 +8049,7 @@ else if (workerCountOf(recheck) == 0)
         
           <a href="/alex-next/archives/">
         
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -7871,7 +8075,7 @@ else if (workerCountOf(recheck) == 0)
             <a href="/alex-next/tags/">
           
         
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
