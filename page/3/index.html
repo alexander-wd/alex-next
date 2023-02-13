@@ -247,655 +247,6 @@
   
   
   <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/06/01/javaEE/spring源码/spring源码(一)--IOC容器整体/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="alex">
-      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
-      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="alex的博客 - github.com">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/alex-next/2022/06/01/javaEE/spring源码/spring源码(一)--IOC容器整体/" class="post-title-link" itemprop="url">spring源码(一)--IOC容器整体</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2022-06-01 22:10:20" itemprop="dateCreated datePublished" datetime="2022-06-01T22:10:20+08:00">2022-06-01</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-02-13 17:41:12" itemprop="dateModified" datetime="2023-02-13T17:41:12+08:00">2023-02-13</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/JavaEE/" itemprop="url" rel="index"><span itemprop="name">JavaEE</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="IOC容器源码-大体"><a href="#IOC容器源码-大体" class="headerlink" title="IOC容器源码(大体)"></a>IOC容器源码(大体)</h2><h3 id="1-整体介绍"><a href="#1-整体介绍" class="headerlink" title="1.整体介绍"></a>1.整体介绍</h3><ul>
-<li><p>IOC控制反转的意义</p>
-<ul>
-<li>当一个依赖的类改变了，不用处处都改，只需要改变IOC容器中的bean</li>
-</ul>
-</li>
-<li><p>BeanFactory和ApplicationContext区别</p>
-</li>
-<li><p>循环依赖</p>
-<ul>
-<li>设置三级缓存解决</li>
-</ul>
-</li>
-<li><p>扩展点</p>
-<ul>
-<li>集成其他框架时，用的非常多</li>
-<li><p>BeanFactoryPostProcessor</p>
-<ul>
-<li>集成其他框架时，用的非常多</li>
-</ul>
-</li>
-<li><p>BeanDefinitionRegistryPostProcessor</p>
-<ul>
-<li>用于注册扩展的bean定义，相当于“增加图纸”</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>问题</p>
-<ul>
-<li>描述下BeanFactory</li>
-<li><p>BeanFactory和ApplicationContext的区别</p>
-<ul>
-<li>BeanFactory是spring的顶层核心接口，工厂只负责按照要求(beanDefinition)生产bean，要生产成什么样由ApplicationContext决定</li>
-<li>ApplicationContext面向的是用户，需要提供各种人性化的服务，继承了BeanFactory，离开了BeanFactory生产不了bean(就行各种店铺离不开工厂)</li>
-</ul>
-</li>
-<li><p>简述SpringIOC的加载过程</p>
-</li>
-<li><p>简述Bean的生命周期</p>
-<ul>
-<li><p>实例化</p>
-<ul>
-<li><ol>
-<li>实例化Bean对象，这个时候Bean的对象是非常低级的，基本不能够被我们使用，因为连最基本的属性都没有设置，可以理解为 连Autowired注解都是没有解析的； </li>
-</ol>
-</li>
-</ul>
-</li>
-<li><p>属性注入</p>
-<ul>
-<li><ol>
-<li>填充属性，当做完这一步，Bean对象基本是完整的了，可以理解为Autowired注解已经解析完毕，依赖注入完成了； </li>
-</ol>
-</li>
-</ul>
-</li>
-<li><p>初始化Initialization</p>
-<ul>
-<li><p>invokeAwareMethods</p>
-<ul>
-<li><ol>
-<li>如果Bean实现了BeanNameAware接口，则调用setBeanName方法； </li>
-</ol>
-</li>
-<li><ol>
-<li>如果Bean实现了BeanClassLoaderAware接口，则调用setBeanClassLoader方法；</li>
-</ol>
-</li>
-<li><ol>
-<li>如果Bean实现了BeanFactoryAware接口，则调用setBeanFactory方法； </li>
-</ol>
-</li>
-</ul>
-</li>
-<li><ol>
-<li>调用BeanPostProcessor的postProcessBeforeInitialization方法；</li>
-</ol>
-</li>
-<li><p>init</p>
-<ul>
-<li><ol>
-<li>如果Bean实现了InitializingBean接口，调用afterPropertiesSet方法； </li>
-</ol>
-</li>
-<li><ol>
-<li>如果Bean定义了init-method方法，则调用Bean的init-method方法；</li>
-</ol>
-</li>
-<li><ol>
-<li>调用BeanPostProcessor的postProcessAfterInitialization方法；当进行到这一步，Bean已经被准备就绪了，一直停留在应用的 上下文中，直到被销毁；</li>
-</ol>
-</li>
-</ul>
-</li>
-<li><p>close()</p>
-<ul>
-<li><ol>
-<li>如果应用的上下文被销毁了，如果Bean实现了DisposableBean接口，则调用destroy方法，如果Bean定义了destory-method 声明了销毁方法也会被调用。</li>
-</ol>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Spring中有哪些扩展接口及调用时机</p>
-<ul>
-<li>BeanFactoryPostProcessor</li>
-<li>FactoryBean</li>
-<li>BeanPostProcessor</li>
-<li>初始化生命周期回调方法</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="2-源码介绍-IOC容器初始化过程"><a href="#2-源码介绍-IOC容器初始化过程" class="headerlink" title="2.源码介绍(IOC容器初始化过程)"></a>2.源码介绍(IOC容器初始化过程)</h3><ul>
-<li><p>源码编译</p>
-<ul>
-<li><p>问题</p>
-<ul>
-<li><p>Error resolving plugin</p>
-</li>
-<li><p>Kotlin: warnings found and -Werror specified</p>
-</li>
-<li><p>CoroutinesRegistrar不存在</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>使用配置类的设计理念更先进</p>
-</li>
-<li><p>问题</p>
-<ul>
-<li><p>FactoryBean和BeanFactory区别</p>
-<ul>
-<li>FactoryBean就是一个扩展点，BeanFactory是使用了简单工厂模式，用于生产bean</li>
-</ul>
-</li>
-<li><p>BeanFactoryPostProcessor和BeanPostProcessor区别</p>
-<ul>
-<li>BeanFactoryPostProcessor用于扩展bean定义，BeanPostProcessor用于扩展bean</li>
-</ul>
-</li>
-<li><p>介绍下BeanFactoryPostProcessor在Spring中的用途</p>
-<ul>
-<li>扩展点，mybatis基于此与spring集成</li>
-</ul>
-</li>
-<li><p>@Component、@Import和@Bean区别</p>
-<ul>
-<li>@Component无法注入接口，只能注入类，@Bean可以自定义实现，可以控制bean的实例化过程，可以注入接口的实现类</li>
-<li><p>@Import可以批量注入，可以导入不在扫描范围里的Bean，所以集成第三方框架一般都用@Import</p>
-<ul>
-<li><p>ImportSelector无法改变Bean的使用顺序，如Springboot中想要自定义某个默认的Bean(SqlSessionFactory)，就不能实现</p>
-<ul>
-<li>@ConditionalOnBean(SqlSessionFactory.class)配置了该bean，才注册</li>
-<li>可以使用DeffredImportSelector，最后导入</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="AnnotationConfigApplicationContext-MainConfig-class"><a href="#AnnotationConfigApplicationContext-MainConfig-class" class="headerlink" title="AnnotationConfigApplicationContext(MainConfig.class)"></a>AnnotationConfigApplicationContext(MainConfig.class)</h3><ul>
-<li><p>this();</p>
-<ul>
-<li><p>this.beanFactory = new DefaultListableBeanFactory();</p>
-<p>调用父类的构造函数，初始化BeanFactory</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>调用父类的构造函数，初始化BeanFactory</li>
-<li>DefaultListableBeanFactory还继承了BeanDefinitionRegistry的功能</li>
-<li>DefaultListableBeanFactory属性</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>this.reader = new AnnotatedBeanDefinitionReader(this);</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li><p>注册spring内置的PostProcessor到BeanDefinitionMap中，这几个类是spring的创始类</p>
-<ul>
-<li><p>AutowiredAnnotationBeanPostProcessor</p>
-<p>用于解析@Autowired</p>
-</li>
-<li><p>internalConfigurationAnnotationProcessorConfigurationClassPostProcessor</p>
-<p>在这个类中，会解析加了@Configuration的配置类，还会解析@ComponentScan、@ComponentScans注解扫描的包，以及解析@Import等注解。</p>
-</li>
-<li><p>RequiredAnnotationBeanPostProcessor</p>
-<p>用于解析@Required</p>
-</li>
-<li><p>CommonAnnotationBeanPostProcessor</p>
-<p>它负责解析<br>@Resource、@WebServiceRef、@EJB三个注解。<br>这三个注解都是定义在javax.*包下的注解，属于java中的注解。</p>
-</li>
-<li><p>EventListenerMethodProcessor</p>
-</li>
-<li><p>DefaultEventListenerFactory</p>
-<p>负责创建监听器：ApplicationListenerMethodAdapter<br>为标注了@EventListener的方法<br>创建调用监听适配器：ApplicationListenerMethodAdapter</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);</p>
-<p>public static Set<beandefinitionholder> registerAnnotationConfigProcessors(</beandefinitionholder></p>
-<pre><code>  BeanDefinitionRegistry registry, @Nullable Object source) {
-</code></pre><p>   DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);<br>   if (beanFactory != null) {</p>
-<pre><code>  if (!(beanFactory.getDependencyComparator() instanceof AnnotationAwareOrderComparator)) {
-     //注册了实现Order接口的排序器
-     beanFactory.setDependencyComparator(AnnotationAwareOrderComparator.INSTANCE);
-  }
-  //设置@AutoWired的候选的解析器：ContextAnnotationAutowireCandidateResolver
-  // getLazyResolutionProxyIfNecessary方法，它也是唯一实现。
-  //如果字段上带有@Lazy注解，表示进行懒加载 Spring不会立即创建注入属性的实例，而是生成代理对象，来代替实例
-  if (!(beanFactory.getAutowireCandidateResolver() instanceof ContextAnnotationAutowireCandidateResolver)) {
-     beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());
-  }
-</code></pre><p>   }</p>
-<p>   Set<beandefinitionholder> beanDefs = new LinkedHashSet&lt;&gt;(8);</beandefinitionholder></p>
-<p>   /**</p>
-<pre><code>* 为我们容器中注册了解析我们配置类的后置处理器ConfigurationClassPostProcessor
-* 名字叫:org.springframework.context.annotation.internalConfigurationAnnotationProcessor
-*/
-</code></pre><p>   if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {</p>
-<pre><code>  RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
-  def.setSource(source);
-  beanDefs.add(registerPostProcessor(registry, def, CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME));
-</code></pre><p>   }</p>
-<p>   /**</p>
-<pre><code>* 为我们容器中注册了处理@Autowired 注解的处理器AutowiredAnnotationBeanPostProcessor
-* 名字叫:org.springframework.context.annotation.internalAutowiredAnnotationProcessor
-*/
-</code></pre><p>   if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {</p>
-<pre><code>  RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
-  def.setSource(source);
-  beanDefs.add(registerPostProcessor(registry, def, AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME));
-</code></pre><p>   }</p>
-<p>   /**</p>
-<pre><code>* 为我们容器中注册处理@Required属性的注解处理器RequiredAnnotationBeanPostProcessor
-* 名字叫:org.springframework.context.annotation.internalRequiredAnnotationProcessor
-*/
-</code></pre><p>   if (!registry.containsBeanDefinition(REQUIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {</p>
-<pre><code>  RootBeanDefinition def = new RootBeanDefinition(RequiredAnnotationBeanPostProcessor.class);
-  def.setSource(source);
-  beanDefs.add(registerPostProcessor(registry, def, REQUIRED_ANNOTATION_PROCESSOR_BEAN_NAME));
-</code></pre><p>   }</p>
-<p>   /**</p>
-<pre><code>* 为我们容器注册处理JSR规范的注解处理器CommonAnnotationBeanPostProcessor
-* org.springframework.context.annotation.internalCommonAnnotationProcessor
-*/
-</code></pre><p>   if (jsr250Present &amp;&amp; !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {</p>
-<pre><code>  RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);
-  def.setSource(source);
-  beanDefs.add(registerPostProcessor(registry, def, COMMON_ANNOTATION_PROCESSOR_BEAN_NAME));
-</code></pre><p>   }</p>
-<p>   /**</p>
-<pre><code>* 处理jpa注解的处理器org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor
-*/
-</code></pre><p>   if (jpaPresent &amp;&amp; !registry.containsBeanDefinition(PERSISTENCE_ANNOTATION_PROCESSOR_BEAN_NAME)) {</p>
-<pre><code>  RootBeanDefinition def = new RootBeanDefinition();
-  try {
-     def.setBeanClass(ClassUtils.forName(PERSISTENCE_ANNOTATION_PROCESSOR_CLASS_NAME,
-           AnnotationConfigUtils.class.getClassLoader()));
-  }
-  catch (ClassNotFoundException ex) {
-     throw new IllegalStateException(
-           &quot;Cannot load optional framework class: &quot; + PERSISTENCE_ANNOTATION_PROCESSOR_CLASS_NAME, ex);
-  }
-  def.setSource(source);
-  beanDefs.add(registerPostProcessor(registry, def, PERSISTENCE_ANNOTATION_PROCESSOR_BEAN_NAME));
-</code></pre><p>   }</p>
-<p>   /**</p>
-<pre><code>* 处理监听方法的注解@EventListener解析器EventListenerMethodProcessor
-*/
-</code></pre><p>   if (!registry.containsBeanDefinition(EVENT_LISTENER_PROCESSOR_BEAN_NAME)) {</p>
-<pre><code>  RootBeanDefinition def = new RootBeanDefinition(EventListenerMethodProcessor.class);
-  def.setSource(source);
-  beanDefs.add(registerPostProcessor(registry, def, EVENT_LISTENER_PROCESSOR_BEAN_NAME));
-</code></pre><p>   }</p>
-<p>   /**</p>
-<pre><code>* 注册事件监听器工厂
-*/
-</code></pre><p>   if (!registry.containsBeanDefinition(EVENT_LISTENER_FACTORY_BEAN_NAME)) {</p>
-<pre><code>  RootBeanDefinition def = new RootBeanDefinition(DefaultEventListenerFactory.class);
-  def.setSource(source);
-  beanDefs.add(registerPostProcessor(registry, def, EVENT_LISTENER_FACTORY_BEAN_NAME));
-</code></pre><p>   }</p>
-<p>   return beanDefs;<br>}</p>
-<ul>
-<li><p>registerPostProcessor()</p>
-<p>注册某个具体的内置PostProcessor，会存放到BeanDefinitionMap中</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>this.scanner = new ClassPathBeanDefinitionScanner(this);</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>会加载系统环境变量和资源读取器，并且里面定义了扫描包的核心方法doScan()</li>
-<li>但是这里的scanner只用于applicationContext调用调度扫描包注册beanDefinition</li>
-<li>还有个非常重要的地方，new ClassPathBeanDefinitionScanner的时候会调用registerDefaultFilters();在里面注册扫描时过滤候选component的includeFilters</li>
-</ul>
-</li>
-<li><p>registerDefaultFilters();</p>
-</li>
-<li><p>setEnvironment(environment);</p>
-<ul>
-<li>设置环境对象</li>
-</ul>
-</li>
-<li><p>setResourceLoader(resourceLoader);</p>
-<ul>
-<li>设置资源加载器</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>register(componentClasses);</p>
-<p>for (Class&lt;?&gt; annotatedClass : annotatedClasses) {<br>   registerBean(annotatedClass);<br>}</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>将配置类(@Configuration标注的)注册到BeanDefinitionMap中。(这个类是启动容器的配置类)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>refresh();</p>
-<ul>
-<li><p>invokeBeanFactoryPostProcessors(beanFactory);</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>调用我们的bean工厂的后置处理器</li>
-<li>会在此将class扫描成beanDefinition到beanDefinitionMap中</li>
-<li>bean工厂的后置处理器调用</li>
-</ul>
-</li>
-<li><p>PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>if (beanFactory instanceof BeanDefinitionRegistry)可以发现这句代码，如果是applicationContext就进入，有众多流程</li>
-<li><p>若仅仅是beanFactory，则执行如下代码</p>
-<p>invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);</p>
-</li>
-</ul>
-</li>
-<li><p>invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>获取容器中的ConfigurationClassPostProcessor的后置处理器进行bean定义的扫描，解析@Bean,@Component,@Service等等注解，添加到beanDefinitionMap中</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>getBeanFactoryPostProcessors()</p>
-<ul>
-<li>我们自己调用addBeanFactoryPostProcessor的自定义BeanFactoryPostProcessor</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>registerBeanPostProcessors(beanFactory);</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>注册BeanPostProcessor</li>
-</ul>
-</li>
-<li><p>后置处理器9处调用</p>
-</li>
-<li><p>registerBeanPostProcessors</p>
-<ul>
-<li><p>注册主要的几个BeanPostProcessor</p>
-<ul>
-<li><p>AutowiredAnnotationBeanPostProcessor</p>
-<p>解析@Autowired</p>
-</li>
-<li><p>RequiredAnnotationBeanPostProcessor</p>
-<p>解析@Required</p>
-</li>
-<li><p>CommonAnnotationBeanPostProcessor</p>
-<p>解析@Resource、@WebServiceRef、@EJB</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>finishBeanFactoryInitialization(beanFactory);</p>
-<ul>
-<li><p>解释</p>
-<ul>
-<li>整个bean的创建过程</li>
-</ul>
-</li>
-<li><p>beanFactory.preInstantiateSingletons();</p>
-<p>实例化单例bean</p>
-<ul>
-<li><p>getBean</p>
-<ul>
-<li><p>doGetBean</p>
-<ul>
-<li>实例化createBean</li>
-<li>属性注入@Autowired   @Value</li>
-<li><p>初始化initMethod   destroy</p>
-<ul>
-<li>Aware</li>
-<li>@PostConstruct</li>
-<li>InitializingBean</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h3><ul>
-<li><p>spring底层核心常用注解</p>
-<ul>
-<li><p>1.配置</p>
-<ul>
-<li>@Configuration</li>
-<li>@Bean</li>
-</ul>
-</li>
-<li><p>2.包扫描</p>
-<ul>
-<li><p>@ComponentScan</p>
-<ul>
-<li>excludeFilters</li>
-<li>includeFilters</li>
-<li>Filter</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>3.配置bean的作用域</p>
-<ul>
-<li><p>@Scope</p>
-<ul>
-<li>a) singleton 单实例的(默认) </li>
-<li>b) prototype 多实例的 </li>
-<li>c) request 同一次请求 </li>
-<li>d) session 同一个会话级别</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>4.Bean的懒加载</p>
-<ul>
-<li>@Lazy</li>
-</ul>
-</li>
-<li><p>5.条件判断</p>
-<ul>
-<li>@Conditional</li>
-</ul>
-</li>
-<li><p>6.往IOC中添加组件</p>
-<ul>
-<li><p>@CompentScan +@Controller @Service @Respository @compent</p>
-<ul>
-<li>针对我们自己写的组件可以通过该方式来进行加载到容器中。</li>
-</ul>
-</li>
-<li><p>@Bean</p>
-<ul>
-<li>适用于导入第三方组件的类</li>
-</ul>
-</li>
-<li><p>@Import</p>
-<ul>
-<li>导入组件的id为全类名路径</li>
-<li>ImportSelector</li>
-<li>ImportBeanDefinitionRegister</li>
-</ul>
-</li>
-<li><p>实现FactoryBean</p>
-</li>
-</ul>
-</li>
-<li><p>7.Bean的初始化和销毁方法</p>
-<ul>
-<li>@Bean(initMethod = “init”,destroyMethod = “destroy”)</li>
-<li>实现InitializingBean和DisposableBean</li>
-<li>使用@PostConstruct 和@ProDestory标注方法</li>
-<li>实现BeanPostProcessor重写postProcessBeforeInitialization和postProcessAfterInitialization</li>
-</ul>
-</li>
-<li><p>8.给组件赋值</p>
-<ul>
-<li>@Value +@PropertySource</li>
-</ul>
-</li>
-<li><p>9.自动装配</p>
-<ul>
-<li>@Autowired</li>
-<li><p>@Qualifier</p>
-<ul>
-<li>指定特定的bean装配，===在@bean后加@Primary</li>
-</ul>
-</li>
-<li><p>@Resource</p>
-</li>
-<li>@Inject</li>
-</ul>
-</li>
-<li><p>10.使用IOC的组件，如ApplicationContext</p>
-<ul>
-<li>实现XXXAware接口</li>
-</ul>
-</li>
-<li><p>11.@Profile</p>
-<ul>
-<li>根据不同环境激活bean</li>
-<li>运行时jvm参数来切换 -Dspring.profiles.active=test|dev|prod</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>IOC容器整体加载流程图</p>
-</li>
-<li>IOC容器整体加载流程图(详细)</li>
-<li>spring设计模式</li>
-<li><p>spring源码脑图</p>
-</li>
-<li><p>spring中文文档</p>
-</li>
-<li><p>IOC概念</p>
-</li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
     <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/05/28/javaEE/mysql深入/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -5029,6 +4380,119 @@ else if (workerCountOf(recheck) == 0)
 </li>
 </ul>
 <h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2>
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+          <div class="post-eof"></div>
+        
+      </footer>
+  </div>
+  
+  
+  
+  </article>
+
+    
+        <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block home">
+    <link itemprop="mainEntityOfPage" href="https://alexander-wd.github.io/alex-next/2022/01/04/面试题/Springboot面试题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="alex">
+      <meta itemprop="description" content="时光静好,与君语;细水流年,与君同;繁华落尽,与君老.">
+      <meta itemprop="image" content="/alex-next/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="alex的博客 - github.com">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+            
+            <a href="/alex-next/2022/01/04/面试题/Springboot面试题/" class="post-title-link" itemprop="url">SpringBoot面试题</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2022-01-04 16:10:20" itemprop="dateCreated datePublished" datetime="2022-01-04T16:10:20+08:00">2022-01-04</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-13 18:43:59" itemprop="dateModified" datetime="2023-02-13T18:43:59+08:00">2023-02-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/alex-next/categories/面试题/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="76-谈谈你对SpringBoot的理解，它有哪些特性"><a href="#76-谈谈你对SpringBoot的理解，它有哪些特性" class="headerlink" title="76.谈谈你对SpringBoot的理解，它有哪些特性"></a>76.谈谈你对SpringBoot的理解，它有哪些特性</h3><p>​    快速开发Spring应用的脚手架，简化Spring的初始搭建及配置<br>​    1.无配置集成，开箱即用<br>​    2.基于JavaConfig<br>​    3.内置Web容器，无需web.xml，jar文件就能启动web应用<br>​    4.管理了第三方依赖版本，减少版本冲突<br>​    5.自带监控功能<br>​    参考</p>
+<p><img alt="55" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125205315.png"></p>
+<h3 id="77-Spring和SpringBoot的关系和区别"><a href="#77-Spring和SpringBoot的关系和区别" class="headerlink" title="77.Spring和SpringBoot的关系和区别"></a>77.Spring和SpringBoot的关系和区别</h3><p>​    关系<br>​        Springboot是Spring生态的产品<br>​    Spring Framework<br>​        是一个容器框架<br>​    Springboot是一个快速开发Spring的脚手架</p>
+<h3 id="78-Springboot的核心注解"><a href="#78-Springboot的核心注解" class="headerlink" title="78.Springboot的核心注解"></a>78.Springboot的核心注解</h3><p>​    @SpringBootApplication<br>​        @SpringBootConfiguration<br>​        @EnableAutoConfiguration<br>​    @Conditional<br>​        @ConditionalOnBean<br>​        @ConditionalOnClass<br>​        @ConditionalExpression<br>​        @ConditionalOnMissingBean<br>​    参考</p>
+<p><img alt="56" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125205344.png"></p>
+<h3 id="79-Springboot的自动配置原理"><a href="#79-Springboot的自动配置原理" class="headerlink" title="==79.Springboot的自动配置原理=="></a>==79.Springboot的自动配置原理==</h3><p>​    1.@SpringBootApplication<br>​        导入@SpringBootConfiguration标注当前类是配置类<br>​        导入@EnableAutoConfiguration，自动配置<br>​    2.@EnableAutoConfiguation引入了@Import<br>​    3.Spring容器启动(SpringBoot.run)加载IOC容器会解析@Import注解<br>​    4.@Import导入了一个DeferredImportSelector<br>​        会使Springboot的自动配置类顺序在最后，方便我们扩展和覆盖<br>​            @ConditionalOnBean<br>​                配置了某个Bean，就帮我们把剩下的组件配置好<br>​            @ConditionalOnMissingBean<br>​                如果我们没有配置，就自动帮我们配置，如DispatcherServlet<br>​    5.读取所有/META-INF/spring.factories文件(类似API)<br>​    6.过滤出所有AutoConfigurationClass(初筛)<br>​    7.通过@Conditional排除无效的自动配置类</p>
+<h3 id="80-为什么SpringBoot的jar可以直接运行"><a href="#80-为什么SpringBoot的jar可以直接运行" class="headerlink" title="==80.为什么SpringBoot的jar可以直接运行=="></a>==80.为什么SpringBoot的jar可以直接运行==</h3><p>​    1.spring-boot-maven-plugin可以把程序打包成一个可执行的jar包<br>​    2.打包后，生成了一个Fat jar，包含了应用以来的jar包和Springboot loader相关的类<br>​    3.java -jar会去jar中(jvm规范)找MANIFEST.MF，找真正的启动类(Main-Class)<br>​    4.Fat jar的启动函数是JarLauncher，它负责创建一个LaunchedURLClassLoader来加载lib下面的jar，并以一个新线程去启动应用启动类的Main函数(MANIFEST.MF中的Start-Class)</p>
+<h3 id="81-SpringBoot的启动原理"><a href="#81-SpringBoot的启动原理" class="headerlink" title="==81.SpringBoot的启动原理=="></a>==81.SpringBoot的启动原理==</h3><p>​    1.运行main方法，构造函数初始化信息，从spring.factories读取监听器，初始化器<br>​    2.运行run方法，读取环境变量、配置信息<br>​    3.创建springApplication上下文：ServletWebServerApplicationContext<br>​    4,预初始化上下文<br>​        将启动类作为配置类进行读取，将配置注册为BeanDefinition<br>​    5.调用refresh加载ioc容器<br>​        invokeBeanFactoryBeanProcessor<br>​            @Import加载所有自动配置类<br>​        onRefresh：常见内置servlet容器<br>​    6.在这个过程中springboot会调用很多监听器对外进行扩展</p>
+<h3 id="82-SpringBoot内置Tomcat原理"><a href="#82-SpringBoot内置Tomcat原理" class="headerlink" title="==82.SpringBoot内置Tomcat原理=="></a>==82.SpringBoot内置Tomcat原理==</h3><p>​    1.依赖spring-boot-starter-web依赖会在Springboot中添加ServletWebServerFactoryAutoConfiguration   servlet自动配置类<br>​    2.该自动配置类通过@Import导入了一个Web容器工厂(默认tomcat)<br>​    3.在加载IOC容器时，解析@Import，onRefresh(会拿到tomcat容器工厂)创建内置tomcat并启动<br>​        new tomcat()<br>​        启动tomcat<br>​        挂起线程<br>​    SpringMVC中的DispatcherServlet也是自动配置类导入进来的</p>
+<h3 id="83-SpringBoot外部tomcat启动原理"><a href="#83-SpringBoot外部tomcat启动原理" class="headerlink" title="==83.SpringBoot外部tomcat启动原理=="></a>==83.SpringBoot外部tomcat启动原理==</h3><p>​    SPI<br>​        当servlet容器启动时候，就会去META-INF/services 文件夹中找到javax.servlet.ServletContainerInitializer<br>​        执行官方的SpringServletContainerInitializer(继承了ServletContainerInitializer)<br>​        执行自己的SpringBootServletInitializer#onStartup(继承了WebApplicationInitializer)<br>​            启动SpringBoot</p>
+<h3 id="84-自定义Starter的过程"><a href="#84-自定义Starter的过程" class="headerlink" title="==84.自定义Starter的过程=="></a>==84.自定义Starter的过程==</h3><p>​    导入spring-boot-configuration-processor，配置文件绑定就会有提示<br>​        可以自定义XXXProperties文件，外部使用就能直接配置在.properties，.yml文件中<br>​    自定义XXXAutoCOnfiguration自动导入(开启)配置类<br>​    一定要在resources文件夹下创建META/spring.factories指定自动配置类<br>​    maven install</p>
+<h3 id="85-SpringBoot读取配置文件原理是什么，加载顺序是怎样的"><a href="#85-SpringBoot读取配置文件原理是什么，加载顺序是怎样的" class="headerlink" title="85.SpringBoot读取配置文件原理是什么，加载顺序是怎样的"></a>85.SpringBoot读取配置文件原理是什么，加载顺序是怎样的</h3><p>​    通过事件监听的方式读取配置文件<br>​        ConfigFIleApplicationListener监听器<br>​    读取顺序<br>​        file:./config<br>​            file:路径就是项目的target文件夹:../target/<br>​        file:./config/{@literal *}<br>​            /target/config/xxx/        任意文件夹<br>​        file:./<br>​        classpath:config/<br>​        classpath:<br>​        细节<br>​            优先级从高到低，高优先级没有可以从低优先级互补</p>
+<h3 id="86-SpringBoot默认日志实现框架是什么，怎么切换成别的"><a href="#86-SpringBoot默认日志实现框架是什么，怎么切换成别的" class="headerlink" title="86.SpringBoot默认日志实现框架是什么，怎么切换成别的"></a>86.SpringBoot默认日志实现框架是什么，怎么切换成别的</h3><p>​    ==默认实现框架==<br>​        logback<br>​        参考</p>
+<p><img alt="57" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125210316.png"></p>
+<p>​            log4j到logback原理<br>​                1.log4j-api通过log4j-to-slf4j适配器转换为slf4j<br>​                2.slf4j通过logback-classic桥接器最终使用logback输出<br>​        springboot默认提供了jul和log4j到slf4j的适配器<br>​    ==怎么切换==<br>​        切换为log4j2<br>​            添加slf4j对应的桥接器<br>​                排除logback桥接器<br>​                加入log4j2桥接器<br>​                参考</p>
+<p><img alt="58" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125210416.png"></p>
+<p>​        切换为log4j<br>​            排除logback桥接器<br>​            加入log4j的桥接器<br>​            参考</p>
+<p><img alt="59" data-src="https://blog-wd.oss-cn-shanghai.aliyuncs.com/面试题/Spring/20230125210421.png"></p>
+<h3 id="87-平时开发的时候怎么在SpringBoot的基础上做扩展"><a href="#87-平时开发的时候怎么在SpringBoot的基础上做扩展" class="headerlink" title="87.平时开发的时候怎么在SpringBoot的基础上做扩展"></a>87.平时开发的时候怎么在SpringBoot的基础上做扩展</h3><p>​    查看XXXAutoConfiguration<br>​        重点关注@ConditionalOnXXX<br>​    深入看源码</p>
+<h3 id="88-微服务架构的优缺点"><a href="#88-微服务架构的优缺点" class="headerlink" title="88.微服务架构的优缺点"></a>88.微服务架构的优缺点</h3><p>​    优点<br>​        分工协作<br>​            提高开发效率和敏捷性<br>​            单个服务启动快<br>​            专人处理专事，专注自己的服务<br>​        并发能力<br>​            充分利用服务器资源(并发量高的模块多部署几台服务器)<br>​        维护能力<br>​            根据功能垂直拆分，责任更加分明，维护更加精准<br>​        容错<br>​            弱依赖的服务出现故障，可以进行熔断(隔离)依然不影响主业务正常使用<br>​        扩展<br>​            新服务可以采用任意新技术<br>​    缺点<br>​        ==分布式==<br>​            分布式系统较难编程(远程调用速度很慢，并且总是面临失败的风险)，对开发人员技术要求高<br>​        ==最终一致性==<br>​            对于分布式系统，保持强一致性非常困难，所以每个人都必须管理最终一致性<br>​        ==运维复杂度==<br>​        隐式接口<br>​            服务和服务通过接口来联系，当一个服务更改接口格式时，所有涉及此接口的服务都要做调整<br>​        重复劳动<br>​            很多服务用到同一功能，但这一功能并没有大到提供一个服务的程度，不同服务团队都会单独开发这一功能</p>
+
         
       
     </div>
